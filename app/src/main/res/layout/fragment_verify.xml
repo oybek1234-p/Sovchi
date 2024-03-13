@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.uz.sovchi.ui.base.MyToolBar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="@string/akkauntga_kirish" />
+
+        <TextView
+            android:id="@+id/textView"
+            style="@style/Title4_24"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen_24"
+            android:gravity="start"
+            android:text="@string/sms_kod_yuborildi"
+            android:textColor="?attr/colorOnSurface"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/phone_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dimen_24"
+            android:layout_marginTop="@dimen/dimen_24"
+            android:gravity="center"
+            app:helperText="@string/sms_kodni_kiriting"
+            app:helperTextTextAppearance="@style/Text1_14"
+            app:helperTextTextColor="?colorOnSurfaceVariant"
+            app:hintEnabled="false"
+            app:counterEnabled="true"
+            app:counterMaxLength="6"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+
+                android:inputType="numberDecimal"
+                android:maxLength="6"
+                android:minWidth="150dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/continue_button"
+            style="@style/FilledButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen_24"
+            android:enabled="false"
+            android:text="@string/davom_etish"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/resend_code_button"
+            style="@style/Headline2_16"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dimen_24"
+            android:enabled="false"
+            android:text="@string/kodni_qayta_yuborish"
+            app:layout_constraintBottom_toTopOf="@+id/continue_button"
+            app:layout_constraintStart_toStartOf="@+id/continue_button" />
+
+        <TextView
+            android:id="@+id/time_out_count_view"
+            style="@style/Headline2_16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginStart="@dimen/dimen_12"
+            android:text="60 s"
+            android:enabled="false"
+            app:layout_constraintBottom_toBottomOf="@+id/resend_code_button"
+            app:layout_constraintStart_toEndOf="@+id/resend_code_button"
+            app:layout_constraintTop_toTopOf="@+id/resend_code_button" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progress_bar"
+            android:layout_width="18dp"
+            android:layout_height="@dimen/dimen_18"
+            android:layout_marginBottom="@dimen/dimen_12"
+            android:indeterminate="true"
+            app:layout_constraintBottom_toTopOf="@+id/continue_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/phone_view"
+            app:layout_constraintTop_toBottomOf="@+id/phone_view" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

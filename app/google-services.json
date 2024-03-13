@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "310017818206",
+    "firebase_url": "https://sovchi-561d3-default-rtdb.firebaseio.com",
+    "project_id": "sovchi-561d3",
+    "storage_bucket": "sovchi-561d3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:310017818206:android:c9f4759fadd36a2be7fecf",
+        "android_client_info": {
+          "package_name": "com.uz.sovchi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "310017818206-878dgj5o263mns9smu3ugghd89ifl60b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.uz.sovchi",
+            "certificate_hash": "bdc996941aaa7cd94f15657af319701e5178893e"
+          }
+        },
+        {
+          "client_id": "310017818206-pv96kir0ogj74513f7diqlv4953028in.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.uz.sovchi",
+            "certificate_hash": "e9006e340d91b1440fc6bb9337e63c382f921638"
+          }
+        },
+        {
+          "client_id": "310017818206-jtkhisrm8l78plo60286p1lhvjq6a087.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_S-Xhz6_L5_YKpSbfI1WE5_CZ9OTlu0o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "310017818206-jtkhisrm8l78plo60286p1lhvjq6a087.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

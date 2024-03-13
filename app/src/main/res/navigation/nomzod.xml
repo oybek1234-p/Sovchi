@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nomzod_nav"
+    app:startDestination="@id/nomzodFragment">
+
+    <fragment
+        android:id="@+id/nomzodFragment"
+        android:name="com.uz.sovchi.ui.nomzod.NomzodFragment"
+        android:label="NomzodFragment" />
+    <include app:graph="@navigation/auth_graph" />
+    <fragment
+        android:id="@+id/addNomzodFragment"
+        android:name="com.uz.sovchi.ui.nomzod.AddNomzodFragment"
+        android:label="AddNomzodFragment" />
+    <fragment
+        android:id="@+id/nomzodDetailsFragment"
+        android:name="com.uz.sovchi.ui.nomzod.NomzodDetailsFragment"
+        android:label="NomzodDetailsFragment" />
+</navigation>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?colorSurface"
+        android:orientation="vertical">
+
+        <com.uz.sovchi.ui.base.MyToolBar
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="@string/filter" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/materialButton"
+            app:layout_constraintTop_toBottomOf="@+id/my_toolbar">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/dimen_18">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/type_filter"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/nomzod"
+                    android:textSize="14sp"
+                    app:boxCornerRadiusBottomEnd="@dimen/dimen_12"
+                    app:boxCornerRadiusBottomStart="@dimen/dimen_12"
+                    app:boxCornerRadiusTopEnd="@dimen/dimen_12"
+                    app:boxCornerRadiusTopStart="@dimen/dimen_12">
+
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:inputType="none"
+                        android:maxLines="1"
+                        android:paddingVertical="12dp"
+                        android:textSize="14sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/location_filter"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_18"
+                    android:hint="@string/manzili_toshkent"
+                    android:textSize="14sp"
+                    app:boxCornerRadiusBottomEnd="@dimen/dimen_12"
+                    app:boxCornerRadiusBottomStart="@dimen/dimen_12"
+                    app:boxCornerRadiusTopEnd="@dimen/dimen_12"
+                    app:boxCornerRadiusTopStart="@dimen/dimen_12">
+
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:inputType="none"
+                        android:maxLines="1"
+                        android:paddingVertical="12dp"
+                        android:textSize="14sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/oilaviy_view"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_18"
+                    android:hint="@string/oilaviy_holati"
+                    android:textSize="14sp"
+                    app:boxCornerRadiusBottomEnd="@dimen/dimen_12"
+                    app:boxCornerRadiusBottomStart="@dimen/dimen_12"
+                    app:boxCornerRadiusTopEnd="@dimen/dimen_12"
+                    app:boxCornerRadiusTopStart="@dimen/dimen_12">
+
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:inputType="none"
+                        android:maxLines="1"
+                        android:paddingVertical="12dp"
+                        android:textSize="14sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/yosh_chegarasi_view"
+                    style="@style/FilledButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_18"
+                    android:hint="@string/necha_yosh_gacha">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal"
+                        android:maxLength="2" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/imkonchek_check_box"
+                    style="@style/Headline3_15"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_12"
+                    android:text="@string/imkoniyati_cheklangan" />
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/done_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen_18"
+            android:text="@string/saqlash"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

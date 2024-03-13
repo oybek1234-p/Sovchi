@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/search_nav"
+        android:icon="@drawable/home_ic"
+        android:title="@string/nomzodlar" />
+
+    <item
+        android:id="@+id/like_nav"
+        android:icon="@drawable/ic_liked"
+        android:title="@string/saqlangan" />
+
+    <item
+        android:id="@+id/nomzod_nav"
+        android:icon="@drawable/add_circle_ic"
+        android:title="@string/nomzod_qo_shish" />
+
+    <item
+        android:id="@+id/profile_nav"
+        android:icon="@drawable/profile_ic"
+        android:title="@string/profil" />
+</menu>

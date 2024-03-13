@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/auth_view"
+            layout="@layout/auth_need_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/main_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="?colorSurface"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/dimen_48">
+
+            <TextView
+                android:id="@+id/name_view"
+                style="@style/Title2_20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/oybek"
+                android:textColor="?colorOnSurface"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/phone_View"
+                style="@style/Text1_16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_8"
+                android:text="@string/_998971871415"
+                android:textColor="?colorOnSurface"
+                app:layout_constraintEnd_toEndOf="@+id/name_view"
+                app:layout_constraintStart_toStartOf="@+id/name_view"
+                app:layout_constraintTop_toBottomOf="@+id/name_view" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/boglanish_button"
+                style="@style/Widget.Material3.Button.ElevatedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_18"
+                android:drawableLeft="@drawable/admin_ic"
+                android:drawableTint="?colorPrimary"
+                android:text="@string/biz_bilan_bog_lanish" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/rate_button"
+                style="@style/Widget.Material3.Button.ElevatedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_8"
+                android:text="@string/programmani_baholash" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/signOut"
+                style="@style/Widget.Material3.Button.ElevatedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_24"
+                android:text="@string/akauntdan_chiqish"
+                app:layout_constraintEnd_toEndOf="@+id/phone_View"
+                app:layout_constraintStart_toStartOf="@+id/phone_View"
+                app:layout_constraintTop_toBottomOf="@+id/phone_View" />
+
+            <TextView
+                style="@style/Subtitle3_13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_4"
+                android:text="Akkauntdan ciqish uchun 3 sek bosib turing!" />
+        </LinearLayout>
+
+
+    </FrameLayout>
+
+</layout>
