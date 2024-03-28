@@ -13,4 +13,8 @@
         android:id="@+id/nomzodDetailsFragment"
         android:name="com.uz.sovchi.ui.nomzod.NomzodDetailsFragment"
         android:label="NomzodDetailsFragment" />
+    <fragment
+        android:id="@+id/allUsersFragment"
+        android:name="com.uz.sovchi.ui.users.AllUsersFragment"
+        android:label="AllUsersFragment" />
 </navigation>

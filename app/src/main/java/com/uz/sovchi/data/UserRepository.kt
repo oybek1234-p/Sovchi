@@ -26,6 +26,12 @@ class UserRepository(val context: Context) {
         }
     }
 
+    fun loadAllUsers(done: (list: List<User>) -> Unit) {
+        usersReference.get().addOnCompleteListener { it ->
+            done.invoke(it.result.children.mapNotNull { it.getValue(User::class.java) })
+        }
+    }
+
     fun signOut() {
         FirebaseAuth.getInstance().signOut()
         LocalUser.user = User()
@@ -41,7 +47,7 @@ class UserRepository(val context: Context) {
         }
     }
 
-    suspend fun updateUser(user: User) {
+    fun updateUser(user: User) {
         if (user.valid && user.uid == LocalUser.user.uid) {
             LocalUser.user = user
             LocalUser.saveUser(context)
@@ -50,6 +56,17 @@ class UserRepository(val context: Context) {
         }
     }
 
+    fun setHasNomzod(has: Boolean) {
+        if (user.valid.not()) return
+        user.hasNomzod = has
+        updateUser(user)
+    }
+
+    fun updateLastSeenTime() {
+        if (user.valid) {
+            usersReference.child(user.uid).child(User::lastSeenTime.name).setValue(System.currentTimeMillis())
+        }
+    }
     suspend fun authFirebaseUser(): User? {
         val firebaseUser = FirebaseAuth.getInstance().currentUser
         if (firebaseUser == null || firebaseUser.uid.isEmpty()) {
@@ -61,7 +78,7 @@ class UserRepository(val context: Context) {
         isNewUser = networkUser.valid.not()
         return if (isNewUser) {
             val newUser =
-                User(uid = id, "", firebaseUser.phoneNumber ?: "", System.currentTimeMillis())
+                User(uid = id, "", firebaseUser.phoneNumber ?: "", System.currentTimeMillis(),false)
             createNewUserAndSet(newUser)
             newUser
         } else {

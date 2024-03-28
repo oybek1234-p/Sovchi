@@ -18,6 +18,7 @@ object LocalUser {
                 name = getString("name", "") ?: ""
                 phoneNumber = getString("phone", "") ?: ""
                 lastSeenTime = getLong("lastSeenTime", 0L)
+                hasNomzod = getBoolean("hNomzod",false)
             }
         }
     }
@@ -30,6 +31,7 @@ object LocalUser {
                 putString("name", name)
                 putString("phone", phoneNumber)
                 putLong("lastSeenTime", lastSeenTime)
+                putBoolean("hNomzod",hasNomzod)
                 commit()
             }
         }

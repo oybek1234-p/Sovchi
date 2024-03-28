@@ -7,6 +7,7 @@
     </data>
 
     <FrameLayout
+        android:background="?colorSurface"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -42,7 +43,7 @@
 
             <TextView
                 android:id="@+id/phone_View"
-                style="@style/Text1_16"
+                style="@style/Title3_17"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_8"
@@ -54,7 +55,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/boglanish_button"
-                style="@style/Widget.Material3.Button.ElevatedButton"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_18"
@@ -64,7 +65,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/rate_button"
-                style="@style/Widget.Material3.Button.ElevatedButton"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_8"
@@ -72,11 +73,22 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/signOut"
-                style="@style/Widget.Material3.Button.ElevatedButton"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_24"
+                android:layout_marginTop="@dimen/dimen_12"
                 android:text="@string/akauntdan_chiqish"
+                app:layout_constraintEnd_toEndOf="@+id/phone_View"
+                app:layout_constraintStart_toStartOf="@+id/phone_View"
+                app:layout_constraintTop_toBottomOf="@+id/phone_View" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/allUsers"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_12"
+                android:text="@string/foydalanuvchilar"
                 app:layout_constraintEnd_toEndOf="@+id/phone_View"
                 app:layout_constraintStart_toStartOf="@+id/phone_View"
                 app:layout_constraintTop_toBottomOf="@+id/phone_View" />

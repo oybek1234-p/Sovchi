@@ -6,24 +6,29 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.core.view.children
-import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputLayout
 import com.uz.sovchi.R
 import com.uz.sovchi.data.LocalUser
+import com.uz.sovchi.data.UserRepository
 import com.uz.sovchi.data.location.City
-import com.uz.sovchi.data.nomzod.KELIN
+import com.uz.sovchi.data.nomzod.KUYOV
 import com.uz.sovchi.data.nomzod.Nomzod
 import com.uz.sovchi.data.nomzod.OilaviyHolati
 import com.uz.sovchi.data.nomzod.OqishMalumoti
+import com.uz.sovchi.data.nomzod.Talablar
 import com.uz.sovchi.data.nomzod.nomzodTypes
 import com.uz.sovchi.databinding.AddNomzodFragmentBinding
 import com.uz.sovchi.showToast
 import com.uz.sovchi.ui.base.BaseFragment
+import com.uz.sovchi.ui.photo.PhotoAdapter
+import com.uz.sovchi.ui.photo.PickPhotoFragment
 import com.uz.sovchi.visibleOrGone
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
@@ -44,7 +49,11 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
     private val oilaviyHolati: String get() = binding?.oilaviyView?.editText?.text.toString()
     private val oqishMalumoti: String get() = binding?.oqishView?.editText?.text.toString()
     private val ishJoyi: String get() = binding?.ishView?.editText?.text.toString()
-    private val yoshChegarasi: String get() = binding?.yoshChegarasiView?.editText?.text.toString()
+    private val yoshChegarasiDan: Int
+        get() = binding?.yoshChegarasiDanView?.editText?.text.toString().toIntOrNull() ?: 0
+    private val yoshChegarasiGacha: Int
+        get() = binding?.yoshChegarasiGachaView?.editText?.text.toString().toIntOrNull() ?: 0
+
     private val talablar: String get() = binding?.talablarView?.editText?.text.toString()
     private val telegramLink: String get() = binding?.telegramView?.editText?.text.toString()
     private val joylaganOdam: String get() = binding?.joylaganOdamView?.editText?.text.toString()
@@ -60,15 +69,13 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
     }
 
     private val needNotFillViews = arrayOf(
-        R.id.ismi_view,
-        R.id.telegram_view,
         R.id.mobil_raqam_view,
         R.id.joylagan_odam_view,
         R.id.farzandlar_view,
-        R.id.yosh_chegarasi_view,
         R.id.imkoniyati_malumot_view,
         R.id.buyi_view,
-        R.id.vazni_view
+        R.id.vazni_view,
+        R.id.ish_view
     )
 
     private fun checkEditTextsFilled(): Boolean {
@@ -98,7 +105,6 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
             binding?.nestedScrollView?.smoothScrollBy(0, it)
             showToast(getString(R.string.to_ldiring, error))
         }
-
         if (talablar.length < 70) {
             showToast("Talablarni to'liqroq yozing!")
             notFilled = true
@@ -110,18 +116,26 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
 
     private var nomzodType: Int = -1
 
-    private val ikkinchisigaMumkin: Boolean get() = binding?.ikkinchisigaButton?.isChecked ?: false
+    private var uploading = false
+        set(value) {
+            field = value
+            binding?.progressBar?.visibleOrGone(value)
+        }
 
     private fun saveNomzod() {
+        if (uploading) return
         val allFilled = checkEditTextsFilled()
         if (allFilled.not()) {
             return
         }
+        val photos = photoAdapter.currentList
         val nomzod = Nomzod(
-            if (nomzodId.isNullOrEmpty()) System.currentTimeMillis().toString() else nomzodId!!,
-            LocalUser.user.uid,
-            name,
-            nomzodType,
+            id = if (nomzodId.isNullOrEmpty()) System.currentTimeMillis()
+                .toString() else nomzodId!!,
+            userId = LocalUser.user.uid,
+            name = name,
+            type = nomzodType,
+            photos.map { it.path },
             tugilganYili,
             tugilganJoyi,
             manzilSelected,
@@ -132,22 +146,45 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
             oilaviyHolatiSelected,
             oqishMalumotiSelected,
             ishJoyi,
-            yoshChegarasi,
+            yoshChegarasiDan,
+            yoshChegarasiGacha,
             talablar,
             imkoniyatiCheklangan,
             imkoniyatChekMalumot,
-            ikkinchisigaMumkin,
-            telegramLink,
+            talablarList = talablarAdapter.selectedTalablar.map { it.name },
+            telegramLink = telegramLink,
             joylaganOdam,
             mobilRaqam
         )
-        nomzodViewModel.repository.uploadNewMyNomzod(nomzod)
-        closeFragment()
+        uploading = true
+        userViewModel.repository
+        lifecycleScope.launch {
+            nomzodViewModel.repository.uploadNewMyNomzod(nomzod) {
+                uploading = false
+                userViewModel.repository.setHasNomzod(true)
+                closeFragment()
+            }
+        }
     }
 
     private var manzilSelected = City.Hammasi.name
     private var oilaviyHolatiSelected = OilaviyHolati.Aralash.name
     private var oqishMalumotiSelected = OqishMalumoti.OrtaMaxsus.name
+
+    private val talablarAdapter: TalablarAdapter by lazy {
+        TalablarAdapter()
+    }
+
+    private val photoAdapter: PhotoAdapter by lazy {
+        PhotoAdapter { del,pos, model ->
+            if (del) {
+                photoAdapter.currentList.toMutableList().apply {
+                    remove(model)
+                    photoAdapter.submitList(this)
+                }
+            }
+        }
+    }
 
     private var currentNomzod: Nomzod? = null
     private fun initUi() {
@@ -155,12 +192,29 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
             deleteButton.visibleOrGone(nomzodId.isNullOrEmpty().not())
             deleteButton.setOnClickListener {
                 nomzodViewModel.repository.deleteNomzod(nomzodId!!)
+                lifecycleScope.launch {
+                    if (nomzodViewModel.repository.myNomzods.size == 0) {
+                        userViewModel.repository.setHasNomzod(false)
+                    }
+                }
                 findNavController().popBackStack()
             }
+
             with(currentNomzod!!) {
+                //Photo
+                photoRecyclerView.adapter = photoAdapter.apply {
+                    submitList(photos.map { PickPhotoFragment.Image(it) })
+                }
+                addPhotoButton.setOnClickListener {
+                    PickPhotoFragment(true) {
+                        if (it.isNotEmpty()) {
+                            photoAdapter.submitList(it)
+                        }
+                    }.open(mainActivity()!!)
+                }
+
                 toolbar.title =
                     if (id.isEmpty()) getString(R.string.yangi_nomzod) else getString(R.string.nomzod)
-                ikkinchisigaButton.isVisible = false
                 val oilaviyHolati = OilaviyHolati.entries.filter { it != OilaviyHolati.Aralash }
                 val oilaviyHolatiAdapter =
                     ArrayAdapter(requireContext(), R.layout.list_item, oilaviyHolati.map {
@@ -231,14 +285,41 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                         val selectedType = nomzodTypes.find { it.first == type }
                         setText(selectedType?.second)
                         setAdapter(nomzodTypeAdapter)
+                        onItemClickListener = AdapterView.OnItemClickListener { _, _, po, od ->
+                            nomzodType = nomzodTypes[po].first
 
+                            //Talablar submit
+                            val list = arrayListOf<Talablar>()
+                            list.addAll(Talablar.entries)
+                            if (nomzodType == KUYOV) {
+                                list.apply {
+                                    remove(Talablar.IkkinchiRuzgorgaTaqiq)
+                                    remove(Talablar.BuydoqlarTaqiq)
+                                    remove(Talablar.AlohidaUyJoy)
+                                }
+                            } else {
+                                list.apply {
+                                    remove(Talablar.Hijoblik)
+                                }
+                            }
+                            talablarAdapter.submitList(list)
+                        }
                         nomzodType = type
 
-                        if (nomzodId.isNullOrEmpty().not()) {
-                            ikkinchisigaButton.isVisible = (type == KELIN).also {
-                                ikkinchisigaButton.visibleOrGone(it)
+                        //Talablar
+                        try {
+                            talablarListView.adapter = talablarAdapter.apply {
+                                talablarList.forEach {
+                                    selectedTalablar.add(Talablar.valueOf(it))
+                                }
                             }
+                        } catch (e: Exception) {
+                            //
                         }
+                        talablarListView.layoutManager = LinearLayoutManager(
+                            requireContext(), LinearLayoutManager.VERTICAL, false
+                        )
+
                         ismiView.editText?.setText(name)
                         tgyView.editText?.setText(tugilganYili.toStringOrEmpty())
                         tgjView.editText?.setText(tugilganJoyi)
@@ -247,17 +328,14 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                         farzandlarView.editText?.setText(farzandlar)
                         millatiView.editText?.setText(millati.ifEmpty { getString(R.string.o_zbek) })
                         ishView.editText?.setText(ishJoyi)
-                        yoshChegarasiView.editText?.setText(yoshChegarasi)
+                        yoshChegarasiDanView.editText?.setText(yoshChegarasiDan.toStringOrEmpty())
+                        yoshChegarasiGachaView.editText?.setText(yoshChegarasiGacha.toStringOrEmpty())
                         talablarView.editText?.setText(talablar)
                         telegramView.editText?.setText(telegramLink)
-                        joylaganOdamView.editText?.setText(joylaganOdam)
+                        if (joylaganOdam.isNotEmpty()) {
+                            joylaganOdamView.editText?.setText(joylaganOdam)
+                        }
                         mobilRaqamView.editText?.setText(mobilRaqam)
-                        onItemClickListener =
-                            AdapterView.OnItemClickListener { parent, view, position, id ->
-                                val sType = nomzodTypes[position]
-                                nomzodType = sType.first
-                                ikkinchisigaButton.isVisible = sType.first == KELIN
-                            }
                     }
                     this@AddNomzodFragment.imkoniyatiCheklangan =
                         currentNomzod!!.imkoniyatiCheklangan

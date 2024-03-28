@@ -55,7 +55,7 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
     override fun viewCreated(bind: SearchFragmentBinding) {
         showBottomSheet = true
         bind.apply {
-            listAdapter = SearchAdapter(onClick = {
+            listAdapter = SearchAdapter(userViewModel,onClick = {
                 NomzodDetailsFragment.navigateToHere(this@SearchFragment, it)
             }, next = {
                 viewModel.loadNextNomzodlar()

@@ -47,6 +47,21 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: UserViewModel by viewModels()
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        PermissionController.getInstance().onPermissionResult(requestCode,grantResults)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        PermissionController.getInstance()
+            .onActivityResult(requestCode, data, resultCode == RESULT_OK)
+    }
+
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,7 +136,7 @@ class MainActivity : AppCompatActivity() {
             );
         }
     }
-
+    
     private fun initUser() {
         LocalUser.getUser(appContext)
         MyFilter.get()
@@ -130,6 +145,14 @@ class MainActivity : AppCompatActivity() {
         }
         if (LocalUser.user.valid) {
             SavedRepository.loadSaved { }
+            viewModel.repository.updateLastSeenTime()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (LocalUser.user.valid) {
+            viewModel.repository.updateLastSeenTime()
         }
     }
 

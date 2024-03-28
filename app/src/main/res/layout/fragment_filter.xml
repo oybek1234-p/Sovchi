@@ -101,11 +101,11 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/yosh_chegarasi_view"
-                    style="@style/FilledButton"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="@string/necha_yosh_gacha">
+                    android:hint="Yosh chegarasi">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
@@ -116,7 +116,7 @@
 
                 <com.google.android.material.checkbox.MaterialCheckBox
                     android:id="@+id/imkonchek_check_box"
-                    style="@style/Headline3_15"
+                    style="@style/Text1_14"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dimen_12"
@@ -130,7 +130,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dimen_18"
-            android:text="@string/saqlash"
+            android:text="@string/qidirish"
             app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

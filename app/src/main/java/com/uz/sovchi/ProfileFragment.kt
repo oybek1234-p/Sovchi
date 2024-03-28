@@ -1,5 +1,6 @@
 package com.uz.sovchi
 
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.uz.sovchi.data.saved.SavedRepository
@@ -30,6 +31,12 @@ class ProfileFragment : BaseFragment<ProfileFragmentBinding>() {
             nameView.text = user.name
             phoneView.text = PhoneUtils.formatPhoneNumber(user.phoneNumber)
 
+            userViewModel.user.phoneNumber.let {
+                allUsers.isVisible = it == "+998971871415"
+            }
+            allUsers.setOnClickListener {
+                navigate(R.id.allUsersFragment)
+            }
             rateButton.setOnClickListener {
                 mainActivity()?.requestReview()
             }

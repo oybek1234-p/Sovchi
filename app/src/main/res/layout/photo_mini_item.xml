@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        app:cardBackgroundColor="?backgroundColor"
+        android:layout_margin="@dimen/dimen_4"
+        app:cardCornerRadius="@dimen/dimen_12">
+
+        <ImageView
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:elevation="1dp"
+            android:id="@+id/delete_button"
+            android:src="@drawable/delete_ic"
+            android:scaleType="center"
+            android:layout_gravity="top|end"
+            android:background="?colorSurface"
+            app:tint="?colorOnSurface" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/image_view"
+            android:scaleType="centerCrop" />
+    </com.google.android.material.card.MaterialCardView>
+</layout>

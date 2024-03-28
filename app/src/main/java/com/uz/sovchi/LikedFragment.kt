@@ -47,7 +47,7 @@ class LikedFragment : BaseFragment<LikedFragmentBinding>() {
         }
         if (LocalUser.user.valid.not()) return
         bind.apply {
-            listAdapter = SearchAdapter({}, {
+            listAdapter = SearchAdapter(userViewModel,{}, {
                 NomzodDetailsFragment.navigateToHere(this@LikedFragment, it)
             }, { _, _ ->
                 updateAdapter()

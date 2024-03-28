@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:padding="@dimen/dimen_12"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/name_view"
+                style="@style/Headline2_16"
+                android:text="@string/oybek"
+                android:textColor="?colorOnSurface"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/number_view"
+                android:layout_marginStart="@dimen/dimen_12"
+                style="@style/Text2_15"
+                android:text="@string/_998971871415"
+                android:textColor="?colorOnSurface"
+                />
+        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/date_view"
+            android:layout_marginTop="@dimen/dimen_4"
+            style="@style/Text2_15"
+            android:text="@string/_998971871415"
+            android:textColor="?colorOnSurface"
+            />
+    </LinearLayout>
+</layout>

@@ -10,12 +10,13 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
+        android:background="?backgroundColor"
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#F3F3F3">
+           >
 
             <TextView
                 android:id="@+id/imkon_chek_textView"

@@ -24,4 +24,5 @@
         android:id="@+id/filterFragment"
         android:name="com.uz.sovchi.ui.filter.FilterFragment"
         android:label="FilterFragment" />
+    <include app:graph="@navigation/auth_graph" />
 </navigation>

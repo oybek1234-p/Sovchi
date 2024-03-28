@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_lay"
+        android:backgroundTint="#176750A4"
+        android:paddingStart="@dimen/dimen_12"
+        android:paddingVertical="@dimen/dimen_12"
+        android:layout_marginTop="@dimen/dimen_4"
+        >
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:layout_width="match_parent"
+            android:id="@+id/checkbox"
+            android:paddingVertical="0dp"
+            android:paddingHorizontal="0dp"
+            android:visibility="gone"
+            android:layout_height="wrap_content">
+
+        </com.google.android.material.checkbox.MaterialCheckBox>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_view"
+            style="@style/Headline3_15"
+            android:text="@string/samarqand"
+            android:textColor="?colorOnSurface"
+            />
+    </FrameLayout>
+</layout>

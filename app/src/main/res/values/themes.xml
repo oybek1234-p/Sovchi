@@ -4,6 +4,9 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurfaceVariant">#7D7D7D</item>
+        <item name="backgroundColor">#F4F4F4</item>
+        <item name="android:windowBackground">?backgroundColor</item>
     </style>
 
     <style name="Theme.Sovchi" parent="Base.Theme.Sovchi" />

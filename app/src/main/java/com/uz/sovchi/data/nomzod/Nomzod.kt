@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.uz.sovchi.R
 import com.uz.sovchi.appContext
-import com.uz.sovchi.data.location.City
 
 const val KELIN = 0
 const val KUYOV = 1
@@ -14,58 +13,65 @@ val nomzodTypes = listOf(
     Pair(KUYOV, appContext.getString(R.string.kuyovlikga))
 )
 
+enum class Talablar(val textId: Int) {
+    IkkinchiRuzgorgaTaqiq(R.string.ruzgor_taqiq),
+    OilaQurmagan(R.string.oila_qurmaganlar),
+    OliyMalumotli(R.string.oliy_mal),
+    BuydoqlarTaqiq(R.string.bo_ydoqlar_yozmasin),
+    FarzandiYoq(R.string.farzand_yoq),
+    FaqatShaxarlik(R.string.faqat_shaxar),
+    FaqatViloyat(R.string.faqat_viloyat),
+    AlohidaUyJoy(R.string.alohidauyjoy),
+    Hijoblik(R.string.hijobda),
+    QonuniyAjrashgan(R.string.qonuniy_ajrashgan),
+}
+
 fun getNomzodTypeText(id: Int) = nomzodTypes.find { it.first == id }?.second
 
 @Entity
 data class Nomzod(
-    @PrimaryKey var id: String,
-    var userId: String,
-    var name: String,
-    var type: Int,
-    var tugilganYili: Int,
-    var tugilganJoyi: String,
-    var manzil: String = City.Toshkent.name,
-    var buyi: Int,
-    var vazni: Int,
-    var farzandlar: String,
-    var millati: String,
-    var oilaviyHolati: String,
-    var oqishMalumoti: String,
-    var ishJoyi: String,
-    var yoshChegarasi: String,
-    var talablar: String,
-    var imkoniyatiCheklangan: Boolean,
-    var imkoniyatiCheklanganHaqida: String,
-    var ikkinchisiga: Boolean,
-    var telegramLink: String,
-    var joylaganOdam: String,
-    var mobilRaqam: String,
+    @PrimaryKey var id: String = "",
+    var userId: String = "",
+    var name: String = "",
+    var type: Int = -1,
+    var photos: List<String> = listOf(),
+    var tugilganYili: Int = 0,
+    var tugilganJoyi: String = "",
+    var manzil: String = "",
+    var buyi: Int = 0,
+    var vazni: Int = 0,
+    var farzandlar: String = "",
+    var millati: String = "",
+    var oilaviyHolati: String = "",
+    var oqishMalumoti: String = "",
+    var ishJoyi: String = "",
+    var yoshChegarasiDan: Int = 0,
+    var yoshChegarasiGacha: Int = 0,
+    //Qo'shimcha
+    var talablar: String = "",
+    var imkoniyatiCheklangan: Boolean = false,
+    var imkoniyatiCheklanganHaqida: String = "",
+    //Talablar
+    val talablarList: List<String> = listOf(),
+    var telegramLink: String = "",
+    var joylaganOdam: String = "",
+    var mobilRaqam: String = "",
     var uploadDate: Long = System.currentTimeMillis()
 ) {
-    constructor() : this(
-        id = "",
-        userId = "",
-        name = "",
-        -1,
-        0,
-        "",
-        "",
-        0,
-        0,
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        imkoniyatiCheklangan = false,
-        imkoniyatiCheklanganHaqida = "",
-        ikkinchisiga = false,
-        "",
-        "",
-        ""
-    )
+    constructor() : this(id = "")
+
+}
+
+fun Nomzod.paramsText(): String {
+    var parmText = ""
+    if (buyi > 0) {
+        parmText += "$buyi-sm"
+    }
+    if (vazni > 0) {
+        parmText += "  $vazni-kg"
+    }
+    return parmText
+
 }
 
 enum class OilaviyHolati(val resourceId: Int) {

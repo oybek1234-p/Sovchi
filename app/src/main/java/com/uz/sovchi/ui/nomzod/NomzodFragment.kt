@@ -60,7 +60,7 @@ class NomzodFragment : BaseFragment<NomzodFragmentBinding>() {
                 })
             }
             recyclerView.apply {
-                searchAdapter = SearchAdapter(onClick = {
+                searchAdapter = SearchAdapter(userViewModel,onClick = {
                     openAddNomzodFragment.invoke(it.id)
                 }, next = {}).also {
                     adapter = it

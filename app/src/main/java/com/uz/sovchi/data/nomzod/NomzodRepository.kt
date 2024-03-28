@@ -3,8 +3,10 @@ package com.uz.sovchi.data.nomzod
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.uz.sovchi.data.ImageUploader
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.location.City
+import com.uz.sovchi.ui.photo.PickPhotoFragment
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -38,11 +40,29 @@ class NomzodRepository {
         }
     }
 
-    fun uploadNewMyNomzod(nomzod: Nomzod) {
+    suspend fun uploadNewMyNomzod(nomzod: Nomzod, done: () -> Unit) {
         if (nomzod.id.isEmpty()) return
-        myNomzods.removeIf { it.id == nomzod.id }
-        myNomzods.add(0, nomzod)
-        nomzodlarReference.document(nomzod.id).set(nomzod)
+        val uploadNext = {
+            myNomzods.removeIf { it.id == nomzod.id }
+            myNomzods.add(0, nomzod)
+            nomzodlarReference.document(nomzod.id).set(nomzod).addOnCompleteListener {
+                done.invoke()
+            }
+        }
+        if (nomzod.photos.isNotEmpty()) {
+            val list = arrayListOf<String?>()
+            nomzod.photos.forEach { it ->
+                ImageUploader.uploadImage(PickPhotoFragment.Image(it)) {
+                    list.add(it)
+                    if (list.size == nomzod.photos.size) {
+                        nomzod.photos = list.filterNotNull()
+                        uploadNext.invoke()
+                    }
+                }
+            }
+        } else {
+            uploadNext.invoke()
+        }
     }
 
     fun clearMyNomzods() {
@@ -57,6 +77,29 @@ class NomzodRepository {
             myNomzods.addAll(it)
             suspend.resume(it)
         }
+    }
+
+    private var checkedFit: Boolean = false
+
+    suspend fun checkFitMyNomzod(nomzod: Nomzod, done: (fits: Boolean) -> Unit) {
+        var myNomzod = myNomzods.firstOrNull()
+        if (myNomzod == null && checkedFit) {
+            done.invoke(false)
+            return
+        }
+        if (myNomzods.isEmpty()) {
+            loadMyNomzods()
+        }
+        myNomzod = myNomzods.firstOrNull()
+        var fits = false
+        myNomzod?.let {
+            var ageFits = false
+            if (it.tugilganYili >= nomzod.yoshChegarasiDan && (it.tugilganYili <= nomzod.yoshChegarasiGacha || nomzod.yoshChegarasiGacha == 0)) {
+                ageFits = true
+            }
+            fits = ageFits
+        }
+        done.invoke(fits)
     }
 
     fun loadNomzods(

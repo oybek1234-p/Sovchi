@@ -1,6 +1,7 @@
 package com.uz.sovchi.ui.search
 
 import com.uz.sovchi.R
+import com.uz.sovchi.UserViewModel
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.nomzod.AppRoomDatabase
 import com.uz.sovchi.data.nomzod.Nomzod
@@ -13,6 +14,7 @@ import com.uz.sovchi.ui.base.EmptyDiffUtil
 import com.uz.sovchi.ui.nomzod.setNomzod
 
 class SearchAdapter(
+    val userViewModel: UserViewModel,
     val next: () -> Unit,
     private val onClick: (nomzod: Nomzod) -> Unit,
     private val onLiked: ((liked: Boolean, nomzodId: String) -> Unit)? = null
@@ -50,7 +52,7 @@ class SearchAdapter(
         super.bind(holder, model, pos)
         holder.binding.apply {
             if (this is NomzodItemBinding) {
-                setNomzod(model)
+                setNomzod(model,userViewModel.user.hasNomzod)
                 if (pos == currentList.lastIndex) {
                     next()
                 }
