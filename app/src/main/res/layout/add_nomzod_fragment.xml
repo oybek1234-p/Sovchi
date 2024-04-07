@@ -48,7 +48,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dimen_8"
                     android:text="Rasmingiz faqat o'z nomzodini joylagan foydalanuvchiga ko'rinadi, va tezroq juftinigizni topasiz"
-                    style="@style/Text2_15"
+                    style="@style/Text1_14"
+                    android:textColor="?colorOnSurfaceVariant"
                     />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -68,6 +69,16 @@
                     android:text="@string/rasm_qo_shish"
                     android:layout_marginTop="@dimen/dimen_4"
                     />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_8"
+                    android:text="5 marta ko'proq odam ko'radi, rasm bo'lsa"
+                    style="@style/Text1_16"
+                    android:textColor="?colorOnSurfaceVariant"
+                    />
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/type_view"
                     style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
@@ -186,6 +197,15 @@
                         android:inputType="none" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <CheckBox
+                    android:layout_marginTop="@dimen/dimen_18"
+                    android:layout_gravity="end"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/no_children"
+                    android:text="@string/farzandlar_yo_q"
+                    />
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/farzandlar_view"
                     style="@style/FilledButton"
@@ -226,13 +246,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="top"
-                        android:minHeight="100dp" />
+                        android:maxLength="30" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/yosh_chegarasi"
+                    android:text="Yosh chegarasi"
                     android:layout_marginTop="18dp"
                     android:textColor="?colorOnSurface"
                     style="@style/Title3_17"
@@ -241,6 +261,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/yosh_chegarasi_dan_view"
                     style="@style/FilledButton"
+                    android:layout_marginTop="@dimen/dimen_8"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Yoshdan">
@@ -326,7 +347,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="@string/nomzod_ismi"
+                    android:hint="Nomzod ismi"
                     app:helperTextEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -354,7 +375,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="@string/mobil_raqam">
+                    android:hint="Mobil qaram (Majburiy emas)">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"

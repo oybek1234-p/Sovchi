@@ -4,9 +4,8 @@ import com.uz.sovchi.R
 import com.uz.sovchi.appContext
 
 enum class City(val resId: Int) {
-    Hammasi(R.string.hammasi),
+    Hammasi(R.string.butun_uzbekiston),
     Toshkent(R.string.toshkent),
-    ToshkentViloyat(R.string.toshkentVil),
     Samarqand(R.string.samarqand),
     Nukus(R.string.nukus),
     Qashqadaryo(R.string.qashqa),

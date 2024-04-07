@@ -2,6 +2,7 @@ package com.uz.sovchi.data.nomzod
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.firebase.firestore.Exclude
 import com.uz.sovchi.R
 import com.uz.sovchi.appContext
 
@@ -59,7 +60,6 @@ data class Nomzod(
     var uploadDate: Long = System.currentTimeMillis()
 ) {
     constructor() : this(id = "")
-
 }
 
 fun Nomzod.paramsText(): String {
@@ -72,6 +72,25 @@ fun Nomzod.paramsText(): String {
     }
     return parmText
 
+}
+
+fun Nomzod.getYoshChegarasi(): String {
+    var text =
+        "${if (type == KUYOV) appContext.getString(R.string.kelinlikga) else appContext.getString(R.string.kuyovlikga)} yosh chegarasi:"
+    if (yoshChegarasiGacha > 0 || yoshChegarasiDan > 0) {
+        if (yoshChegarasiDan > 0) {
+            text += " $yoshChegarasiDan dan"
+        }
+        if (yoshChegarasiGacha > 0) {
+            if (yoshChegarasiDan > 0) {
+                text += " -"
+            }
+            text += " $yoshChegarasiGacha gacha"
+        }
+    } else {
+        text += " ${appContext.getString(R.string.taqdir)}"
+    }
+    return text
 }
 
 enum class OilaviyHolati(val resourceId: Int) {

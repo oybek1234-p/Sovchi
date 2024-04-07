@@ -18,25 +18,45 @@
             android:layout_height="match_parent"
            >
 
-            <TextView
-                android:id="@+id/imkon_chek_textView"
-                style="@style/Text2_15"
+            <LinearLayout
+                android:id="@+id/linearLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/dimen_8"
                 android:background="?colorSurface"
-                android:elevation="@dimen/dimen_4"
-                android:padding="@dimen/dimen_8"
-                android:text="Imkoniyati cheklanganlar"
-                android:textColor="?colorPrimary"
-                app:layout_constraintTop_toBottomOf="@+id/filters_container" />
+                android:elevation="4dp"
+                app:layout_constraintTop_toBottomOf="@+id/filters_container">
 
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/photo_button"
+                    android:paddingHorizontal="@dimen/dimen_8"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rasmi_borlar" />
+
+                <TextView
+                    android:id="@+id/imkon_chek_textView"
+                    style="@style/Text2_15"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?colorSurface"
+                    android:elevation="@dimen/dimen_4"
+                    android:padding="@dimen/dimen_8"
+                    android:text="Imkoniyati cheklanganlar"
+                    android:textColor="?colorPrimary"
+                    app:layout_constraintTop_toBottomOf="@+id/filters_container" />
+
+            </LinearLayout>
             <HorizontalScrollView
                 android:id="@+id/filters_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?colorSurface"
                 android:elevation="@dimen/dimen_6"
-                android:fadingEdge="horizontal"
+                android:fadingEdge="none"
+                android:scrollbarSize="0dp"
                 android:fadingEdgeLength="@dimen/dimen_12"
                 android:paddingHorizontal="@dimen/dimen_12"
                 android:paddingVertical="@dimen/dimen_8"
@@ -79,6 +99,7 @@
                         android:layout_marginStart="@dimen/dimen_12"
                         android:hint="@string/kim_kerak"
                         android:textSize="16sp"
+                        android:visibility="gone"
                         app:boxCornerRadiusBottomEnd="@dimen/dimen_12"
                         app:boxCornerRadiusBottomStart="@dimen/dimen_12"
                         app:boxCornerRadiusTopEnd="@dimen/dimen_12"
@@ -94,6 +115,24 @@
                             android:paddingVertical="12dp"
                             android:textSize="14sp" />
                     </com.google.android.material.textfield.TextInputLayout>
+                    <TextView
+                        android:id="@+id/yosh_chegarasi_view"
+                        style="@style/Text1_14"
+                        android:layout_marginVertical="@dimen/dimen_6"
+                        android:paddingVertical="@dimen/dimen_8"
+                        android:paddingHorizontal="@dimen/dimen_10"
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:elevation="2dp"
+                        android:text="@string/yosh_chegarasi"
+                        android:background="@drawable/round_lay"
+                        android:backgroundTint="?colorSurface"
+                        android:layout_marginHorizontal="@dimen/dimen_12"
+                        android:textColor="?colorOnSurface"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/type_view" />
 
                 </LinearLayout>
             </HorizontalScrollView>
@@ -103,9 +142,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/dimen_12"
-                android:background="?selectableItemBackground"
-                android:elevation="@dimen/dimen_12"
+                android:elevation="@dimen/dimen_6"
+                android:translationY="-4dp"
                 android:padding="@dimen/dimen_8"
+                android:backgroundTint="?colorSurface"
+                android:background="@drawable/round_lay"
                 android:src="@drawable/filter_ic"
                 app:layout_constraintBottom_toBottomOf="@+id/filters_container"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -131,7 +172,7 @@
                 android:clipToPadding="false"
                 android:paddingBottom="100dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imkon_chek_textView"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
                 tools:listitem="@layout/nomzod_item" />
 
             <TextView

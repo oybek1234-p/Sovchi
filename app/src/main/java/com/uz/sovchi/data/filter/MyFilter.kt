@@ -19,9 +19,9 @@ import com.uz.sovchi.data.nomzod.nomzodTypes
 @Entity
 data class SavedFilterUser(
     @PrimaryKey var userId: String, var manzil: String, var nomzodType: Int,
-    var oilaviyHolati: String, var yoshChegarasi: Int, var imkonChek: Boolean
+    var oilaviyHolati: String, var yoshChegarasi: Int, var imkonChek: Boolean,var hasPhoto: Boolean
 ) {
-    constructor() : this("", City.Hammasi.name, KELIN, OilaviyHolati.Aralash.name, 0, false)
+    constructor() : this("", City.Hammasi.name, KELIN, OilaviyHolati.Aralash.name, 0, false,false)
 }
 
 object MyFilter {
@@ -44,6 +44,7 @@ object MyFilter {
             filter.oilaviyHolati = getString("oilHolati", OilaviyHolati.Aralash.name)!!
             filter.yoshChegarasi = getInt("yoshCheg", 0)
             filter.imkonChek = getBoolean("imChek", false)
+            filter.hasPhoto = getBoolean("hPhoto",false)
         }
     }
 
@@ -54,6 +55,7 @@ object MyFilter {
             putString("oilHolati", filter.oilaviyHolati)
             putInt("yoshCheg", filter.yoshChegarasi)
             putBoolean("imChek", filter.imkonChek)
+            putBoolean("hPhoto", filter.hasPhoto)
             apply()
         }
     }
@@ -61,7 +63,7 @@ object MyFilter {
 
 object FilterViewUtils {
 
-    private fun updateFilter(filter: SavedFilterUser.() -> Unit) {
+    fun updateFilter(filter: SavedFilterUser.() -> Unit) {
         MyFilter.filter.apply(filter)
         MyFilter.update()
     }
@@ -88,7 +90,11 @@ object FilterViewUtils {
         editText.addTextChangedListener {
             val number = it?.toString()?.toIntOrNull() ?: 0
             updateFilter {
-                yoshChegarasi = number
+                yoshChegarasi = if (number > 17) {
+                    number
+                } else {
+                    0
+                }
                 update.invoke()
             }
         }

@@ -13,6 +13,7 @@ class SearchViewModel : ViewModel() {
 
     var nomzodlar = arrayListOf<Nomzod>()
     val nomzodlarLive = MutableLiveData(nomzodlar)
+    val countLive = MutableLiveData(0L)
     val nomzodlarLoading = MutableLiveData(false)
     private val repo = NomzodRepository()
     private var lastNomzod: Nomzod? = null
@@ -20,7 +21,9 @@ class SearchViewModel : ViewModel() {
     var nomzodTuri = MyFilter.filter.nomzodType
     var searchLocation = MyFilter.filter.manzil
     private var oilaviyHolati = MyFilter.filter.oilaviyHolati
-    private var yoshChegarasi = MyFilter.filter.yoshChegarasi
+    var yoshChegarasi = MyFilter.filter.yoshChegarasi
+    var hasPhoto = MyFilter.filter.hasPhoto
+
     private var imkonChek = MyFilter.filter.imkonChek
 
     private var loadJob: Job? = null
@@ -57,6 +60,7 @@ class SearchViewModel : ViewModel() {
         lastNomzod = nomzodlar.lastOrNull()
 
         loadJob = viewModelScope.launch {
+
             repo.loadNomzods(
                 lastNomzod = lastNomzod,
                 type = nomzodTuri,
@@ -64,12 +68,14 @@ class SearchViewModel : ViewModel() {
                 oilaviyHolati = oilaviyHolati,
                 yoshChegarasi = yoshChegarasi,
                 userId = "",
+                hasPhotoOnly = hasPhoto,
                 imkonChek = imkonChek
-            ) {
+            ) { it,count->
                 if (loadJob?.isCancelled == true) return@loadNomzods
                 nomzodlar.addAll(it)
                 nomzodlarLive.postValue(nomzodlar)
                 nomzodlarLoading.postValue(false)
+                countLive.postValue(count)
             }
         }
     }

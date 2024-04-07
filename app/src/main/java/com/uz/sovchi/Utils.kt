@@ -15,7 +15,8 @@ inline fun String?.ifNotNullOrEmpty(method: (string: String) -> Unit) {
 var gson: Gson? = null
     get() {
         if (field == null) {
-            field = Gson()
+            field = Gson().apply {
+            }
         }
         return field
     }

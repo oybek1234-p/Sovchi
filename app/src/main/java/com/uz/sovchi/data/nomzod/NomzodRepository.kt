@@ -72,7 +72,7 @@ class NomzodRepository {
 
     suspend fun loadMyNomzods() = suspendCoroutine { suspend ->
         myNomzodsLoading.postValue(true)
-        loadNomzods(-1, null, LocalUser.user.uid, "", "", 0) {
+        loadNomzods(-1, null, LocalUser.user.uid, "", "", 0) { it, count ->
             myNomzodsLoading.postValue(false)
             myNomzods.addAll(it)
             suspend.resume(it)
@@ -110,7 +110,8 @@ class NomzodRepository {
         oilaviyHolati: String,
         yoshChegarasi: Int = 0,
         imkonChek: Boolean = false,
-        loaded: (list: List<Nomzod>) -> Unit
+        hasPhotoOnly: Boolean = false,
+        loaded: (list: List<Nomzod>, count: Long) -> Unit
     ) {
         var task = nomzodlarReference.limit(12)
         task = if (yoshChegarasi == 0) {
@@ -132,6 +133,9 @@ class NomzodRepository {
         if (userId.isNotEmpty()) {
             task = task.whereEqualTo(Nomzod::userId.name, userId)
         }
+        if (hasPhotoOnly) {
+            task = task.whereNotEqualTo(Nomzod::photos.name, emptyList<Any>())
+        }
         if (imkonChek) {
             task = task.whereEqualTo(Nomzod::imkoniyatiCheklangan.name, imkonChek)
         }
@@ -144,10 +148,9 @@ class NomzodRepository {
         if (yoshChegarasi > 0) {
             task = task.whereLessThanOrEqualTo(Nomzod::tugilganYili.name, yoshChegarasi)
         }
-
-        task.get().addOnCompleteListener {
+        task.get().addOnCompleteListener { it ->
             val data = it.result.toObjects(Nomzod::class.java)
-            loaded.invoke(data)
+            loaded.invoke(data, 0)
         }
     }
 

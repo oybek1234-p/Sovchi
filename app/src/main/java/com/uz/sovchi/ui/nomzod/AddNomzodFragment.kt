@@ -6,10 +6,12 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.material.textfield.TextInputLayout
 import com.uz.sovchi.R
 import com.uz.sovchi.data.LocalUser
@@ -30,6 +32,7 @@ import com.uz.sovchi.visibleOrGone
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
 
@@ -75,7 +78,10 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
         R.id.imkoniyati_malumot_view,
         R.id.buyi_view,
         R.id.vazni_view,
-        R.id.ish_view
+        R.id.ish_view,
+        R.id.yosh_chegarasi_dan_view,
+        R.id.yosh_chegarasi_gacha_view,
+        R.id.ismi_view
     )
 
     private fun checkEditTextsFilled(): Boolean {
@@ -101,6 +107,10 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
         if (imkoniyatiCheklangan && imkoniyatChekMalumot.isEmpty()) {
             showToast("Imkoniyati cheklanganligi haqida malumot yozing!")
         }
+//        if (photoAdapter.currentList.size == 0) {
+//            showToast("Rasm yuklang")
+//            notFilled = true
+//        }
         notFilledView?.top?.let {
             binding?.nestedScrollView?.smoothScrollBy(0, it)
             showToast(getString(R.string.to_ldiring, error))
@@ -133,11 +143,11 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
             id = if (nomzodId.isNullOrEmpty()) System.currentTimeMillis()
                 .toString() else nomzodId!!,
             userId = LocalUser.user.uid,
-            name = name,
+            name = name.trim().capitalize(Locale.ROOT),
             type = nomzodType,
             photos.map { it.path },
             tugilganYili,
-            tugilganJoyi,
+            tugilganJoyi.trim().capitalize(),
             manzilSelected,
             buyi,
             vazni,
@@ -145,10 +155,10 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
             millati,
             oilaviyHolatiSelected,
             oqishMalumotiSelected,
-            ishJoyi,
+            ishJoyi.trim().capitalize(),
             yoshChegarasiDan,
             yoshChegarasiGacha,
-            talablar,
+            talablar.trim().capitalize(),
             imkoniyatiCheklangan,
             imkoniyatChekMalumot,
             talablarList = talablarAdapter.selectedTalablar.map { it.name },
@@ -235,7 +245,9 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                                 val sType = oilaviyHolati[position]
                                 oilaviyHolatiSelected = sType.name
                                 val buydoq = sType == OilaviyHolati.Buydoq
-                                farzandlarView.visibleOrGone(!buydoq)
+                                farzandlarView.visibleOrGone(!buydoq.also {
+                                    noChildren.isVisible = it.not()
+                                })
                             }
                     }
                 }
@@ -251,6 +263,7 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                         }
                         setAdapter(manzilAdapter)
                     }
+
                     onItemClickListener = AdapterView.OnItemClickListener { _, _, position, id ->
                         manzilSelected = City.entries[position].name
                         if (tgjView.editText?.text.isNullOrEmpty()) {
@@ -258,7 +271,6 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                         }
                     }
                 }
-
                 val oqishMalumotiAdapter = ArrayAdapter(requireContext(),
                     R.layout.list_item,
                     OqishMalumoti.entries.map { getString(it.resId) })
@@ -277,6 +289,14 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                     }
                 }
 
+                noChildren.setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked) {
+                        farzandlarView.editText?.setText("")
+                        farzandlarView.isVisible = false
+                    } else {
+                        farzandlarView.isVisible = true
+                    }
+                }
                 val nomzodTypeAdapter = ArrayAdapter(requireContext(),
                     R.layout.list_item,
                     nomzodTypes.map { it.second })
@@ -316,9 +336,7 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                         } catch (e: Exception) {
                             //
                         }
-                        talablarListView.layoutManager = LinearLayoutManager(
-                            requireContext(), LinearLayoutManager.VERTICAL, false
-                        )
+                        talablarListView.layoutManager = FlexboxLayoutManager(requireContext())
 
                         ismiView.editText?.setText(name)
                         tgyView.editText?.setText(tugilganYili.toStringOrEmpty())

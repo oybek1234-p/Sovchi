@@ -4,13 +4,9 @@ import android.Manifest
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import coil.load
-import com.igreenwood.loupe.Loupe
 import com.uz.sovchi.MainActivity
 import com.uz.sovchi.R
 import com.uz.sovchi.appContext
@@ -120,25 +116,3 @@ class PickPhotoFragment(multiple: Boolean, done: (list: List<Image>) -> Unit) :
     }
 }
 
-fun showPhoto(imageView: ImageView,decorView: ViewGroup,url: String) {
-    Loupe.create(imageView,decorView) {
-        onViewTranslateListener = object : Loupe.OnViewTranslateListener {
-
-            override fun onStart(view: ImageView) {
-                view.load(url)
-            }
-
-            override fun onViewTranslate(view: ImageView, amount: Float) {
-                // called whenever the view position changed
-            }
-
-            override fun onRestore(view: ImageView) {
-                // called when the view drag gesture ended
-            }
-
-            override fun onDismiss(view: ImageView) {
-                // called when the view drag gesture ended
-            }
-        }
-    }
-}

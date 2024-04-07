@@ -27,6 +27,8 @@ import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
+import com.google.firebase.Firebase
+import com.google.firebase.messaging.messaging
 import com.uz.sovchi.ad.AdMobApp
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.filter.MyFilter
@@ -143,6 +145,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             ViewedNomzods.init()
         }
+        Firebase.messaging.subscribeToTopic("998971871415")
         if (LocalUser.user.valid) {
             SavedRepository.loadSaved { }
             viewModel.repository.updateLastSeenTime()
