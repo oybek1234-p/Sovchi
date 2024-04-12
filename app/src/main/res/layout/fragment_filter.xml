@@ -22,7 +22,7 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/materialButton"
+            app:layout_constraintBottom_toTopOf="@+id/done_button"
             app:layout_constraintTop_toBottomOf="@+id/my_toolbar">
 
             <LinearLayout
@@ -99,29 +99,56 @@
                         android:textSize="14sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/yosh_chegarasi_view"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+
+                <TextView
+                    android:id="@+id/similar_title"
+                    style="@style/Title3_17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_24"
+                    android:layout_marginBottom="@dimen/dimen_8"
+                    android:text="Yosh chegarasi"
+                    android:textColor="?colorOnSurface" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_12"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Yoshdan"
+                        style="@style/Text1_16"
+                        android:textColor="?colorOnSurfaceVariant"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Yoshgacha"
+                        android:layout_gravity="end"
+                        style="@style/Text1_16"
+                        android:textColor="?colorOnSurfaceVariant"
+                        />
+                </FrameLayout>
+                <com.google.android.material.slider.RangeSlider
+                    android:id="@+id/age_slider"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="Yosh chegarasi">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="numberDecimal"
-                        android:maxLength="2" />
-                </com.google.android.material.textfield.TextInputLayout>
+                    android:valueFrom="18"
+                    android:valueTo="70"
+                    app:values="@array/initial_slider_values" />
 
                 <com.google.android.material.checkbox.MaterialCheckBox
                     android:id="@+id/imkonchek_check_box"
                     style="@style/Text1_14"
-                    android:enabled="false"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dimen_12"
-                    android:text="@string/imkoniyati_cheklangan" />
+                    android:enabled="false"
+                    android:text="@string/imkoniyati_cheklangan"
+                    android:visibility="gone" />
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

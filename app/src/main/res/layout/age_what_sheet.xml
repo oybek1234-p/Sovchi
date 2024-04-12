@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -19,35 +20,44 @@
             android:textColor="?colorOnSurface"
             style="@style/Title2_20"
             />
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/yosh_chegarasi_view"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dimen_18">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/dimen_24"
+            >
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="numberDecimal"
-                android:maxLength="2" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:text="Yoshdan"
+                style="@style/Text1_16"
+                android:textColor="?colorOnSurface"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Yoshgacha"
+                android:layout_gravity="end"
+                style="@style/Text1_16"
+                android:textColor="?colorOnSurface"
+                />
+        </FrameLayout>
+
+        <com.google.android.material.slider.RangeSlider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_18"
+            android:valueFrom="18"
+            android:id="@+id/age_slider"
+            android:valueTo="70"
+            app:values="@array/initial_slider_values" />
 
         <com.google.android.material.button.MaterialButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/save"
-            android:text="Davom etish"
+            android:text="@string/davom_etish"
             android:layout_marginTop="@dimen/dimen_24"
-            />
-
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dimen_12"
-            style="@style/Widget.Material3.Button.TonalButton"
-            android:id="@+id/keyin"
-            android:text="Keyinroq"
             />
 
     </LinearLayout>

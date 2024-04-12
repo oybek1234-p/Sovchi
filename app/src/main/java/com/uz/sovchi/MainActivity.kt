@@ -50,12 +50,10 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: UserViewModel by viewModels()
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        PermissionController.getInstance().onPermissionResult(requestCode,grantResults)
+        PermissionController.getInstance().onPermissionResult(requestCode, grantResults)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -67,7 +65,6 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initUser()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.apply {
@@ -76,16 +73,17 @@ class MainActivity : AppCompatActivity() {
             navcontroller = navHost.navController
             bottomNavView.setupWithNavController(navcontroller)
         }
-        val launcher =
-            registerForActivityResult(
-                ActivityResultContracts.StartIntentSenderForResult()
-            ) {}
+        initUser()
+
+        val launcher = registerForActivityResult(
+            ActivityResultContracts.StartIntentSenderForResult()
+        ) {}
         lifecycleScope.launch {
             delay(2000)
             AdMobApp.init { }
-            requestNotificationPermission()
             initUpdateManager(launcher)
         }
+        checkDeeplink(intent)
     }
 
     fun showSnack(message: String) {
@@ -126,29 +124,66 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun requestNotificationPermission() {
+    private fun updateUnReadLabel(unread: Int) {
+        val badge = binding.bottomNavView.getOrCreateBadge(R.id.messages_nav)
+        val isVisible = unread > 0
+        badge.isVisible = isVisible
+        if (isVisible) {
+            badge.number = unread
+        }
+    }
+
+    private fun observeUnMessages() {
+        updateUnReadLabel(LocalUser.user.unreadMessages)
+        viewModel.repository.observeUnReadMessages {
+            updateUnReadLabel(it)
+            unreadMessageChangedListener?.invoke(it)
+        }
+    }
+
+    fun requestNotificationPermission() {
         val permissionState =
             ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS);
         // If the permission is not granted, request it.
         if (permissionState == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(
-                this,
-                arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
-                1
+                this, arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1
             );
         }
     }
-    
+
+    var unreadMessageChangedListener: ((count: Int) -> Unit)? = null
+
     private fun initUser() {
         LocalUser.getUser(appContext)
         MyFilter.get()
         lifecycleScope.launch {
             ViewedNomzods.init()
         }
-        Firebase.messaging.subscribeToTopic("998971871415")
+        Firebase.messaging.subscribeToTopic(MyFilter.filter.androidId)
         if (LocalUser.user.valid) {
             SavedRepository.loadSaved { }
             viewModel.repository.updateLastSeenTime()
+            observeUnMessages()
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        checkDeeplink(intent)
+    }
+
+    private fun checkDeeplink(intent: Intent?) {
+        if (intent != null) {
+            val nomzodId = intent.extras?.getString("nomzodId")
+            if (nomzodId != null) {
+                lifecycleScope.launch {
+                    delay(200)
+                    navcontroller.navigate(R.id.nomzodDetailsFragment, Bundle().apply {
+                        putString("nomzodId", nomzodId)
+                    })
+                }
+            }
         }
     }
 
@@ -189,8 +224,7 @@ class MainActivity : AppCompatActivity() {
                 translationY = 120.toFloat()
             }
             if (animate) {
-                animate().setDuration(300)
-                    .translationY(if (show) 0f else measuredHeight.toFloat())
+                animate().setDuration(300).translationY(if (show) 0f else measuredHeight.toFloat())
                     .withEndAction {
                         if (!show) {
                             visibleOrGone(false)

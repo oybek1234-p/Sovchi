@@ -13,7 +13,7 @@ android {
         applicationId = "com.uz.sovchi"
         minSdk = 24
         targetSdk = 34
-        versionCode = 53
+        versionCode = 54
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -85,6 +85,7 @@ dependencies {
     implementation ("top.zibin:Luban-turbo:1.0.0")
     implementation("io.coil-kt:coil:2.6.0")
 
+    implementation("com.google.firebase:firebase-functions")
     implementation ("com.google.android.flexbox:flexbox:3.0.0")
 
 }

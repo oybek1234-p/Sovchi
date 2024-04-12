@@ -11,16 +11,17 @@
         android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/dimen_12"
-        android:layout_marginTop="@dimen/dimen_12"
-        app:cardElevation="0dp"
+        android:layout_marginTop="18dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="#EDEDED"
+        app:strokeColor="?backgroundColor"
         app:strokeWidth="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="?colorSurface"
             android:paddingHorizontal="@dimen/dimen_18"
             android:paddingTop="@dimen/dimen_18"
             android:paddingBottom="@dimen/dimen_12">
@@ -42,42 +43,7 @@
                     android:background="@drawable/rounded_layout"
                     android:scaleType="centerCrop"
                     app:shapeAppearanceOverlay="@style/RadiusImageView12" />
-'=
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/new_badge"
-                        style="@style/Subtitle2_14"
-                        android:layout_marginBottom="@dimen/dimen_12"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:layout_marginEnd="@dimen/dimen_12"
-                        android:text="@string/yangi"
-                        android:paddingVertical="@dimen/dimen_4"
-                        android:paddingHorizontal="@dimen/dimen_12"
-                        android:background="@drawable/round_lay"
-                        android:backgroundTint="#166750A4"
-                        android:textColor="?colorPrimary" />
-
-                    <TextView
-                        android:id="@+id/top_badge"
-                        style="@style/Subtitle2_14"
-                        android:layout_width="wrap_content"
-                        android:layout_marginBottom="@dimen/dimen_12"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:background="@drawable/rounded_layout"
-                        android:backgroundTint="?colorPrimary"
-                        android:paddingHorizontal="@dimen/dimen_4"
-                        android:paddingVertical="@dimen/dimen_2"
-                        android:text="TOP"
-                        android:textColor="@color/white"
-                        android:visibility="gone" />
-                </LinearLayout>
+                '=
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -101,6 +67,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     >
+
                     <TextView
                         android:id="@+id/name_age_view"
                         style="@style/Headline3_15"
@@ -109,7 +76,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/parametrlar"
                         android:gravity="center_vertical"
-                        android:textColor="?colorOnSurface"
+                        android:textColor="?colorPrimary"
                         android:drawablePadding="@dimen/dimen_4"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/type_view"
@@ -118,15 +85,31 @@
                     <TextView
                         android:id="@+id/params_view"
                         style="@style/Text2_15"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/parametrlar"
                         android:maxLines="1"
                         android:ellipsize="end"
                         android:layout_marginStart="8dp"
-                        android:textColor="?colorOnSurface"
+                        android:textColor="?colorOnSurfaceVariant"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/type_view" />
+
+                    <TextView
+                        android:id="@+id/new_badge"
+                        style="@style/Subtitle2_14"
+                        android:layout_marginBottom="@dimen/dimen_12"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginEnd="@dimen/dimen_12"
+                        android:text="@string/yangi"
+                        android:layout_marginStart="@dimen/dimen_12"
+                        android:paddingVertical="@dimen/dimen_4"
+                        android:paddingHorizontal="@dimen/dimen_12"
+                        android:background="@drawable/round_lay"
+                        android:backgroundTint="?colorPrimary"
+                        android:textColor="?colorOnPrimary" />
 
                 </LinearLayout>
 
@@ -161,28 +144,32 @@
 
                     <TextView
                         android:id="@+id/oilaviy_view"
-                        style="@style/Text1_14"
+                        style="@style/Text2_15"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/round_lay"
-                        android:backgroundTint="#176750A4"
+                        android:backgroundTint="#11673AB7"
                         android:paddingHorizontal="@dimen/dimen_8"
                         android:paddingVertical="@dimen/dimen_4"
                         android:text="@string/oilaviy_holati"
-                        android:textColor="?colorOnSurface"
+                        android:textColor="#5437A2"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/type_view" />
 
                     <TextView
                         android:id="@+id/farzandlar_view"
                         style="@style/Text2_15"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:background="@drawable/round_lay"
+                        android:backgroundTint="?backgroundColor"
+                        android:paddingVertical="@dimen/dimen_4"
                         android:layout_marginStart="@dimen/dimen_18"
+                        android:paddingHorizontal="12dp"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:text="@string/farzandlar"
-                        android:textColor="?colorPrimary"
+                        android:textColor="?colorOnSurface"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/type_view" />
 
@@ -212,7 +199,7 @@
                         android:drawablePadding="@dimen/dimen_8"
                         android:drawableStart="@drawable/location_ic"
                         android:text="@string/manzili_toshkent"
-                        android:textColor="?colorOnSurface"
+                        android:textColor="?colorOnSurfaceVariant"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/type_view" />
 
@@ -260,10 +247,10 @@
 
                 <TextView
                     android:id="@+id/yosh_chegarasi_view"
-                    style="@style/Text1_14"
+                    style="@style/Text2_15"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_12"
+                    android:layout_marginTop="18dp"
                     android:text="@string/yosh_chegarasi"
                     android:textColor="?colorOnSurfaceVariant"
                     app:layout_constraintStart_toStartOf="parent"
@@ -282,6 +269,21 @@
                     app:layout_constraintTop_toBottomOf="@+id/type_view" />
 
 
+
+                <TextView
+                    android:id="@+id/qoshimcha_view"
+                    style="@style/Text2_15"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_18"
+                    android:lineSpacingExtra="@dimen/dimen_4"
+                    android:ellipsize="end"
+                    android:maxLines="4"
+                    android:text="Qo'shimcha malumot"
+                    android:textColor="#E12D2C30"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/type_view" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -295,19 +297,6 @@
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:listitem="@layout/talablar_item"
                     />
-
-                <TextView
-                    android:id="@+id/qoshimcha_view"
-                    style="@style/Text2_15"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_12"
-                    android:ellipsize="end"
-                    android:maxLines="4"
-                    android:text="Qo'shimcha malumot"
-                    android:textColor="#DC1D1B20"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/type_view" />
 
                 <TextView
                     android:id="@+id/imkon_chek_info"

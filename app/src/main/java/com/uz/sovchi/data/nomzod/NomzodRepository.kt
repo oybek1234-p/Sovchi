@@ -6,7 +6,9 @@ import com.google.firebase.firestore.Query
 import com.uz.sovchi.data.ImageUploader
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.location.City
+import com.uz.sovchi.showToast
 import com.uz.sovchi.ui.photo.PickPhotoFragment
+import java.sql.Timestamp
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -124,7 +126,7 @@ class NomzodRepository {
             task = if (yoshChegarasi == 0) {
                 task.startAfter(lastNomzod.id)
             } else {
-                task.startAfter(lastNomzod.tugilganYili, lastNomzod.id)
+                task.startAfter(lastNomzod)
             }
         }
         if (type != -1) {

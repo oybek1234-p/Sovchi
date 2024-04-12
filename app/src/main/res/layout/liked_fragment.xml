@@ -29,6 +29,7 @@
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:paddingBottom="100dp"
+            android:paddingHorizontal="@dimen/dimen_12"
             android:clipToPadding="false"
             android:layout_height="match_parent" />
 
@@ -40,6 +41,9 @@
             android:text="@string/saqlanganlar_bo_sh"
             android:textColor="?colorOnSurface"
             android:visibility="gone"
+            android:drawablePadding="@dimen/dimen_12"
+            android:drawableStart="@drawable/like_ic"
+            android:drawableTint="?colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

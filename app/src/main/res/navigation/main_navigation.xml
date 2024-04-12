@@ -8,4 +8,5 @@
     <include app:graph="@navigation/liked" />
     <include app:graph="@navigation/profile" />
     <include app:graph="@navigation/nomzod" />
+    <include app:graph="@navigation/messages_nav" />
 </navigation>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/messages_nav"
+    app:startDestination="@id/messagesFragment">
+
+    <fragment
+        android:id="@+id/messagesFragment"
+        android:name="com.uz.sovchi.ui.messages.MessagesFragment"
+        android:label="MessagesFragment" />
+    <fragment
+        android:id="@+id/nomzodDetailsFragment"
+        android:name="com.uz.sovchi.ui.nomzod.NomzodDetailsFragment"
+        android:label="NomzodDetailsFragment" />
+</navigation>

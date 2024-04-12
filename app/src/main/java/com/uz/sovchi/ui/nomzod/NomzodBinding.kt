@@ -27,13 +27,13 @@ fun NomzodItemBinding.setNomzod(nomzod: Nomzod, hasNomzod: Boolean, forDetails: 
             if (forDetails.not()) {
                 val viewed = ViewedNomzods.isViewed(id)
                 val new = DateUtils.isToday(uploadDate) && !viewed
-                container.setBackgroundColor(
-                    if (new) MaterialColors.getColor(
-                        typeView, com.google.android.material.R.attr.colorSurfaceVariant
-                    ) else MaterialColors.getColor(
-                        typeView, com.google.android.material.R.attr.colorSurface
-                    )
-                )
+//                container.setBackgroundColor(
+//                    if (new) MaterialColors.getColor(
+//                        typeView, com.google.android.material.R.attr.colorSurfaceVariant
+//                    ) else MaterialColors.getColor(
+//                        typeView, com.google.android.material.R.attr.colorSurface
+//                    )
+//                )
                 newBadge.visibleOrGone(new)
             }
             val getString: (id: Int) -> String = { it ->

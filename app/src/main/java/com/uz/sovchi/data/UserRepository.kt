@@ -2,8 +2,11 @@ package com.uz.sovchi.data
 
 import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -30,6 +33,32 @@ class UserRepository(val context: Context) {
         usersReference.get().addOnCompleteListener { it ->
             done.invoke(it.result.children.mapNotNull { it.getValue(User::class.java) })
         }
+    }
+
+    fun setUnreadZero() {
+        if (user.valid) {
+            if (user.unreadMessages == 0) return
+            usersReference.child(user.uid).child(User::unreadMessages.name).setValue(0)
+        }
+    }
+
+    fun observeUnReadMessages(onChange: (count: Int) -> Unit) {
+        if (user.valid.not()) return
+        usersReference.child(user.uid).child(User::unreadMessages.name)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val value = snapshot.getValue(Int::class.java)
+                    if (value is Int) {
+                        LocalUser.user.unreadMessages = value
+                        LocalUser.saveUser()
+                        onChange.invoke(value)
+                    }
+                }
+            })
     }
 
     fun signOut() {
@@ -64,9 +93,13 @@ class UserRepository(val context: Context) {
 
     fun updateLastSeenTime() {
         if (user.valid) {
-            usersReference.child(user.uid).child(User::lastSeenTime.name).setValue(System.currentTimeMillis())
+            val lastSeen = System.currentTimeMillis()
+            LocalUser.user.lastSeenTime = lastSeen
+            LocalUser.saveUser()
+            usersReference.child(user.uid).child(User::lastSeenTime.name).setValue(lastSeen)
         }
     }
+
     suspend fun authFirebaseUser(): User? {
         val firebaseUser = FirebaseAuth.getInstance().currentUser
         if (firebaseUser == null || firebaseUser.uid.isEmpty()) {
@@ -77,8 +110,9 @@ class UserRepository(val context: Context) {
         val networkUser = loadUser(id)
         isNewUser = networkUser.valid.not()
         return if (isNewUser) {
-            val newUser =
-                User(uid = id, "", firebaseUser.phoneNumber ?: "", System.currentTimeMillis(),false)
+            val newUser = User(
+                uid = id, "", firebaseUser.phoneNumber ?: "", System.currentTimeMillis(), false, 0
+            )
             createNewUserAndSet(newUser)
             newUser
         } else {

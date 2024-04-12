@@ -32,6 +32,9 @@ import com.uz.sovchi.visibleOrGone
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
@@ -164,7 +167,8 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
             talablarList = talablarAdapter.selectedTalablar.map { it.name },
             telegramLink = telegramLink,
             joylaganOdam,
-            mobilRaqam
+            mobilRaqam,
+            uploadDateString = timestamp()
         )
         uploading = true
         userViewModel.repository
@@ -176,6 +180,8 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
             }
         }
     }
+    
+    private fun timestamp(): String = java.sql.Timestamp(System.currentTimeMillis()).toString()
 
     private var manzilSelected = City.Hammasi.name
     private var oilaviyHolatiSelected = OilaviyHolati.Aralash.name

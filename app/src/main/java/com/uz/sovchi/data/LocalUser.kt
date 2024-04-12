@@ -2,6 +2,7 @@ package com.uz.sovchi.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.uz.sovchi.appContext
 
 object LocalUser {
 
@@ -11,7 +12,7 @@ object LocalUser {
         (context.getSharedPreferences("localUser", Context.MODE_PRIVATE))
 
     fun getUser(context: Context) {
-        val pref = preference(context)
+        val pref = preference(appContext)
         with(pref) {
             user.apply {
                 uid = getString("uid", "") ?: ""
@@ -23,8 +24,8 @@ object LocalUser {
         }
     }
 
-    fun saveUser(context: Context) {
-        val pref = preference(context).edit()
+    fun saveUser(context: Context = appContext) {
+        val pref = preference(appContext).edit()
         with(pref) {
             user.apply {
                 putString("uid", uid)

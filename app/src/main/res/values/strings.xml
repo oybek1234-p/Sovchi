@@ -128,5 +128,11 @@
     <string name="butun_uzbekiston">Butun O\'zbekiston</string>
     <string name="rasmi_borlar">Rasmi borlar</string>
     <string name="farzandlar_yo_q">Farzandlar yo\'q</string>
-    <string name="taqdir">taqdir</string>
+    <string name="taqdir">Taqdir</string>
+    <string name="o_xshash_nomzodlar">O\'xshash nomzodlar</string>
+    <string name="yangi_nomzodlar">Yangi nomzodlar</string>
+    <string name="suhbatlar">Suhbatlar</string>
+    <string name="suhbatlar_bo_sh">Suhbatlar bo\'sh</string>
+    <string name="sample_date">10.04.2024</string>
+    <string name="nomzodni_ko_rish">Nomzodni ko\'rish</string>
 </resources>

@@ -17,6 +17,11 @@
         android:title="@string/nomzod_qo_shish" />
 
     <item
+        android:id="@+id/messages_nav"
+        android:icon="@drawable/chat_ic"
+        android:title="@string/suhbatlar" />
+
+    <item
         android:id="@+id/profile_nav"
         android:icon="@drawable/profile_ic"
         android:title="@string/profil" />

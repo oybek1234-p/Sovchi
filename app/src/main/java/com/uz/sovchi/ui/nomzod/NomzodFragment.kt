@@ -5,6 +5,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.messaging.FirebaseMessaging
 import com.uz.sovchi.R
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.nomzod.Nomzod

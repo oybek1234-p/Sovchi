@@ -57,7 +57,8 @@ data class Nomzod(
     var telegramLink: String = "",
     var joylaganOdam: String = "",
     var mobilRaqam: String = "",
-    var uploadDate: Long = System.currentTimeMillis()
+    var uploadDate: Long = System.currentTimeMillis(),
+    var uploadDateString: String = ""
 ) {
     constructor() : this(id = "")
 }

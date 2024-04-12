@@ -57,7 +57,7 @@ abstract class BaseFragment<T : ViewDataBinding> : Fragment() {
         if (isDetached) return
         try {
             findNavController().popBackStack()
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             //Ignore
         }
     }

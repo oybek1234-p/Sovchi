@@ -4,12 +4,11 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.nomzod.Nomzod
+import com.uz.sovchi.data.recombee.RecombeeDatabase
 
 object SavedRepository {
 
-    private var savedReference = FirebaseFirestore
-        .getInstance()
-        .collection("saved")
+    private var savedReference = FirebaseFirestore.getInstance().collection("saved")
 
     var savedList = arrayListOf<SavedData>()
 
@@ -37,6 +36,7 @@ object SavedRepository {
         val nomzodId = nomzod.id
         val savedId = userId + nomzodId
         val saved = SavedData(savedId, userId, nomzod)
+        RecombeeDatabase.setNomzodProfileViewed(userId, nomzodId)
         savedReference.document(savedId).set(saved)
         savedList.add(saved)
     }

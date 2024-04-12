@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?backgroundColor"
+        android:background="?colorSurface"
         android:clipToPadding="false">
 
         <TextView
@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:clipToPadding="false"
-            android:paddingHorizontal="@dimen/dimen_8"
+            android:paddingHorizontal="@dimen/dimen_12"
             android:paddingTop="@dimen/dimen_12"
             android:paddingBottom="100dp"
             app:layout_constraintBottom_toBottomOf="parent"

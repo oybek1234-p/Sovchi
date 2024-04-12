@@ -9,13 +9,12 @@ import android.os.StrictMode.VmPolicy
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.gms.ads.AdRequest
 import com.google.android.material.color.MaterialColors
@@ -41,6 +40,7 @@ import com.uz.sovchi.openPhoneCall
 import com.uz.sovchi.ui.base.BaseFragment
 import com.uz.sovchi.ui.photo.PhotoAdapter
 import com.uz.sovchi.ui.photo.PickPhotoFragment
+import com.uz.sovchi.ui.search.SearchAdapter
 import com.uz.sovchi.visibleOrGone
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,6 +53,9 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
         get() = R.layout.nomzod_details
 
     private var nomzod: Nomzod? = null
+
+    private val nomzodViewModel: NomzodViewModel by viewModels()
+    private var nomzodId = ""
 
     companion object {
         fun navigateToHere(fragment: BaseFragment<*>, nomzod: Nomzod) {
@@ -67,15 +70,29 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val json = arguments?.getString("data")
+        nomzodId = arguments?.getString("nomzodId") ?: ""
         if (json.isNullOrEmpty().not()) {
             nomzod = gson!!.fromJson(json!!, Nomzod::class.java)
             if (nomzod != null) {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    RecombeeDatabase.setNomzodViewed(userViewModel.user.uid,nomzod!!.id)
+                    RecombeeDatabase.setNomzodViewed(userViewModel.user.uid,
+                        nomzod!!.id.ifEmpty { nomzodId })
 
                     ViewedNomzods.setViewed(nomzod!!.id)
                 }
             }
+        }
+    }
+
+    private fun setLoading(show: Boolean,empty: Boolean = false) {
+        binding?.apply {
+            if (empty) {
+                progressBar.isVisible = false
+                return
+            }
+            progressBar.isVisible = show
+            container.isVisible = show.not()
+            phoneView.isVisible = show.not()
         }
     }
 
@@ -125,15 +142,12 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
                     if (shareIntent.resolveActivity(packageManager) != null) {
                         requireContext().startActivity(
                             Intent.createChooser(
-                                shareIntent,
-                                "Share with"
+                                shareIntent, "Share with"
                             )
                         )
                     } else {
                         Toast.makeText(
-                            context,
-                            "No suitable apps to share content!",
-                            Toast.LENGTH_SHORT
+                            context, "No suitable apps to share content!", Toast.LENGTH_SHORT
                         ).show()
                     }
                 }
@@ -144,65 +158,98 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
     override fun viewCreated(bind: NomzodDetailsBinding) {
         bind.apply {
             toolbar.setUpBackButton(this@NomzodDetailsFragment)
-            if (nomzod == null) return
-            nomzod!!.apply {
-                toolbar.setTitleTextColor(MaterialColors.getColor(toolbar,
-                    com.google.android.material.R.attr.colorOnSurfaceVariant))
-                setView(bind, this)
-                toolbar.title = if (nomzod?.type == KUYOV) getString(R.string.kuyovlikga) else getString(R.string.kelinlikga)
-//                if (mobilRaqam.length < 8) {
-//                    callButton.visibleOrGone(false)
-//                } else {
-//                    callButton.text = "${getString(R.string.telefon_qilish)} ${
-//                        PhoneUtils.formatPhoneNumber(mobilRaqam)
-//                    }"
-//                }
-
-//            callButton.setOnClickListener {
-//                openPhoneCall(requireActivity(), nomzod!!.mobilRaqam)
-//            }
-
+            toolbar.setTitleTextColor(
+                MaterialColors.getColor(
+                    toolbar, com.google.android.material.R.attr.colorOnSurfaceVariant
+                )
+            )
+            toolbar.title = ""
+            if (nomzod?.id.isNullOrEmpty() && nomzodId.isNotEmpty()) {
+                loadNomzod()
+            } else {
+                setView(bind, nomzod)
+                loadAd()
             }
         }
-        loadAd()
+    }
+
+    private fun loadNomzod() {
+        if (nomzodId.isNotEmpty()) {
+            setLoading(true)
+            lifecycleScope.launch {
+                nomzod = nomzodViewModel.repository.getNomzodById(nomzodId, true)
+                if (nomzod == null) {
+                    setLoading(false,true)
+                    return@launch
+                }
+                binding?.let {
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        setLoading(false)
+                        viewCreated(it)
+                    }
+                }
+            }
+        }
+    }
+
+    private val similarListAdapter: SearchAdapter by lazy {
+        SearchAdapter(userViewModel, onClick = {
+            navigateToHere(this, it)
+        }, next = {}, onLiked = { liked, _ ->
+            mainActivity()?.showSnack(if (liked) "Yoqtirganlarga qo'shildi!" else "Yoqtirganlardan olib tashlandi")
+        })
+    }
+
+    private fun initSimilar() {
+        val nomzodId = nomzod?.id ?: return
+        RecombeeDatabase.getSimilarNomzods(nomzodId, 6) {
+            lifecycleScope.launch {
+                if (it.isNotEmpty()) {
+                    binding?.apply {
+                        similarContainer.isVisible = true
+                        similarRecyclerView.adapter = similarListAdapter.apply {
+                            submitList(it)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables")
-    private fun setView(binding: NomzodDetailsBinding, nomzod: Nomzod) {
+    private fun setView(binding: NomzodDetailsBinding, nomzod: Nomzod?) {
+        if (nomzod == null) return
         binding.apply {
             nomzod.apply {
                 //Photos
-                val hasNomzod = userViewModel.user.hasNomzod
-//                if (hasNomzod) {
-//                    showPhotos()
-//                }
+                initSimilar()
                 showPhotos()
                 nomzodQuyish.setOnClickListener {
                     showAddNomzodAlert()
                 }
-                nameAgeView.setCompoundDrawablesWithIntrinsicBounds(
-                    requireContext().getDrawable(if (type == KUYOV) R.drawable.man_ic else R.drawable.woman_ic),
-                    null,
-                    null,
-                    null
-                )
+//                nameAgeView.setCompoundDrawablesWithIntrinsicBounds(
+//                    requireContext().getDrawable(if (type == KUYOV) R.drawable.man_ic else R.drawable.woman_ic),
+//                    null,
+//                    null,
+//                    null
+//                )
                 photoCon.isVisible = nomzod.photos.isNotEmpty()
                 nomzodQuyish.isVisible = false
 
                 val getString: (id: Int) -> String = { it ->
-                    requireActivity().getString(it)
+                    container.context.getString(it)
                 }
-                var parmText =
-                    "${
-                        name.ifEmpty {
-                            if (nomzod.type == KUYOV) getString(
-                                R.string.kuyovlikga
-                            ) else getString(R.string.kelinlikga)
-                        }
-                    }"
+                var parmText = "${
+                    name.ifEmpty {
+                        if (nomzod.type == KUYOV) getString(
+                            R.string.kuyovlikga
+                        ) else getString(R.string.kelinlikga)
+                    }
+                }"
                 parmText += "   ${tugilganYili}-yosh"
                 nameAgeView.text = parmText
                 paramsView.text = paramsText()
+                paramsView.isVisible = paramsView.text.trim().isNotEmpty()
                 millatiView.text = "$millati"
 
                 val oilaviyHolatiText = try {
@@ -232,8 +279,7 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
                 } catch (e: Exception) {
                     oqishMalumoti
                 }
-                oqishView.text =
-                    "${getString(R.string.ma_lumoti)} $oqishText"
+                oqishView.text = "${getString(R.string.ma_lumoti)} $oqishText"
 
                 if (ishJoyi.isNotEmpty()) {
                     ishView.text = "${getString(R.string.kasbi)} $ishJoyi"
@@ -257,8 +303,7 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
                 if (joyOdam.isEmpty()) {
                     joylaganOdamView.visibleOrGone(false)
                 } else {
-                    joylaganOdamView.text =
-                        "${getString(R.string.joylagan_odam)} - ${nomzod!!.joylaganOdam}"
+                    joylaganOdamView.text = "${nomzod!!.joylaganOdam}"
                 }
                 qoshimchaView.maxLines = Int.MAX_VALUE
 
@@ -284,18 +329,17 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
                 if (mobilRaqam.isNotEmpty()) {
                     callview.isVisible = true
                     callview.setOnClickListener {
-                        openPhoneCall(requireActivity(),mobilRaqam)
-                        RecombeeDatabase.setNomzodProfileViewed(userViewModel.user.uid,nomzod.id)
+                        openPhoneCall(requireActivity(), mobilRaqam)
+                        RecombeeDatabase.setNomzodProfileViewed(userViewModel.user.uid, nomzod.id)
                     }
                 }
                 requestButton.setOnClickListener {
-                    RecombeeDatabase.setNomzodProfileViewed(userViewModel.user.uid,nomzod.id)
+                    RecombeeDatabase.setNomzodProfileViewed(userViewModel.user.uid, nomzod.id)
                     if (userViewModel.user.hasNomzod.not()) {
                         showAddNomzodAlert()
                     } else {
                         SocialMedia.openLink(
-                            requireActivity(),
-                            SocialMedia.parseTelegramLink(nomzod.telegramLink)
+                            requireActivity(), SocialMedia.parseTelegramLink(nomzod.telegramLink)
                         )
                     }
                 }
