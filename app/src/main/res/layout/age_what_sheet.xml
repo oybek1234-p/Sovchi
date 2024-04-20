@@ -21,28 +21,6 @@
             style="@style/Title2_20"
             />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dimen_24"
-            >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Yoshdan"
-                style="@style/Text1_16"
-                android:textColor="?colorOnSurface"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Yoshgacha"
-                android:layout_gravity="end"
-                style="@style/Text1_16"
-                android:textColor="?colorOnSurface"
-                />
-        </FrameLayout>
-
         <com.google.android.material.slider.RangeSlider
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,6 +29,28 @@
             android:id="@+id/age_slider"
             android:valueTo="70"
             app:values="@array/initial_slider_values" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_4"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Yoshdan"
+                style="@style/Text1_14"
+                android:textColor="?colorOnSurfaceVariant"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Yoshgacha"
+                android:layout_gravity="end"
+                style="@style/Text1_14"
+                android:textColor="?colorOnSurfaceVariant"
+                />
+        </FrameLayout>
 
         <com.google.android.material.button.MaterialButton
             android:layout_width="match_parent"

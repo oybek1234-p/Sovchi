@@ -2,9 +2,13 @@ package com.uz.sovchi.ui.messages
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.messages.Message
 import com.uz.sovchi.data.messages.MessagesRepository
+import com.uz.sovchi.showToast
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class MessagesViewModel : ViewModel() {
 
@@ -16,25 +20,38 @@ class MessagesViewModel : ViewModel() {
     val empty = MutableLiveData(false)
 
     fun refresh() {
+        loadingJob?.cancel()
+        loadingJob = null
+        loading.value = false
         messagesList.clear()
         messages.postValue(messagesList)
         loadMessages()
     }
 
+    private var loadingJob: Job? = null
+
     fun loadMessages() {
         if (loading.value == true) return
-        val lastMessage = messagesList.lastOrNull()
+        loadingJob?.cancel()
+        loadingJob = null
         loading.postValue(true)
+        loading.value = true
         empty.postValue(false)
-        repository.loadMessages(lastMessage?.id, LocalUser.user.uid, 8) {
-            loading.postValue(false)
-            messagesList.addAll(it)
-            if (messagesList.isEmpty() && it.isEmpty()) {
-                empty.postValue(true)
-            }else {
-                empty.postValue(false)
+        loadingJob = viewModelScope.launch {
+            val job = this
+            val lastMessage = messagesList.lastOrNull()
+            repository.loadMessages(lastMessage?.date, LocalUser.user.uid, 8) {
+                if (job != loadingJob) return@loadMessages
+                loading.postValue(false)
+                loading.value = false
+                messagesList.addAll(it)
+                if (messagesList.isEmpty() && it.isEmpty()) {
+                    empty.postValue(true)
+                } else {
+                    empty.postValue(false)
+                }
+                messages.postValue(messagesList)
             }
-            messages.postValue(messagesList)
         }
     }
 }

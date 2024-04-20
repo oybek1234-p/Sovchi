@@ -13,13 +13,13 @@
 
     <item
         android:id="@+id/nomzod_nav"
-        android:icon="@drawable/add_circle_ic"
-        android:title="@string/nomzod_qo_shish" />
+        android:icon="@drawable/person_ic"
+        android:title="@string/nomzodim" />
 
     <item
         android:id="@+id/messages_nav"
         android:icon="@drawable/chat_ic"
-        android:title="@string/suhbatlar" />
+        android:title="@string/xabarlar" />
 
     <item
         android:id="@+id/profile_nav"

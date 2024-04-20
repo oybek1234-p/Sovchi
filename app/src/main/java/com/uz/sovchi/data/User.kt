@@ -8,7 +8,7 @@ data class User(
     var hasNomzod: Boolean,
     var unreadMessages: Int
 ) {
-    constructor() : this("", "", "", 0L,false,0)
+    constructor() : this("", "", "", 0L, false, 0)
 }
 
 val User?.valid: Boolean get() = this?.uid?.isEmpty()?.not() ?: false

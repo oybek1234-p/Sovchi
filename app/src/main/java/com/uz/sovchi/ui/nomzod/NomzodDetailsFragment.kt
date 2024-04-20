@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
+import android.text.Html
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
@@ -28,6 +29,8 @@ import com.uz.sovchi.data.nomzod.Nomzod
 import com.uz.sovchi.data.nomzod.OilaviyHolati
 import com.uz.sovchi.data.nomzod.OqishMalumoti
 import com.uz.sovchi.data.nomzod.Talablar
+import com.uz.sovchi.data.nomzod.getManzilText
+import com.uz.sovchi.data.nomzod.getTugilganJoyi
 import com.uz.sovchi.data.nomzod.getYoshChegarasi
 import com.uz.sovchi.data.nomzod.paramsText
 import com.uz.sovchi.data.recombee.RecombeeDatabase
@@ -75,7 +78,8 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
             nomzod = gson!!.fromJson(json!!, Nomzod::class.java)
             if (nomzod != null) {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    RecombeeDatabase.setNomzodViewed(userViewModel.user.uid,
+                    RecombeeDatabase.setNomzodViewed(
+                        userViewModel.user.uid,
                         nomzod!!.id.ifEmpty { nomzodId })
 
                     ViewedNomzods.setViewed(nomzod!!.id)
@@ -84,7 +88,7 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
         }
     }
 
-    private fun setLoading(show: Boolean,empty: Boolean = false) {
+    private fun setLoading(show: Boolean, empty: Boolean = false) {
         binding?.apply {
             if (empty) {
                 progressBar.isVisible = false
@@ -179,7 +183,7 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
             lifecycleScope.launch {
                 nomzod = nomzodViewModel.repository.getNomzodById(nomzodId, true)
                 if (nomzod == null) {
-                    setLoading(false,true)
+                    setLoading(false, true)
                     return@launch
                 }
                 binding?.let {
@@ -222,6 +226,7 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
         binding.apply {
             nomzod.apply {
                 //Photos
+                nomzodViewModel.repository.increaseNomzodViews(id)
                 initSimilar()
                 showPhotos()
                 nomzodQuyish.setOnClickListener {
@@ -260,10 +265,8 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
                 if (oilaviyHolati == OilaviyHolati.AJRASHGAN.name || oilaviyHolati == OilaviyHolati.Beva.name) {
                     farzandlarView.apply {
                         visibleOrGone(true)
-                        if (farzandlar.trim().isEmpty()) {
-                            farzandlar = getString(R.string.yoq)
-                        }
-                        text = "${getString(R.string.farzandlar)}:  $farzandlar"
+                        text =
+                            Html.fromHtml("${getString(R.string.farzandlar)}:  <b>$farzandlar<\b>")
                     }
                 } else {
                     farzandlarView.visibleOrGone(false)
@@ -279,7 +282,7 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
                 } catch (e: Exception) {
                     oqishMalumoti
                 }
-                oqishView.text = "${getString(R.string.ma_lumoti)} $oqishText"
+                oqishView.text = Html.fromHtml("${getString(R.string.ma_lumoti)} $oqishText")
 
                 if (ishJoyi.isNotEmpty()) {
                     ishView.text = "${getString(R.string.kasbi)} $ishJoyi"
@@ -287,9 +290,9 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
                     ishView.isVisible = false
                 }
                 val manzilText = getString(City.valueOf(manzil).resId)
-                manzilView.text = "Manzil: $manzilText"
+                manzilView.text = getManzilText()
                 if (tugilganJoyi != manzilText) {
-                    tgjView.text = "${getString(R.string.tugilgan_joyi)}:   $tugilganJoyi"
+                    tgjView.text = getTugilganJoyi()
                 } else {
                     tgjView.isVisible = false
                 }
@@ -307,7 +310,11 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
                 }
                 qoshimchaView.maxLines = Int.MAX_VALUE
 
-                yoshChegarasiView.text = getYoshChegarasi()
+                if (yoshChegarasiDan == 0 && yoshChegarasiGacha == 0) {
+                    yoshChegarasiView.isVisible = false
+                } else {
+                    yoshChegarasiView.text = getYoshChegarasi()
+                }
                 if (!yoshChegarasiView.isVisible && talablarList.isEmpty()) {
                     talablarTitle.isVisible = false
                     talablarListView.isVisible = false
@@ -330,11 +337,11 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
                     callview.isVisible = true
                     callview.setOnClickListener {
                         openPhoneCall(requireActivity(), mobilRaqam)
-                        RecombeeDatabase.setNomzodProfileViewed(userViewModel.user.uid, nomzod.id)
+                        RecombeeDatabase.setConnectedToNomzod(userViewModel.user.uid, nomzod.id)
                     }
                 }
                 requestButton.setOnClickListener {
-                    RecombeeDatabase.setNomzodProfileViewed(userViewModel.user.uid, nomzod.id)
+                    RecombeeDatabase.setConnectedToNomzod(userViewModel.user.uid, nomzod.id)
                     if (userViewModel.user.hasNomzod.not()) {
                         showAddNomzodAlert()
                     } else {

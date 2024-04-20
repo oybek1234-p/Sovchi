@@ -46,7 +46,7 @@ fun NomzodItemBinding.setNomzod(nomzod: Nomzod, hasNomzod: Boolean, forDetails: 
                     photoView.load(it)
                 }
             }
-            var nameAgeText = " ${name.trim().capitalize().ifEmpty {
+            var nameAgeText = "${name.trim().capitalize().ifEmpty {
                 if (nomzod.type == KUYOV) getString(
                     R.string.kuyovlikga
                 ) else getString(R.string.kelinlikga)

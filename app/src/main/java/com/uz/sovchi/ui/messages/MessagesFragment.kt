@@ -2,10 +2,15 @@ package com.uz.sovchi.ui.messages
 
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.uz.sovchi.R
+import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.databinding.MessagesFragmentBinding
+import com.uz.sovchi.showToast
 import com.uz.sovchi.ui.base.BaseFragment
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MessagesFragment : BaseFragment<MessagesFragmentBinding>() {
 
@@ -13,7 +18,9 @@ class MessagesFragment : BaseFragment<MessagesFragmentBinding>() {
         get() = R.layout.messages_fragment
 
     private val viewModel: MessagesViewModel by viewModels()
-    private val listAdapter = MessagesAdapter(this)
+    private val listAdapter = MessagesAdapter(this) {
+        viewModel.loadMessages()
+    }
 
     private fun initSwipeRefresh() {
         binding?.swipeRefresh?.apply {
@@ -29,11 +36,10 @@ class MessagesFragment : BaseFragment<MessagesFragmentBinding>() {
         binding?.recyclerView?.itemAnimator = null
         binding?.recyclerView?.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        mainActivity()?.unreadMessageChangedListener = null
+        lifecycleScope.launch {
+            delay(500)
+            binding?.recyclerView?.scrollToPosition(0)
+        }
     }
 
     private fun observe() {
@@ -58,10 +64,13 @@ class MessagesFragment : BaseFragment<MessagesFragmentBinding>() {
 
     override fun onResume() {
         super.onResume()
-        userViewModel.repository.setUnreadZero()
-        mainActivity()?.unreadMessageChangedListener = {
+        val unread = LocalUser.user.unreadMessages
+        if (unread > 0) {
             viewModel.refresh()
+        } else {
+            viewModel.loadMessages()
         }
+        userViewModel.repository.setUnreadZero()
     }
 
     override fun viewCreated(bind: MessagesFragmentBinding) {
@@ -70,7 +79,6 @@ class MessagesFragment : BaseFragment<MessagesFragmentBinding>() {
             observe()
             initRecycler()
             initSwipeRefresh()
-            viewModel.loadMessages()
         }
     }
 }

@@ -114,7 +114,7 @@
     <string name="oila_qurmaganlar">Oila qurmagan bo\'lsin</string>
     <string name="oliy_mal">🎓Oliy malumotli bo\'lsin</string>
     <string name="bo_ydoqlar_yozmasin">Bo\'ydoqlar yozmasin</string>
-    <string name="farzand_yoq">Farzandi yoq</string>
+    <string name="farzand_yoq">Farzandi yo\'q bo\'lsin</string>
     <string name="faqat_shaxar">🏢 Shaxarlik bo\'lsin</string>
     <string name="faqat_viloyat">Viloyatlik bo\'lsin</string>
     <string name="alohidauyjoy">Alohida uy joy</string>
@@ -135,4 +135,7 @@
     <string name="suhbatlar_bo_sh">Suhbatlar bo\'sh</string>
     <string name="sample_date">10.04.2024</string>
     <string name="nomzodni_ko_rish">Nomzodni ko\'rish</string>
+    <string name="so_rov_yuborish">So\'rov yuborish</string>
+    <string name="xabarlar">Xabarlar</string>
+    <string name="nomzodim">Nomzodim</string>
 </resources>

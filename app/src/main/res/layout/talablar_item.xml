@@ -12,9 +12,9 @@
         android:background="@drawable/round_lay"
         app:cardElevation="0dp"
         app:strokeWidth="1dp"
-        app:strokeColor="#6B673AB7"
+        app:strokeColor="?colorPrimary"
         android:layout_marginStart="@dimen/dimen_12"
-        app:cardBackgroundColor="#36FFFFFF"
+        app:cardBackgroundColor="?backgroundColor"
         android:layout_marginTop="@dimen/dimen_8"
         >
 
@@ -33,11 +33,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/text_view"
-            style="@style/Subtitle2_14"
+            style="@style/Text2_15"
             android:paddingVertical="@dimen/dimen_10"
             android:paddingHorizontal="@dimen/dimen_18"
             android:text="@string/samarqand"
-            android:textColor="#3C3B3D"
+            android:textColor="?colorOnSurfaceVariant"
             />
     </com.google.android.material.card.MaterialCardView>
 </layout>

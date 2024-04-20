@@ -6,6 +6,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.uz.sovchi.R
+import com.uz.sovchi.data.filter.MyFilter
 import com.uz.sovchi.data.valid
 import com.uz.sovchi.databinding.FragmentVerifyBinding
 import com.uz.sovchi.ifNotNullOrEmpty
@@ -85,9 +86,9 @@ class VerifyFragment : BaseFragment<FragmentVerifyBinding>() {
         viewModel.verifyState.postValue(VerifyState.Verifying)
         lifecycleScope.launch {
             val user = userViewModel.authFirebaseUser()
-
             viewModel.verifyState.postValue(VerifyState.Input(inputCode))
             if (user.valid.not()) return@launch
+            MyFilter.update()
             if (user!!.name.isEmpty()) {
                 navigate(R.id.action_verifyFragment_to_getUserNameFragment)
             } else {

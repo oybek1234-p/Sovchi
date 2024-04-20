@@ -23,9 +23,9 @@
             android:id="@+id/main_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
+            android:layout_gravity="start"
             android:background="?colorSurface"
-            android:gravity="center"
+            android:gravity="start|center_vertical"
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/dimen_48">
 

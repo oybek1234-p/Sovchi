@@ -31,12 +31,22 @@
                 android:orientation="vertical"
                 android:padding="@dimen/dimen_18">
 
+
+                <TextView
+                    style="@style/Title3_17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dimen_8"
+                    android:text="Nomzod turi"
+                    android:textColor="?colorOnSurface" />
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/type_filter"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/nomzod"
+                    app:hintEnabled="false"
                     android:textSize="14sp"
                     app:boxCornerRadiusBottomEnd="@dimen/dimen_12"
                     app:boxCornerRadiusBottomStart="@dimen/dimen_12"
@@ -52,15 +62,26 @@
                         android:paddingVertical="12dp"
                         android:textSize="14sp" />
                 </com.google.android.material.textfield.TextInputLayout>
+
+
+                <TextView
+                    style="@style/Title3_17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_24"
+                    android:layout_marginBottom="@dimen/dimen_8"
+                    android:text="Manzil"
+                    android:textColor="?colorOnSurface" />
+
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/location_filter"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
                     android:hint="@string/manzili_toshkent"
                     android:textSize="14sp"
+                    app:hintEnabled="false"
                     app:boxCornerRadiusBottomEnd="@dimen/dimen_12"
                     app:boxCornerRadiusBottomStart="@dimen/dimen_12"
                     app:boxCornerRadiusTopEnd="@dimen/dimen_12"
@@ -76,12 +97,23 @@
                         android:textSize="14sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+
+                <TextView
+                    style="@style/Title3_17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_24"
+                    android:layout_marginBottom="@dimen/dimen_8"
+                    android:text="Oilaviy holati"
+                    android:textColor="?colorOnSurface" />
+
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/oilaviy_view"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
+                    app:hintEnabled="false"
                     android:hint="@string/oilaviy_holati"
                     android:textSize="14sp"
                     app:boxCornerRadiusBottomEnd="@dimen/dimen_12"
@@ -110,16 +142,25 @@
                     android:text="Yosh chegarasi"
                     android:textColor="?colorOnSurface" />
 
-                <FrameLayout
+                <com.google.android.material.slider.RangeSlider
+                    android:id="@+id/age_slider"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dimen_12"
+                    android:valueFrom="18"
+                    android:valueTo="70"
+                    app:values="@array/initial_slider_values" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_4"
                     >
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Yoshdan"
-                        style="@style/Text1_16"
+                        style="@style/Text1_14"
                         android:textColor="?colorOnSurfaceVariant"
                         />
                     <TextView
@@ -127,18 +168,10 @@
                         android:layout_height="wrap_content"
                         android:text="Yoshgacha"
                         android:layout_gravity="end"
-                        style="@style/Text1_16"
+                        style="@style/Text1_14"
                         android:textColor="?colorOnSurfaceVariant"
                         />
                 </FrameLayout>
-                <com.google.android.material.slider.RangeSlider
-                    android:id="@+id/age_slider"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:valueFrom="18"
-                    android:valueTo="70"
-                    app:values="@array/initial_slider_values" />
 
                 <com.google.android.material.checkbox.MaterialCheckBox
                     android:id="@+id/imkonchek_check_box"
@@ -158,6 +191,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dimen_18"
+            app:icon="@drawable/search_ic"
+            app:iconGravity="textStart"
             android:text="@string/qidirish"
             app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>

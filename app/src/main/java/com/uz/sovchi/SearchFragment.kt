@@ -22,6 +22,7 @@ import com.uz.sovchi.data.nomzod.KUYOV
 import com.uz.sovchi.data.nomzod.OilaviyHolati
 import com.uz.sovchi.databinding.AgeWhatSheetBinding
 import com.uz.sovchi.databinding.SearchFragmentBinding
+import com.uz.sovchi.databinding.WeWillNotifySheetBinding
 import com.uz.sovchi.databinding.WhoYouNeedBinding
 import com.uz.sovchi.ui.base.BaseFragment
 import com.uz.sovchi.ui.nomzod.NomzodDetailsFragment
@@ -85,11 +86,11 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
     }
 
     private fun showWhoNeedSheet() {
-        val showed = whoNeedCache.getBoolean("showed", false)
+        val showed = whoNeedCache.getBoolean("showedFilter", false)
         if (showed) return
         val setShowed = {
             whoNeedCache.edit {
-                putBoolean("showed", true)
+                putBoolean("showedFilter", true)
             }
         }
         val bottomSheet = BottomSheetDialog(requireContext())
@@ -125,6 +126,24 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
         }
     }
 
+    private fun showAlertSheet() {
+        val bottomSheet = BottomSheetDialog(requireContext())
+        val binding =
+            WeWillNotifySheetBinding.inflate(LayoutInflater.from(requireContext()), null, false)
+        bottomSheet.setContentView(binding.root)
+        bottomSheet.setCancelable(false)
+        binding.davom.setOnClickListener {
+            bottomSheet.dismiss()
+        }
+        bottomSheet.show()
+        bottomSheet.setOnDismissListener {
+            mainActivity()?.requestNotificationPermission()
+            updateYoshChegarasi()
+            checkFilterChangedFromDefault()
+            viewModel.checkNeedRefresh()
+        }
+    }
+
     private fun showAgeSheet(kelin: Boolean) {
         val bottomSheet = BottomSheetDialog(requireContext())
         val binding =
@@ -133,10 +152,7 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
         bottomSheet.setCancelable(false)
         bottomSheet.show()
         bottomSheet.setOnDismissListener {
-            mainActivity()?.requestNotificationPermission()
-            updateYoshChegarasi()
-            checkFilterChangedFromDefault()
-            viewModel.checkNeedRefresh()
+            showAlertSheet()
         }
         binding.apply {
             title.text = "${if (kelin) "Kelin" else "Kuyov"} yosh chegarasini belgilang?"
@@ -163,7 +179,6 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
                 }
             })
             save.setOnClickListener {
-                MyFilter.update()
                 bottomSheet.dismiss()
             }
 

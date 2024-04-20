@@ -117,7 +117,7 @@
                             android:lineSpacingExtra="@dimen/dimen_12"
                             android:ellipsize="end"
                             android:maxLines="2"
-                            android:textColor="?colorPrimary"
+                            android:textColor="?colorOnSurface"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/type_view"
                             app:drawableTint="?colorOnSurfaceVariant" />
@@ -133,7 +133,7 @@
                             android:paddingHorizontal="@dimen/dimen_18"
                             android:paddingVertical="@dimen/dimen_8"
                             android:background="@drawable/round_lay"
-                            android:backgroundTint="#11673AB7"
+                            android:backgroundTint="?backgroundColor"
                             android:text="@string/oilaviy_holati"
                             android:textColor="?colorPrimary"
                             app:layout_constraintStart_toStartOf="parent"
@@ -147,30 +147,17 @@
                         android:orientation="vertical"
                         >
                         <TextView
-                            android:id="@+id/farzandlar_view"
-                            style="@style/Headline3_15"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/farzandlar"
-                            android:paddingVertical="@dimen/dimen_4"
-                            android:paddingHorizontal="@dimen/dimen_12"
-                            android:background="@drawable/round_lay"
-                            android:backgroundTint="?backgroundColor"
-                            android:gravity="start"
-                            android:textColor="#4B3780"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/type_view" />
-
-                        <TextView
                             android:id="@+id/params_view"
                             style="@style/Text2_15"
                             android:layout_gravity="start|center_vertical"
                             android:fontFamily="@font/roboto_regular"
                             android:layout_width="wrap_content"
+                            android:drawablePadding="@dimen/dimen_8"
+                            android:drawableTint="?colorPrimary"
                             android:layout_height="wrap_content"
                             android:text="@string/parametrlar"
-                            android:layout_marginTop="@dimen/dimen_12"
-                            android:textColor="#C81D1B20"
+                            android:gravity="center"
+                            android:textColor="?colorOnSurfaceVariant"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/type_view" />
 
@@ -202,18 +189,18 @@
 
                         <TextView
                             android:id="@+id/manzil_view"
-                            style="@style/Headline3_15"
+                            style="@style/Text2_15"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:drawablePadding="@dimen/dimen_8"
                             android:gravity="center"
                             android:text="@string/manzili_toshkent"
                             android:layout_marginEnd="@dimen/dimen_24"
-                            android:textColor="?colorOnSurface"
+                            android:textColor="?colorOnSurfaceVariant"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/type_view"
                             app:drawableStartCompat="@drawable/location_ic"
-                            app:drawableTint="?colorOnSurface" />
+                            app:drawableTint="@color/iconColor" />
 
                         <TextView
                             android:id="@+id/millati_view"
@@ -221,51 +208,49 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/o_zbek"
-                            android:textColor="#C81D1B20"
+                            android:textColor="?colorOnSurfaceVariant"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/type_view" />
 
 
                     </LinearLayout>
 
+
                     <TextView
                         android:id="@+id/tgj_view"
                         style="@style/Text2_15"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/dimen_18"
+                        android:layout_marginTop="@dimen/dimen_20"
                         android:text="@string/tugilgan_joyi"
                         android:gravity="center"
+                        android:drawableStart="@drawable/globus_ic"
                         android:drawablePadding="@dimen/dimen_8"
-                        android:textColor="#C81D1B20"
+                        android:textColor="?colorOnSurfaceVariant"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/type_view"
-                        app:drawableTint="?colorOnSurfaceVariant" />
+                        app:drawableTint="@color/iconColor" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:layout_marginTop="@dimen/dimen_12"
-                        android:background="?backgroundColor"
-                        />
+
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:paddingTop="@dimen/dimen_18"
+                        android:layout_marginBottom="@dimen/dimen_12"
+                        android:layout_marginTop="@dimen/dimen_20"
                         >
                         <TextView
                             android:id="@+id/oqish_view"
                             style="@style/Text2_15"
                             android:drawableStart="@drawable/study_ic"
                             android:drawablePadding="@dimen/dimen_8"
-                            android:layout_marginBottom="@dimen/dimen_18"
                             android:gravity="start|center"
-                            android:drawableTint="?colorOnSurfaceVariant"
+                            android:drawableTint="@color/iconColor"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/o_qish_malumoti"
-                            android:textColor="#C81D1B20"
+                            android:textColor="?colorOnSurfaceVariant"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/type_view" />
 
@@ -281,11 +266,35 @@
                         android:drawablePadding="@dimen/dimen_8"
                         android:text="@string/ish_joyi"
                         android:gravity="center_vertical"
-                        android:textColor="#C81D1B20"
+                        android:textColor="?colorOnSurfaceVariant"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/type_view"
                         app:drawableStartCompat="@drawable/work_ic"
-                        app:drawableTint="?colorOnSurfaceVariant" />
+                        app:drawableTint="@color/iconColor" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:layout_marginBottom="@dimen/dimen_12"
+
+                        >
+                        <TextView
+                            android:id="@+id/farzandlar_view"
+                            style="@style/Text2_15"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/farzandlar"
+                            android:drawablePadding="@dimen/dimen_8"
+                            android:backgroundTint="?backgroundColor"
+                            android:gravity="start"
+                            android:textColor="?colorOnSurfaceVariant"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/type_view"
+                            app:drawableTint="?colorPrimary"
+                            app:drawableStartCompat="@drawable/child_ic" />
+
+                    </LinearLayout>
                 </LinearLayout>
 
                 <View
@@ -296,12 +305,11 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/qo_shimcha"
-                    android:layout_marginTop="@dimen/dimen_12"
+                    android:text="Haqida:"
+                    android:layout_marginTop="@dimen/dimen_18"
                     android:layout_marginHorizontal="@dimen/dimen_12"
-                    style="@style/Text2_15"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textColor="?colorOnSurfaceVariant"
+                    style="@style/Headline3_15"
+                    android:textColor="?colorOnSurface"
 
                     />
                 <LinearLayout
@@ -319,7 +327,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:lineSpacingExtra="@dimen/dimen_4"
-                        android:textColor="#2E2C30" />
+                        android:textColor="?colorOnSurface" />
 
                 </LinearLayout>
 
@@ -335,17 +343,17 @@
                     android:layout_height="wrap_content"
                     android:text="@string/talablar"
                     android:id="@+id/talablar_title"
-                    style="@style/Text1_14"
+                    style="@style/Headline3_15"
                     android:layout_marginBottom="@dimen/dimen_8"
                     android:layout_marginHorizontal="@dimen/dimen_12"
                     android:layout_marginTop="@dimen/dimen_12"
-                    android:textColor="?colorOnSurfaceVariant"
+                    android:textColor="?colorOnSurface"
 
                     />
 
                 <TextView
                     android:id="@+id/yosh_chegarasi_view"
-                    style="@style/Subtitle2_14"
+                    style="@style/Text2_15"
                     android:paddingVertical="@dimen/dimen_10"
                     android:paddingHorizontal="@dimen/dimen_18"
                     android:layout_width="match_parent"
@@ -354,7 +362,7 @@
                     android:background="@drawable/round_lay_stroke"
                     android:layout_marginTop="@dimen/dimen_4"
                     android:layout_marginHorizontal="@dimen/dimen_12"
-                    android:textColor="?colorOnSurface"
+                    android:textColor="?colorOnSurfaceVariant"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/type_view" />
 
@@ -393,18 +401,72 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/type_view" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bog'lanish"
+                    android:layout_marginTop="@dimen/dimen_18"
+                    android:layout_marginHorizontal="@dimen/dimen_12"
+                    style="@style/Headline3_15"
+                    android:textColor="?colorOnSurface"
+
+                    />
+
+                <LinearLayout
+                    android:id="@+id/phone_View"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?colorSurface"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="@dimen/dimen_12"
+                    android:paddingVertical="@dimen/dimen_8"
+                    android:clipToPadding="false"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/callview"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/telefon_qilish"
+                        android:padding="@dimen/dimen_12"
+                        app:icon="@drawable/call_ic"
+                        app:iconGravity="textStart"
+                        app:tint="@color/white" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableTint="@color/white"
+                        android:text="@string/so_rov_yuborish"
+                        android:visibility="gone"
+                        app:icon="@drawable/telegram_ic"
+                        app:iconGravity="textEnd" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/request_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableTint="@color/white"
+                        android:text="Telegram"
+                        app:icon="@drawable/telegram_ic"
+                        app:iconGravity="textEnd" />
+
+                </LinearLayout>
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_4"
+                    android:layout_marginTop="@dimen/dimen_24"
                     android:orientation="horizontal"
-                    android:paddingStart="@dimen/dimen_12"
                     android:layout_marginHorizontal="@dimen/dimen_12"
                     app:layout_constraintTop_toBottomOf="@+id/nomzod_view">
 
                     <TextView
                         android:id="@+id/joylagan_odam_view"
-                        style="@style/Text2_15"
+                        style="@style/Text1_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColorHighlight="?attr/colorOnSurfaceVariant"
@@ -414,7 +476,7 @@
 
                     <TextView
                         android:id="@+id/date_view"
-                        style="@style/Text2_15"
+                        style="@style/Text1_14"
                         android:gravity="start"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -423,6 +485,13 @@
                         app:layout_constraintTop_toBottomOf="@+id/type_view" />
 
                 </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginTop="@dimen/dimen_18"
+                    android:background="?backgroundColor"
+                    />
 
                 <LinearLayout
                     android:visibility="gone"
@@ -440,19 +509,18 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:text="@string/o_xshash_nomzodlar"
                         android:layout_marginTop="@dimen/dimen_12"
                         android:layout_marginHorizontal="@dimen/dimen_12"
-                        style="@style/Title2_20"
+                        style="@style/Headline3_15"
                         android:fontFamily="@font/roboto_bold"
                         android:textColor="?colorOnSurface"
-
                         />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:layout_width="match_parent"
                         android:paddingHorizontal="@dimen/dimen_2"
-                        android:layout_marginTop="@dimen/dimen_12"
                         android:clipToOutline="false"
                         android:layout_height="wrap_content"
                         android:clipToPadding="false"
@@ -475,40 +543,5 @@
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
-        <LinearLayout
-            android:id="@+id/phone_View"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?colorSurface"
-            android:elevation="@dimen/dimen_12"
-            android:paddingHorizontal="@dimen/dimen_12"
-            android:paddingVertical="@dimen/dimen_8"
-            app:layout_constraintBottom_toBottomOf="@+id/container"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <ImageView
-                android:layout_width="@dimen/dimen_48"
-                android:layout_height="38dp"
-                android:id="@+id/callview"
-                android:src="@drawable/call_ic"
-                android:layout_gravity="center"
-                android:visibility="gone"
-                android:background="@drawable/round_lay"
-                android:backgroundTint="?colorPrimary"
-                android:layout_marginEnd="@dimen/dimen_12"
-                android:padding="@dimen/dimen_12"
-                app:tint="@color/white" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/request_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableTint="@color/white"
-                app:icon="@drawable/telegram_ic"
-                app:iconGravity="textEnd"
-                android:text="Telegram" />
-
-        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

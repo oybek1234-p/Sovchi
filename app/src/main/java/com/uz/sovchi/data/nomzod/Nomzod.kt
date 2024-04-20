@@ -1,10 +1,12 @@
 package com.uz.sovchi.data.nomzod
 
+import android.text.Html
+import android.text.Spanned
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.google.firebase.firestore.Exclude
 import com.uz.sovchi.R
 import com.uz.sovchi.appContext
+import com.uz.sovchi.data.location.City
 
 const val KELIN = 0
 const val KUYOV = 1
@@ -15,16 +17,15 @@ val nomzodTypes = listOf(
 )
 
 enum class Talablar(val textId: Int) {
-    IkkinchiRuzgorgaTaqiq(R.string.ruzgor_taqiq),
-    OilaQurmagan(R.string.oila_qurmaganlar),
-    OliyMalumotli(R.string.oliy_mal),
-    BuydoqlarTaqiq(R.string.bo_ydoqlar_yozmasin),
-    FarzandiYoq(R.string.farzand_yoq),
-    FaqatShaxarlik(R.string.faqat_shaxar),
-    FaqatViloyat(R.string.faqat_viloyat),
-    AlohidaUyJoy(R.string.alohidauyjoy),
-    Hijoblik(R.string.hijobda),
-    QonuniyAjrashgan(R.string.qonuniy_ajrashgan),
+    IkkinchiRuzgorgaTaqiq(R.string.ruzgor_taqiq), OilaQurmagan(R.string.oila_qurmaganlar), OliyMalumotli(
+        R.string.oliy_mal
+    ),
+    BuydoqlarTaqiq(R.string.bo_ydoqlar_yozmasin), FarzandiYoq(R.string.farzand_yoq), FaqatShaxarlik(
+        R.string.faqat_shaxar
+    ),
+    FaqatViloyat(R.string.faqat_viloyat), AlohidaUyJoy(R.string.alohidauyjoy), Hijoblik(R.string.hijobda), QonuniyAjrashgan(
+        R.string.qonuniy_ajrashgan
+    ),
 }
 
 fun getNomzodTypeText(id: Int) = nomzodTypes.find { it.first == id }?.second
@@ -58,7 +59,8 @@ data class Nomzod(
     var joylaganOdam: String = "",
     var mobilRaqam: String = "",
     var uploadDate: Long = System.currentTimeMillis(),
-    var uploadDateString: String = ""
+    var uploadDateString: String = "",
+    var views: Int = 0
 ) {
     constructor() : this(id = "")
 }
@@ -75,10 +77,19 @@ fun Nomzod.paramsText(): String {
 
 }
 
-fun Nomzod.getYoshChegarasi(): String {
+fun Nomzod.getTugilganJoyi(): Spanned {
+    return Html.fromHtml(appContext.getString(R.string.tugilgan_joyi) + ": <b>${tugilganJoyi}<\b>")
+}
+
+fun Nomzod.getManzilText(): Spanned {
+    return Html.fromHtml("Manzil" + ": <b>${appContext.getString(City.valueOf(manzil).resId)}<\b>")
+}
+
+fun Nomzod.getYoshChegarasi(): Spanned {
     var text =
         "${if (type == KUYOV) appContext.getString(R.string.kelinlikga) else appContext.getString(R.string.kuyovlikga)} yosh chegarasi:"
     if (yoshChegarasiGacha > 0 || yoshChegarasiDan > 0) {
+        text += "<b>"
         if (yoshChegarasiDan > 0) {
             text += " $yoshChegarasiDan dan"
         }
@@ -89,9 +100,10 @@ fun Nomzod.getYoshChegarasi(): String {
             text += " $yoshChegarasiGacha gacha"
         }
     } else {
-        text += " ${appContext.getString(R.string.taqdir)}"
+        text += ""
     }
-    return text
+    text += "<\b>"
+    return Html.fromHtml(text)
 }
 
 enum class OilaviyHolati(val resourceId: Int) {

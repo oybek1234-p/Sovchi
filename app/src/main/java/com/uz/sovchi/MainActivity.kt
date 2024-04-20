@@ -152,7 +152,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    var unreadMessageChangedListener: ((count: Int) -> Unit)? = null
+    private var unreadMessageChangedListener: ((count: Int) -> Unit)? = null
 
     private fun initUser() {
         LocalUser.getUser(appContext)
@@ -160,12 +160,13 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             ViewedNomzods.init()
         }
-        Firebase.messaging.subscribeToTopic(MyFilter.filter.androidId)
         if (LocalUser.user.valid) {
             SavedRepository.loadSaved { }
+            Firebase.messaging.subscribeToTopic(LocalUser.user.phoneNumber.removePrefix("+"))
             viewModel.repository.updateLastSeenTime()
             observeUnMessages()
         }
+
     }
 
     override fun onNewIntent(intent: Intent?) {

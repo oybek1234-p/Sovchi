@@ -1,8 +1,11 @@
 package com.uz.sovchi.data.recombee
 
 import com.recombee.api_client.RecombeeClient
+import com.recombee.api_client.api_requests.AddBookmark
 import com.recombee.api_client.api_requests.AddDetailView
 import com.recombee.api_client.api_requests.AddPurchase
+import com.recombee.api_client.api_requests.DeleteBookmark
+import com.recombee.api_client.api_requests.DeletePurchase
 import com.recombee.api_client.api_requests.RecommendItemsToItem
 import com.recombee.api_client.api_requests.RecommendItemsToUser
 import com.recombee.api_client.api_requests.RecommendNextItems
@@ -28,12 +31,6 @@ object RecombeeDatabase {
 
     private val scope = CoroutineScope(SupervisorJob())
 
-    const val randomBooster1 = "if 'date' >= now() - 24 * 60 * 60 > 0 then 1.5\n" +
-            "  else if 'date' >= now() - 7 * 24 * 60 * 60 then 1.3\n" +
-            "  else random()"
-
-    fun getBooster()  = listOf(randomBooster1).random()
-
     fun getSimilarNomzods(nomzodId: String, count: Int, result: (list: List<Nomzod>) -> Unit) {
         scope.launch {
             try {
@@ -49,7 +46,7 @@ object RecombeeDatabase {
                 val response = client.send(
                     RecommendItemsToItem(
                         nomzodId, null, count.toLong()
-                    ).setReturnProperties(true).setFilter("$filter AND 'nid' != $nomzodId").setBooster(getBooster())
+                    ).setReturnProperties(true).setFilter("$filter AND 'nid' != $nomzodId")
                 )
                 response.forEach { it ->
                     val rec = it.values
@@ -88,6 +85,30 @@ object RecombeeDatabase {
         return filter
     }
 
+    fun deleteSaved(id: String) {
+        try {
+            client.send(DeleteBookmark(LocalUser.user.uid, id))
+        } catch (e: Exception) {
+            //
+        }
+    }
+
+    fun setSaved(id: String) {
+        try {
+            client.send(AddBookmark(LocalUser.user.uid, id))
+        } catch (e: Exception) {
+            //
+        }
+    }
+
+    fun deleteFromPurchase(id: String) {
+        try {
+            client.send(DeletePurchase(LocalUser.user.uid, id))
+        } catch (e: Exception) {
+            //
+        }
+    }
+
     fun getRecommendForUser(
         recomId: String,
         type: Int,
@@ -102,14 +123,16 @@ object RecombeeDatabase {
         scope.launch {
             try {
                 val response = if (recomId.isEmpty()) {
-                    var req = RecommendItemsToUser(userId.ifEmpty { null }, limit.toLong()).setReturnProperties(true)
+                    var req = RecommendItemsToUser(
+                        userId.ifEmpty { null }, limit.toLong()
+                    ).setReturnProperties(true)
                     val filter = buildFilter(
                         type, manzil, userId, oilaviyHolati, yoshChegarasiGacha, yoshChegarasiDan
                     )
                     if (filter.isNotEmpty()) {
                         req = req.setFilter(filter)
                     }
-                    client.send(req.setScenario("homePage").setBooster(getBooster()))
+                    client.send(req.setScenario("homePage"))
                 } else {
                     client.send(RecommendNextItems(recomId, limit.toLong()))
                 }
@@ -141,7 +164,7 @@ object RecombeeDatabase {
         }
     }
 
-    fun setNomzodProfileViewed(userId: String, nomzodId: String) {
+    fun setConnectedToNomzod(userId: String, nomzodId: String) {
         if (userId.isEmpty()) return
         scope.launch {
             try {

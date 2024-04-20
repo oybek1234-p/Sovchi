@@ -8,12 +8,12 @@ plugins {
 android {
     namespace = "com.uz.sovchi"
     compileSdk = 34
-    
+
     defaultConfig {
         applicationId = "com.uz.sovchi"
         minSdk = 24
         targetSdk = 34
-        versionCode = 54
+        versionCode = 62
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

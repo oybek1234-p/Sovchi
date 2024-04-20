@@ -17,6 +17,7 @@ import com.uz.sovchi.data.nomzod.KELIN
 import com.uz.sovchi.data.nomzod.OilaviyHolati
 import com.uz.sovchi.data.nomzod.getNomzodTypeText
 import com.uz.sovchi.data.nomzod.nomzodTypes
+import com.uz.sovchi.data.valid
 import java.util.UUID
 
 var uniqueID: String = ""
@@ -39,16 +40,17 @@ private const val PREF_UNIQUE_ID = "PREF_UNIQUE_ID"
 @Entity
 data class SavedFilterUser(
     @PrimaryKey var userId: String,
-    @PrimaryKey var androidId: String,
+    @PrimaryKey var phoneNumber: String,
     var manzil: String,
     var nomzodType: Int,
     var oilaviyHolati: String,
     var yoshChegarasiDan: Int,
     var yoshChegarasiGacha: Int,
-    var imkonChek: Boolean
+    var imkonChek: Boolean,
+    var date: Long
 ) {
     constructor() : this(
-        LocalUser.user.uid, uniqueID, City.Hammasi.name, KELIN, OilaviyHolati.Aralash.name, 18, 90, false
+        LocalUser.user.uid, uniqueID, City.Hammasi.name, KELIN, OilaviyHolati.Aralash.name, 18, 90, false,0
     )
 }
 
@@ -58,7 +60,7 @@ object MyFilter {
     const val AGE_MAX = 70
 
     private var savedFilterPrefs =
-        appContext.getSharedPreferences("SavedFilter", Context.MODE_PRIVATE)
+        appContext.getSharedPreferences("SavedFilters", Context.MODE_PRIVATE)
 
     var filter = SavedFilterUser()
 
@@ -97,20 +99,12 @@ object MyFilter {
             putInt("yoshChegDan", filter.yoshChegarasiDan)
             putInt("yoshChegGacha", filter.yoshChegarasiGacha)
             putBoolean("imChek", filter.imkonChek)
+            filter.date = System.currentTimeMillis()
             apply()
-            filter.userId = LocalUser.user.uid
-            try {
-                FirebaseMessaging.getInstance().token.addOnCompleteListener {
-                    val token = it.result
-                    if (token.isEmpty()) {
-                        filter.androidId = uniqueID
-                    } else {
-                        filter.androidId = token
-                    }
-                    filtersReference.document(filter.androidId).set(filter)
-                }
-            } catch (e: Exception) {
-                //
+            if (LocalUser.user.valid) {
+                filter.userId = LocalUser.user.uid
+                filter.phoneNumber = LocalUser.user.phoneNumber.removePrefix("+")
+                filtersReference.document(filter.userId).set(filter)
             }
         }
 

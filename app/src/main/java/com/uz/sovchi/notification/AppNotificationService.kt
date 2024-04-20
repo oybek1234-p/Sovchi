@@ -13,11 +13,11 @@ import com.uz.sovchi.R
 import com.uz.sovchi.data.filter.MyFilter
 import com.uz.sovchi.showToast
 
-
 class AppNotificationService : FirebaseMessagingService() {
     
     override fun onNewToken(token: String) {
-        MyFilter.update()
+        if (token == "BLACKLISTED") return
+     //   MyFilter.update()
     }
 
     private val chanelID = "sovchi"

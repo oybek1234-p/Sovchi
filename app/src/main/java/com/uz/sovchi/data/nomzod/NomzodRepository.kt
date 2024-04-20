@@ -1,14 +1,13 @@
 package com.uz.sovchi.data.nomzod
 
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.uz.sovchi.data.ImageUploader
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.location.City
-import com.uz.sovchi.showToast
 import com.uz.sovchi.ui.photo.PickPhotoFragment
-import java.sql.Timestamp
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -64,6 +63,16 @@ class NomzodRepository {
             }
         } else {
             uploadNext.invoke()
+        }
+    }
+    
+    fun increaseNomzodViews(nomzodId: String) {
+        if (nomzodId.isEmpty()) return
+        try {
+            nomzodlarReference.document(nomzodId)
+                .update(Nomzod::views.name, FieldValue.increment(1))
+        } catch (e: Exception) {
+            //
         }
     }
 

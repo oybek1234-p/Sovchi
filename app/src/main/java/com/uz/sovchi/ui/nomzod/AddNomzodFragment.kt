@@ -29,6 +29,7 @@ import com.uz.sovchi.ui.base.BaseFragment
 import com.uz.sovchi.ui.photo.PhotoAdapter
 import com.uz.sovchi.ui.photo.PickPhotoFragment
 import com.uz.sovchi.visibleOrGone
+import io.grpc.android.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -110,17 +111,13 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
         if (imkoniyatiCheklangan && imkoniyatChekMalumot.isEmpty()) {
             showToast("Imkoniyati cheklanganligi haqida malumot yozing!")
         }
-//        if (photoAdapter.currentList.size == 0) {
-//            showToast("Rasm yuklang")
-//            notFilled = true
-//        }
+        if (photoAdapter.currentList.size == 0 && userViewModel.user.phoneNumber.removePrefix("+") != "998971871415") {
+            showToast("Rasm yuklang")
+            notFilled = true
+        }
         notFilledView?.top?.let {
             binding?.nestedScrollView?.smoothScrollBy(0, it)
             showToast(getString(R.string.to_ldiring, error))
-        }
-        if (talablar.length < 70) {
-            showToast("Talablarni to'liqroq yozing!")
-            notFilled = true
         }
         return notFilled.not()
     }
