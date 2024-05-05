@@ -39,7 +39,6 @@ import com.uz.sovchi.databinding.ActivityMainBinding
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var navcontroller: NavController
@@ -69,7 +68,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.apply {
             navHost =
-                (supportFragmentManager.findFragmentById(R.id.view_container) as NavHostFragment)
+                (supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment)
             navcontroller = navHost.navController
             bottomNavView.setupWithNavController(navcontroller)
         }
@@ -161,8 +160,9 @@ class MainActivity : AppCompatActivity() {
             ViewedNomzods.init()
         }
         if (LocalUser.user.valid) {
+            MyFilter.update()
             SavedRepository.loadSaved { }
-            Firebase.messaging.subscribeToTopic(LocalUser.user.phoneNumber.removePrefix("+"))
+            Firebase.messaging.subscribeToTopic(LocalUser.user.phoneNumber.removePrefix("+") + "topic")
             viewModel.repository.updateLastSeenTime()
             observeUnMessages()
         }

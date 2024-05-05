@@ -8,17 +8,20 @@ import android.widget.AutoCompleteTextView
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
+import coil.load
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.material.textfield.TextInputLayout
 import com.uz.sovchi.R
 import com.uz.sovchi.data.LocalUser
-import com.uz.sovchi.data.UserRepository
 import com.uz.sovchi.data.location.City
 import com.uz.sovchi.data.nomzod.KUYOV
 import com.uz.sovchi.data.nomzod.Nomzod
+import com.uz.sovchi.data.nomzod.NomzodState
+import com.uz.sovchi.data.nomzod.NomzodTarif
 import com.uz.sovchi.data.nomzod.OilaviyHolati
 import com.uz.sovchi.data.nomzod.OqishMalumoti
 import com.uz.sovchi.data.nomzod.Talablar
@@ -29,13 +32,8 @@ import com.uz.sovchi.ui.base.BaseFragment
 import com.uz.sovchi.ui.photo.PhotoAdapter
 import com.uz.sovchi.ui.photo.PickPhotoFragment
 import com.uz.sovchi.visibleOrGone
-import io.grpc.android.BuildConfig
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
@@ -68,11 +66,21 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
     private val imkoniyatChekMalumot: String get() = binding?.imkoniyatiMalumotView?.editText?.text.toString()
     private var imkoniyatiCheklangan = false
 
-    private var nomzodId: String? = null
+    private var uploadDate: Long? = null
+
+    private val viewModel: AddNomzodViewModel by viewModels()
+
+    private val nomzodId: String? get() = viewModel.nomzodId
+
+    private var isAdmin = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        nomzodId = arguments?.getString("nId")
+        val id = arguments?.getString("nId")
+        isAdmin = arguments?.getBoolean("admin") ?: false
+        if (id != null) {
+            viewModel.nomzodId = id
+        }
     }
 
     private val needNotFillViews = arrayOf(
@@ -85,7 +93,8 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
         R.id.ish_view,
         R.id.yosh_chegarasi_dan_view,
         R.id.yosh_chegarasi_gacha_view,
-        R.id.ismi_view
+        R.id.ismi_view,
+        R.id.telegram_view
     )
 
     private fun checkEditTextsFilled(): Boolean {
@@ -132,19 +141,25 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
             binding?.progressBar?.visibleOrGone(value)
         }
 
-    private fun saveNomzod() {
+    private fun saveNomzod(cache: Boolean = false) {
         if (uploading) return
         val allFilled = checkEditTextsFilled()
         if (allFilled.not()) {
             return
         }
+        val state =
+            if (nomzodTarif != NomzodTarif.STANDART) NomzodState.NOT_PAID else NomzodState.CHECKING
         val photos = photoAdapter.currentList
+        val upDate = uploadDate ?: System.currentTimeMillis()
         val nomzod = Nomzod(
             id = if (nomzodId.isNullOrEmpty()) System.currentTimeMillis()
                 .toString() else nomzodId!!,
             userId = LocalUser.user.uid,
             name = name.trim().capitalize(Locale.ROOT),
             type = nomzodType,
+            state = state,
+            tarif = nomzodTarif.name,
+            currentNomzod?.paymentCheckPhotoUrl ?: "",
             photos.map { it.path },
             tugilganYili,
             tugilganJoyi.trim().capitalize(),
@@ -165,20 +180,33 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
             telegramLink = telegramLink,
             joylaganOdam,
             mobilRaqam,
-            uploadDateString = timestamp()
+            uploadDateString = timestamp(upDate),
+            uploadDate = upDate
         )
+        if (cache) {
+            currentNomzod = nomzod
+            return
+        }
         uploading = true
-        userViewModel.repository
         lifecycleScope.launch {
             nomzodViewModel.repository.uploadNewMyNomzod(nomzod) {
                 uploading = false
                 userViewModel.repository.setHasNomzod(true)
+
                 closeFragment()
+                if (nomzodTarif != NomzodTarif.STANDART) {
+                    navigate(R.id.paymentGetCheckFragment, Bundle().apply {
+                        putString("value", nomzod.id)
+                        putString("tarif", nomzod.tarif)
+                    })
+                } else {
+                    navigate(R.id.nomzodUploadSuccessFragment)
+                }
             }
         }
     }
-    
-    private fun timestamp(): String = java.sql.Timestamp(System.currentTimeMillis()).toString()
+
+    private fun timestamp(date: Long): String = java.sql.Timestamp(date).toString()
 
     private var manzilSelected = City.Hammasi.name
     private var oilaviyHolatiSelected = OilaviyHolati.Aralash.name
@@ -189,7 +217,7 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
     }
 
     private val photoAdapter: PhotoAdapter by lazy {
-        PhotoAdapter { del,pos, model ->
+        PhotoAdapter { del, pos, model,view ->
             if (del) {
                 photoAdapter.currentList.toMutableList().apply {
                     remove(model)
@@ -212,9 +240,16 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                 }
                 findNavController().popBackStack()
             }
-
             with(currentNomzod!!) {
+                if (isAdmin) {
+                    checkView.isVisible = true
+                    chekTitle.isVisible = true
+                    val check = paymentCheckPhotoUrl
+                    checkView.load(check)
+                }
                 //Photo
+                this@AddNomzodFragment.uploadDate = uploadDate
+
                 photoRecyclerView.adapter = photoAdapter.apply {
                     submitList(photos.map { PickPhotoFragment.Image(it) })
                 }
@@ -300,7 +335,8 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                         farzandlarView.isVisible = true
                     }
                 }
-                val nomzodTypeAdapter = ArrayAdapter(requireContext(),
+                val nomzodTypeAdapter = ArrayAdapter(
+                    requireContext(),
                     R.layout.list_item,
                     nomzodTypes.map { it.second })
                 typeView.editText?.apply {
@@ -340,7 +376,6 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                             //
                         }
                         talablarListView.layoutManager = FlexboxLayoutManager(requireContext())
-
                         ismiView.editText?.setText(name)
                         tgyView.editText?.setText(tugilganYili.toStringOrEmpty())
                         tgjView.editText?.setText(tugilganJoyi)
@@ -369,9 +404,25 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                 imkoniyatiMalumotView.visibleOrGone(isChecked)
             }
             saveView.setOnClickListener {
-                saveNomzod()
+                startSaving()
             }
         }
+    }
+
+    private var nomzodTarif: NomzodTarif = NomzodTarif.STANDART
+
+    private fun startSaving() {
+        if (checkEditTextsFilled().not()) {
+            return
+        }
+        setFragmentResultListener("payResult") { key, result ->
+            val type = result.getString("result") ?: ""
+            val tarif = NomzodTarif.valueOf(type)
+            nomzodTarif = tarif
+            saveNomzod()
+        }
+        saveNomzod(true)
+        navigate(R.id.paymentFragment)
     }
 
     private fun Int.toStringOrEmpty(): String {
@@ -398,11 +449,15 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
         bind.apply {
             toolbar.setUpBackButton(this@AddNomzodFragment)
 
-            if (nomzodId.isNullOrEmpty()) {
-                currentNomzod = Nomzod()
+            if (currentNomzod != null) {
                 initUi()
             } else {
-                getNomzod()
+                if (nomzodId.isNullOrEmpty()) {
+                    currentNomzod = Nomzod()
+                    initUi()
+                } else {
+                    getNomzod()
+                }
             }
         }
     }

@@ -18,7 +18,7 @@ class SearchAdapter(
     val next: () -> Unit,
     private val onClick: (nomzod: Nomzod) -> Unit,
     private val onLiked: ((liked: Boolean, nomzodId: String) -> Unit)? = null
-    ) :
+) :
     BaseAdapter<Nomzod, NomzodItemBinding>(R.layout.nomzod_item, EmptyDiffUtil()) {
 
     override fun onViewCreated(holder: ViewHolder<NomzodItemBinding>, viewType: Int) {
@@ -28,23 +28,30 @@ class SearchAdapter(
                 onClick.invoke(currentList[holder.adapterPosition])
             }
             likeButton.setOnClickListener {
-                if (LocalUser.user.valid.not()) {
-                    showToast("Akkauntga kiring!")
-                    return@setOnClickListener
-                }
                 val nomzod = currentList[holder.adapterPosition]
-                val isLiked = SavedRepository.isNomzodLiked(nomzod.id)
-                SavedRepository.apply {
-                    if (savedLoading.value == true) return@setOnClickListener
-                    if (isLiked) {
-                        removeFromSaved(nomzod.id)
-                    } else {
-                        addToSaved(nomzod)
-                    }
-                    onLiked?.invoke(isLiked.not(), nomzod.id)
-                    notifyItemChanged(holder.adapterPosition)
+                val isLiked = likeItem(nomzod)
+                onLiked?.invoke(isLiked.not(), nomzod.id)
+                notifyItemChanged(holder.adapterPosition)
+            }
+        }
+    }
+
+    companion object {
+        fun likeItem(nomzod: Nomzod): Boolean {
+            if (LocalUser.user.valid.not()) {
+                showToast("Akkauntga kiring!")
+                return false
+            }
+            val isLiked = SavedRepository.isNomzodLiked(nomzod.id)
+            SavedRepository.apply {
+                if (savedLoading.value == true) return false
+                if (isLiked) {
+                    removeFromSaved(nomzod.id)
+                } else {
+                    addToSaved(nomzod)
                 }
             }
+            return isLiked
         }
     }
 
@@ -52,7 +59,7 @@ class SearchAdapter(
         super.bind(holder, model, pos)
         holder.binding.apply {
             if (this is NomzodItemBinding) {
-                setNomzod(model,userViewModel.user.hasNomzod)
+                setNomzod(model, userViewModel.user.hasNomzod)
                 if (pos == currentList.lastIndex) {
                     next()
                 }

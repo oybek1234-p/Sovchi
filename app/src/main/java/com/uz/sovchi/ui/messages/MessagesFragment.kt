@@ -1,14 +1,15 @@
 package com.uz.sovchi.ui.messages
 
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.uz.sovchi.R
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.databinding.MessagesFragmentBinding
-import com.uz.sovchi.showToast
 import com.uz.sovchi.ui.base.BaseFragment
+import com.uz.sovchi.ui.nomzod.NomzodViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -18,9 +19,11 @@ class MessagesFragment : BaseFragment<MessagesFragmentBinding>() {
         get() = R.layout.messages_fragment
 
     private val viewModel: MessagesViewModel by viewModels()
-    private val listAdapter = MessagesAdapter(this) {
+    private val nomzodViewModel: NomzodViewModel by viewModels()
+
+    private val listAdapter by lazy { MessagesAdapter(this, {
         viewModel.loadMessages()
-    }
+    }, nomzodRepository = nomzodViewModel.repository) }
 
     private fun initSwipeRefresh() {
         binding?.swipeRefresh?.apply {

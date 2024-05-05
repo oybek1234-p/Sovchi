@@ -33,6 +33,10 @@ class ProfileFragment : BaseFragment<ProfileFragmentBinding>() {
 
             userViewModel.user.phoneNumber.let {
                 allUsers.isVisible = it == "+998971871415"
+                verifyButton.isVisible = it == "+998971871415"
+            }
+            verifyButton.setOnClickListener {
+                navigate(R.id.adminVerificationFragment)
             }
             allUsers.setOnClickListener {
                 navigate(R.id.allUsersFragment)

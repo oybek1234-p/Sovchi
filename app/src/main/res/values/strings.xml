@@ -94,8 +94,8 @@
     <string name="nomzod_qo_shish">Elon</string>
     <string name="cheklangan">Cheklangan</string>
     <string name="o_zbek">O\'zbek</string>
-    <string name="imkoniyati_cheklangan">Imkoniyati cheklangan</string>
-    <string name="im_ch_m">Imkoniyati cheklanganligi haqida</string>
+    <string name="imkoniyati_cheklangan">Imkoniyati cheklangan (Invalid)</string>
+    <string name="im_ch_m">Imkoniyati(Nuqsoni) cheklanganligi haqida</string>
     <string name="ma_lumot">ℹ️ Ma\'lumot</string>
     <string name="programmani_baholash">Programmani baholang</string>
     <string name="nomzod_ismi">Nomzod ismi</string>
@@ -138,4 +138,16 @@
     <string name="so_rov_yuborish">So\'rov yuborish</string>
     <string name="xabarlar">Xabarlar</string>
     <string name="nomzodim">Nomzodim</string>
+    <string name="standart">Standart</string>
+    <string name="bepul">Bepul</string>
+    <string name="standartname">Standart</string>
+    <string name="top3name">Top 3 kun</string>
+    <string name="top7name">Top 7 kun</string>
+    <string name="premium">Premium</string>
+    <string name="_15000_sum">15000 sum</string>
+    <string name="yuborish">Yuborish</string>
+    <string name="tekshirilmoqda">Tekshirilmoqda</string>
+    <string name="chek">Chek</string>
+    <string name="top">TOP</string>
+    <string name="bog_lanish">Bog\'lanish</string>
 </resources>

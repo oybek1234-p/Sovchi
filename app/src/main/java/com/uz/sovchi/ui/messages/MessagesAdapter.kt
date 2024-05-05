@@ -14,10 +14,11 @@ import com.uz.sovchi.data.messages.MESSAGE_TYPE_NOMZOD_LIKED
 import com.uz.sovchi.data.messages.Message
 import com.uz.sovchi.data.messages.NomzodForYouModel
 import com.uz.sovchi.data.messages.NomzodLikedModel
+import com.uz.sovchi.data.nomzod.NomzodRepository
 import com.uz.sovchi.databinding.MessageItemBinding
 import com.uz.sovchi.ui.base.BaseAdapter
 
-class MessagesAdapter(val fragment: MessagesFragment,val next: () -> Unit) :
+class MessagesAdapter(val fragment: MessagesFragment, val next: () -> Unit,val nomzodRepository: NomzodRepository) :
     BaseAdapter<Message, MessageItemBinding>(R.layout.message_item,
         object : DiffUtil.ItemCallback<Message>() {
             override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
@@ -47,8 +48,12 @@ class MessagesAdapter(val fragment: MessagesFragment,val next: () -> Unit) :
                             iconView.apply {
                                 setImageResource(R.drawable.smile_emoji)
                                 scaleType = ImageView.ScaleType.CENTER
-                                imageTintList = ColorStateList.valueOf(MaterialColors.getColor(root,
-                                    androidx.appcompat.R.attr.colorPrimary))
+                                imageTintList = ColorStateList.valueOf(
+                                    MaterialColors.getColor(
+                                        root,
+                                        androidx.appcompat.R.attr.colorPrimary
+                                    )
+                                )
                             }
                             if (model.data is NomzodForYouModel) {
                                 val forYouModel = model.data as NomzodForYouModel
@@ -68,20 +73,32 @@ class MessagesAdapter(val fragment: MessagesFragment,val next: () -> Unit) :
                             iconView.apply {
                                 setImageResource(R.drawable.like_ic)
                                 scaleType = ImageView.ScaleType.CENTER
-                                imageTintList = ColorStateList.valueOf(context.getColor(R.color.likeColor))
+                                imageTintList =
+                                    ColorStateList.valueOf(context.getColor(R.color.likeColor))
                             }
-                                val likeModel = model.data as NomzodLikedModel
-                                titleView.text = likeModel.likedUserName.trim().ifEmpty {
-                                    "Foydalanuvchi"
-                                } + " sizga like bosdi!"
-                                subtitleView.text = "Sizning nomzodingizni saqlashdi!"
-                                dateView.text = DateUtils.formatDate(model.date)
-                                showNomzod.isVisible = false
-                                root.setOnClickListener {
-                                    fragment.navigate(R.id.nomzodDetailsFragment, Bundle().apply {
-                                        putString("nomzodId", likeModel.nomzodId)
-                                    })
+                            val likeModel = model.data as NomzodLikedModel
+                            titleView.text = likeModel.likedUserName.trim().ifEmpty {
+                                "Foydalanuvchi"
+                            } + " sizga like bosdi!"
+                            subtitleView.text = "Sizning nomzodingizni saqlashdi!"
+
+                            dateView.text = DateUtils.formatDate(model.date)
+                            showNomzod.isVisible = likeModel.hasNomzod
+                            showNomzod.setOnClickListener {
+                                nomzodRepository.loadNomzods(-1,null,likeModel.likedUserId,"","") { list,count->
+                                    if (list.isEmpty().not()) {
+                                        val item = list.first()
+                                        fragment.navigate(R.id.nomzodDetailsFragment, Bundle().apply {
+                                            putString("nomzodId", item.id)
+                                        })
+                                    }
                                 }
+                            }
+                            root.setOnClickListener {
+                                fragment.navigate(R.id.nomzodDetailsFragment, Bundle().apply {
+                                    putString("nomzodId", likeModel.nomzodId)
+                                })
+                            }
                         }
                     }
                 }

@@ -6,7 +6,7 @@
     <data>
 
     </data>
-
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -25,13 +25,35 @@
             android:id="@+id/progress_bar"
             />
 
-        <com.uz.sovchi.ui.base.MyToolBar
+        <FrameLayout
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:title="@string/nomzod_haqida" />
+            >
+            <ImageView
+                android:id="@+id/back"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:scaleType="center"
+                android:src="@drawable/arrow_back"
+                app:tint="?colorOnSurface" />
+
+            <ImageView
+                android:id="@+id/like_button"
+                android:layout_width="56dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical|end"
+                android:background="?selectableItemBackground"
+                android:elevation="@dimen/dimen_2"
+                android:scaleType="center"
+                android:src="@drawable/like_ic"
+                app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+        </FrameLayout>
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/container"
@@ -55,9 +77,8 @@
                 <FrameLayout
                     android:id="@+id/photo_con"
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
+                    android:layout_height="340dp"
                     android:layout_marginBottom="@dimen/dimen_18"
-                    android:layout_marginHorizontal="@dimen/dimen_12"
                     >
                     <androidx.viewpager2.widget.ViewPager2
                         android:layout_width="match_parent"
@@ -70,13 +91,26 @@
                         android:layout_height="wrap_content"
                         android:text="1/2"
                         android:background="@drawable/round_lay"
-                        android:backgroundTint="#6D000000"
+                        android:backgroundTint="#000000"
                         android:textColor="@color/white"
                         style="@style/Headline3_15"
                         android:id="@+id/photo_count_view"
                         android:paddingVertical="@dimen/dimen_4"
                         android:paddingHorizontal="@dimen/dimen_12"
                         android:layout_gravity="bottom|end"
+                        android:layout_margin="@dimen/dimen_18"
+                        />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/full_screen"
+                        android:paddingVertical="@dimen/dimen_4"
+                        android:paddingHorizontal="4dp"
+                        android:layout_gravity="bottom|start"
+                        android:background="@drawable/round_lay"
+                        android:backgroundTint="@color/black"
+                        app:tint="@color/white"
                         android:layout_margin="@dimen/dimen_18"
                         />
                 </FrameLayout>
@@ -169,7 +203,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:layout_marginTop="@dimen/dimen_12"
+                    android:layout_marginTop="@dimen/dimen_8"
                     android:background="?backgroundColor"
                     />
 
@@ -189,7 +223,7 @@
 
                         <TextView
                             android:id="@+id/manzil_view"
-                            style="@style/Text2_15"
+                            style="@style/Text1_16"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:drawablePadding="@dimen/dimen_8"
@@ -200,7 +234,7 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/type_view"
                             app:drawableStartCompat="@drawable/location_ic"
-                            app:drawableTint="@color/iconColor" />
+                            app:drawableTint="#009688" />
 
                         <TextView
                             android:id="@+id/millati_view"
@@ -212,16 +246,14 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/type_view" />
 
-
                     </LinearLayout>
-
 
                     <TextView
                         android:id="@+id/tgj_view"
                         style="@style/Text2_15"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/dimen_20"
+                        android:layout_marginTop="@dimen/dimen_12"
                         android:text="@string/tugilgan_joyi"
                         android:gravity="center"
                         android:drawableStart="@drawable/globus_ic"
@@ -229,7 +261,7 @@
                         android:textColor="?colorOnSurfaceVariant"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/type_view"
-                        app:drawableTint="@color/iconColor" />
+                        app:drawableTint="?colorOnSurfaceVariant" />
 
 
 
@@ -238,7 +270,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_marginBottom="@dimen/dimen_12"
-                        android:layout_marginTop="@dimen/dimen_20"
+                        android:layout_marginTop="@dimen/dimen_12"
                         >
                         <TextView
                             android:id="@+id/oqish_view"
@@ -246,7 +278,7 @@
                             android:drawableStart="@drawable/study_ic"
                             android:drawablePadding="@dimen/dimen_8"
                             android:gravity="start|center"
-                            android:drawableTint="@color/iconColor"
+                            android:drawableTint="#03A9F4"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/o_qish_malumoti"
@@ -270,14 +302,12 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/type_view"
                         app:drawableStartCompat="@drawable/work_ic"
-                        app:drawableTint="@color/iconColor" />
+                        app:drawableTint="#FF9800" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:layout_marginBottom="@dimen/dimen_12"
-
+                        android:layout_marginBottom="@dimen/dimen_8"
                         >
                         <TextView
                             android:id="@+id/farzandlar_view"
@@ -291,7 +321,7 @@
                             android:textColor="?colorOnSurfaceVariant"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/type_view"
-                            app:drawableTint="?colorPrimary"
+                            app:drawableTint="#9C27B0"
                             app:drawableStartCompat="@drawable/child_ic" />
 
                     </LinearLayout>
@@ -302,11 +332,20 @@
                     android:layout_height="2dp"
                     android:background="?backgroundColor"
                     />
+
+                <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/adView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_8"
+                    ads:adSize="BANNER"
+                    ads:adUnitId="ca-app-pub-8679920253502267/3951382909"></com.google.android.gms.ads.AdView>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Haqida:"
-                    android:layout_marginTop="@dimen/dimen_18"
+                    android:layout_marginTop="@dimen/dimen_8"
                     android:layout_marginHorizontal="@dimen/dimen_12"
                     style="@style/Headline3_15"
                     android:textColor="?colorOnSurface"
@@ -316,7 +355,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingVertical="@dimen/dimen_18"
+                    android:paddingVertical="@dimen/dimen_12"
                     android:elevation="1dp"
                     android:backgroundTint="?backgroundColor"
                     >
@@ -428,13 +467,14 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/callview"
                         android:visibility="gone"
+                        style="@style/FilledButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/telefon_qilish"
                         android:padding="@dimen/dimen_12"
                         app:icon="@drawable/call_ic"
-                        app:iconGravity="textStart"
+                        app:iconGravity="textEnd"
                         app:tint="@color/white" />
 
                     <com.google.android.material.button.MaterialButton
@@ -452,10 +492,11 @@
                         android:layout_height="wrap_content"
                         android:drawableTint="@color/white"
                         android:text="Telegram"
+                        style="@style/FilledButton"
                         app:icon="@drawable/telegram_ic"
                         app:iconGravity="textEnd" />
-
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -509,13 +550,11 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
                         android:text="@string/o_xshash_nomzodlar"
-                        android:layout_marginTop="@dimen/dimen_12"
                         android:layout_marginHorizontal="@dimen/dimen_12"
-                        style="@style/Headline3_15"
+                        style="@style/Title3_17"
                         android:fontFamily="@font/roboto_bold"
-                        android:textColor="?colorOnSurface"
+                        android:textColor="#FF5722"
                         />
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -533,13 +572,6 @@
                         />
                 </LinearLayout>
 
-                <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/adView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_8"
-                    ads:adSize="BANNER"
-                    ads:adUnitId="ca-app-pub-8679920253502267/3951382909"></com.google.android.gms.ads.AdView>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 

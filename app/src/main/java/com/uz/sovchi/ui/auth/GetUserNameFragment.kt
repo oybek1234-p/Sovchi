@@ -2,10 +2,8 @@ package com.uz.sovchi.ui.auth
 
 import android.os.Bundle
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.uz.sovchi.R
-import com.uz.sovchi.UserViewModel
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.databinding.FragmentUserNameBinding
 import com.uz.sovchi.showKeyboard

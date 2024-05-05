@@ -16,9 +16,19 @@ class MessagesRepository {
             query = query.startAfter(startId)
         }
         query.limit(limit.toLong()).whereEqualTo("userId", userId).get().addOnCompleteListener {
-                val messages = it.result.toObjects(Message::class.java).parseData()
+            try {
+                val messages = it.result.mapNotNull {
+                    try {
+                        it.toObject(Message::class.java)
+                    } catch (e: Exception) {
+                        null
+                    }
+                }.parseData()
                 result.invoke(messages)
+            } catch (e: Exception) {
+                //
             }
+        }
     }
 
     private fun List<Message>.parseData(): List<Message> {
@@ -39,7 +49,12 @@ class MessagesRepository {
                             data = NomzodLikedModel(
                                 hashMap["nomzodId"].toString(),
                                 hashMap[NomzodLikedModel::likedUserName.name].toString(),
-                                hashMap[NomzodLikedModel::likedUserId.name].toString()
+                                hashMap[NomzodLikedModel::likedUserId.name].toString(),
+                                try {
+                                    hashMap[NomzodLikedModel::hasNomzod.name] as Boolean
+                                } catch (e: Exception) {
+                                    false
+                                }
                             )
                         }
                     }

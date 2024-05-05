@@ -35,7 +35,7 @@ object SavedRepository {
         val userId = LocalUser.user.uid
         val nomzodId = nomzod.id
         val savedId = userId + nomzodId
-        val saved = SavedData(savedId, userId, nomzod, LocalUser.user.name)
+        val saved = SavedData(savedId, userId, nomzod, LocalUser.user.name,LocalUser.user.hasNomzod)
         RecombeeDatabase.setSaved(nomzodId)
         savedReference.document(savedId).set(saved)
         savedList.add(saved)

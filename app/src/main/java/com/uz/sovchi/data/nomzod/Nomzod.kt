@@ -30,12 +30,29 @@ enum class Talablar(val textId: Int) {
 
 fun getNomzodTypeText(id: Int) = nomzodTypes.find { it.first == id }?.second
 
+object NomzodState {
+    const val VISIBLE = 1
+    const val NOT_PAID = 2
+    const val DELETED = 3
+    const val CHECKING = 4
+}
+
+enum class NomzodTarif(val nameRes: Int, val priceSum: Int, val infoRes: Int) {
+    STANDART(R.string.standartname, 0, 0), TOP_3(
+        R.string.top3name, 29000, 0
+    ),
+    TOP_7(R.string.top7name, 39000, 0), PREMIUM(R.string.premium, 69000, 0)
+}
+
 @Entity
 data class Nomzod(
     @PrimaryKey var id: String = "",
     var userId: String = "",
     var name: String = "",
     var type: Int = -1,
+    var state: Int = NomzodState.CHECKING,
+    var tarif: String = NomzodTarif.STANDART.name,
+    var paymentCheckPhotoUrl: String = "",
     var photos: List<String> = listOf(),
     var tugilganYili: Int = 0,
     var tugilganJoyi: String = "",
@@ -60,7 +77,9 @@ data class Nomzod(
     var mobilRaqam: String = "",
     var uploadDate: Long = System.currentTimeMillis(),
     var uploadDateString: String = "",
-    var views: Int = 0
+    var views: Int = 0,
+    var top: Boolean = false,
+    var visibleDate: Long = 0
 ) {
     constructor() : this(id = "")
 }
@@ -83,6 +102,16 @@ fun Nomzod.getTugilganJoyi(): Spanned {
 
 fun Nomzod.getManzilText(): Spanned {
     return Html.fromHtml("Manzil" + ": <b>${appContext.getString(City.valueOf(manzil).resId)}<\b>")
+}
+
+fun Nomzod.getStatusText(): String {
+    return when (state) {
+        NomzodState.CHECKING -> "Tekshirilmoqda"
+        NomzodState.DELETED -> "O'chirilgan"
+        NomzodState.NOT_PAID -> "To'lanmagan"
+        NomzodState.VISIBLE -> "Aktiv"
+        else -> ""
+    }
 }
 
 fun Nomzod.getYoshChegarasi(): Spanned {

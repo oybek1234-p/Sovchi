@@ -94,12 +94,11 @@ fun NomzodItemBinding.setNomzod(nomzod: Nomzod, hasNomzod: Boolean, forDetails: 
             oqishView.text = "$oqishText"
 
             ishView.text = "${ishJoyi.trim().capitalize()}"
-
+            topBadge.isVisible = top
             manzilView.text = "${getString(City.valueOf(manzil).resId)}"
             qoshimchaView.text = "${talablar.trim().capitalize()}"
             dateView.text = DateUtils.formatDate(uploadDate)
-            imkonChekBadgeTextView.visibleOrGone(imkoniyatiCheklangan)
-            ishView.visibleOrGone(type == KUYOV)
+            ishView.visibleOrGone(type == KUYOV && ishJoyi.isNotEmpty())
 
             if (yoshChegarasiDan == 0 && yoshChegarasiGacha == 0) {
                 yoshChegarasiView.visibleOrGone(false)

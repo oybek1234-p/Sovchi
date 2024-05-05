@@ -10,7 +10,7 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:background="?colorSurface"
+        android:background="?backgroundColor"
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout

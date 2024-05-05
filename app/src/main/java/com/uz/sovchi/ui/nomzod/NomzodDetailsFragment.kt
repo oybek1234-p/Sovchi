@@ -3,6 +3,8 @@ package com.uz.sovchi.ui.nomzod
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
@@ -34,11 +36,13 @@ import com.uz.sovchi.data.nomzod.getTugilganJoyi
 import com.uz.sovchi.data.nomzod.getYoshChegarasi
 import com.uz.sovchi.data.nomzod.paramsText
 import com.uz.sovchi.data.recombee.RecombeeDatabase
+import com.uz.sovchi.data.saved.SavedRepository
 import com.uz.sovchi.data.valid
 import com.uz.sovchi.data.viewed.ViewedNomzods
 import com.uz.sovchi.databinding.NomzodDetailsBinding
 import com.uz.sovchi.databinding.RequestNomzodAlertBinding
 import com.uz.sovchi.gson
+import com.uz.sovchi.openImageViewer
 import com.uz.sovchi.openPhoneCall
 import com.uz.sovchi.ui.base.BaseFragment
 import com.uz.sovchi.ui.photo.PhotoAdapter
@@ -101,8 +105,8 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
     }
 
     private val photosAdapter: PhotoAdapter by lazy {
-        PhotoAdapter { _, pos, model ->
-
+        PhotoAdapter { _, pos, model, imageView ->
+            imageView.openImageViewer(photosAdapter.currentList.map { it.path }, pos)
         }
     }
 
@@ -111,7 +115,6 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
         if (nomzod?.photos.isNullOrEmpty()) return
         binding?.apply {
             photoCountView.isVisible = true
-
             photoPager.apply {
                 registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
@@ -161,13 +164,7 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
 
     override fun viewCreated(bind: NomzodDetailsBinding) {
         bind.apply {
-            toolbar.setUpBackButton(this@NomzodDetailsFragment)
-            toolbar.setTitleTextColor(
-                MaterialColors.getColor(
-                    toolbar, com.google.android.material.R.attr.colorOnSurfaceVariant
-                )
-            )
-            toolbar.title = ""
+            back.setOnClickListener { closeFragment() }
             if (nomzod?.id.isNullOrEmpty() && nomzodId.isNotEmpty()) {
                 loadNomzod()
             } else {
@@ -222,7 +219,8 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
 
     @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables")
     private fun setView(binding: NomzodDetailsBinding, nomzod: Nomzod?) {
-        if (nomzod == null) return
+        if (nomzod == null || isAdded.not() || context == null) return
+
         binding.apply {
             nomzod.apply {
                 //Photos
@@ -231,6 +229,21 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
                 showPhotos()
                 nomzodQuyish.setOnClickListener {
                     showAddNomzodAlert()
+                }
+                //Like
+                val isLiked = SavedRepository.isNomzodLiked(nomzod.id)
+                likeButton.imageTintList = ColorStateList.valueOf(
+                    if (isLiked) MaterialColors.getColor(
+                        likeButton, androidx.appcompat.R.attr.colorPrimary
+                    ) else Color.LTGRAY
+                )
+                likeButton.setOnClickListener {
+                    val liked = !SearchAdapter.likeItem(nomzod)
+                    likeButton.imageTintList = ColorStateList.valueOf(
+                        if (liked) MaterialColors.getColor(
+                            likeButton, androidx.appcompat.R.attr.colorPrimary
+                        ) else Color.LTGRAY
+                    )
                 }
 //                nameAgeView.setCompoundDrawablesWithIntrinsicBounds(
 //                    requireContext().getDrawable(if (type == KUYOV) R.drawable.man_ic else R.drawable.woman_ic),
@@ -324,13 +337,15 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
                         "${getString(R.string.ma_lumot)}: $imkoniyatiCheklanganHaqida"
                 }
                 //Talablar
-                talablarListView.layoutManager = FlexboxLayoutManager(requireContext())
-                talablarListView.adapter = TalablarAdapter().apply {
-                    showCheckBox = false
-                    try {
-                        submitList(talablarList.map { Talablar.valueOf(it) })
-                    } catch (e: Exception) {
-                        //
+                if (context != null) {
+                    talablarListView.layoutManager = FlexboxLayoutManager(requireContext())
+                    talablarListView.adapter = TalablarAdapter().apply {
+                        showCheckBox = false
+                        try {
+                            submitList(talablarList.map { Talablar.valueOf(it) })
+                        } catch (e: Exception) {
+                            //
+                        }
                     }
                 }
                 if (mobilRaqam.isNotEmpty()) {

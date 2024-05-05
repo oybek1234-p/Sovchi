@@ -7,9 +7,9 @@ import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.filter.MyFilter
 import com.uz.sovchi.data.nomzod.Nomzod
 import com.uz.sovchi.data.nomzod.NomzodRepository
+import com.uz.sovchi.data.nomzod.NomzodState
 import com.uz.sovchi.data.recombee.RecombeeDatabase
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
@@ -60,6 +60,7 @@ class SearchViewModel : ViewModel() {
     }
 
     private var recomId = ""
+    var forVerify = false
 
     fun loadNextNomzodlar() {
         if (nomzodlarLoading.value == true) return
@@ -87,14 +88,16 @@ class SearchViewModel : ViewModel() {
                 lastNomzod = nomzodlar.lastOrNull()
                 repo.loadNomzods(
                     lastNomzod = lastNomzod,
-                    type = nomzodTuri,
-                    manzil = searchLocation,
-                    oilaviyHolati = oilaviyHolati,
-                    yoshChegarasi = yoshChegarasiGacha,
+                    type = if (forVerify) -1 else nomzodTuri,
+                    manzil = if (forVerify) "" else searchLocation,
+                    oilaviyHolati = if (forVerify) "" else oilaviyHolati,
+                    yoshChegarasi = if (forVerify) 0 else yoshChegarasiGacha,
                     userId = "",
+                    verify = forVerify,
                     hasPhotoOnly = false,
-                    imkonChek = imkonChek
-                ) { it, count ->
+                    imkonChek = imkonChek,
+                    state = NomzodState.VISIBLE
+                ) { it, _ ->
                     if (loadJob?.isCancelled == true) return@loadNomzods
                     nomzodlar.addAll(it)
                     nomzodlarLive.postValue(nomzodlar)

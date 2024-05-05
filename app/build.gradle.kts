@@ -13,7 +13,7 @@ android {
         applicationId = "com.uz.sovchi"
         minSdk = 24
         targetSdk = 34
-        versionCode = 62
+        versionCode = 66
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -87,5 +87,6 @@ dependencies {
 
     implementation("com.google.firebase:firebase-functions")
     implementation ("com.google.android.flexbox:flexbox:3.0.0")
+    implementation ("com.github.stfalcon-studio:StfalconImageViewer:v1.0.1")
 
 }

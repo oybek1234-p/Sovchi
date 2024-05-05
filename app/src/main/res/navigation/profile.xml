@@ -17,4 +17,16 @@
         android:id="@+id/allUsersFragment"
         android:name="com.uz.sovchi.ui.users.AllUsersFragment"
         android:label="AllUsersFragment" />
+    <fragment
+        android:id="@+id/verifyFragment2"
+        android:name="com.uz.sovchi.ui.auth.VerifyFragment"
+        android:label="VerifyFragment" />
+    <fragment
+        android:id="@+id/adminVerificationFragment"
+        android:name="com.uz.sovchi.ui.verification.AdminVerificationFragment"
+        android:label="AdminVerificationFragment" />
+    <fragment
+        android:id="@+id/addNomzodFragment"
+        android:name="com.uz.sovchi.ui.nomzod.AddNomzodFragment"
+        android:label="AddNomzodFragment" />
 </navigation>

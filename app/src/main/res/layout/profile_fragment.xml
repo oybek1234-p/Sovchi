@@ -84,6 +84,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/allUsers"
+                android:visibility="gone"
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -92,6 +93,15 @@
                 app:layout_constraintEnd_toEndOf="@+id/phone_View"
                 app:layout_constraintStart_toStartOf="@+id/phone_View"
                 app:layout_constraintTop_toBottomOf="@+id/phone_View" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/verify_button"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_12"
+                android:text="Verifikatsiya" />
 
             <TextView
                 style="@style/Subtitle3_13"

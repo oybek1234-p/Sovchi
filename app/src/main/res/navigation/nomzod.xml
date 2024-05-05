@@ -17,4 +17,24 @@
         android:id="@+id/nomzodDetailsFragment"
         android:name="com.uz.sovchi.ui.nomzod.NomzodDetailsFragment"
         android:label="NomzodDetailsFragment" />
+    <fragment
+        android:id="@+id/paymentFragment"
+        android:name="com.uz.sovchi.ui.payment.PaymentFragment"
+        android:label="PaymentFragment" />
+    <fragment
+        android:id="@+id/paymentGetCheckFragment"
+        android:name="com.uz.sovchi.ui.payment.PaymentGetCheckFragment"
+        android:label="PaymentGetCheckFragment" />
+    <fragment
+        android:id="@+id/pickPhotoFragment"
+        android:name="com.uz.sovchi.ui.photo.PickPhotoFragment"
+        android:label="PickPhotoFragment" />
+    <fragment
+        android:id="@+id/adminVerificationFragment2"
+        android:name="com.uz.sovchi.ui.verification.AdminVerificationFragment"
+        android:label="AdminVerificationFragment" />
+    <fragment
+        android:id="@+id/nomzodUploadSuccessFragment"
+        android:name="com.uz.sovchi.ui.nomzod.NomzodUploadSuccessFragment"
+        android:label="NomzodUploadSuccessFragment" />
 </navigation>

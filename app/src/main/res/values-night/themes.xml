@@ -3,8 +3,8 @@
     <style name="Base.Theme.Sovchi" parent="Theme.Material3.Light.NoActionBar">
 
         <item name="colorSurface">@color/white</item>
-        <item name="colorOnSurfaceVariant">#373737</item>
-        <item name="backgroundColor">#F4F4F4</item>
+        <item name="colorOnSurfaceVariant">#474747</item>
+        <item name="backgroundColor">#EFEFEF</item>
         <item name="android:windowBackground">?backgroundColor</item>
 
         <item name="android:statusBarColor">?colorSurface</item>

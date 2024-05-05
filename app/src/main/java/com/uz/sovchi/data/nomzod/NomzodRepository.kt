@@ -7,6 +7,7 @@ import com.google.firebase.firestore.Query
 import com.uz.sovchi.data.ImageUploader
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.location.City
+import com.uz.sovchi.showToast
 import com.uz.sovchi.ui.photo.PickPhotoFragment
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -41,6 +42,34 @@ class NomzodRepository {
         }
     }
 
+    suspend fun uploadPaymentData(
+        chekPath: String, nomzodId: String, done: (success: Boolean) -> Unit
+    ) {
+        if (nomzodId.isNotEmpty()) {
+            var url = ""
+            val upload = {
+                if (url.isEmpty().not()) {
+                    nomzodlarReference.document(nomzodId).update(
+                        Nomzod::state.name,
+                        NomzodState.CHECKING,
+                        Nomzod::paymentCheckPhotoUrl.name,
+                        url
+                    ).addOnCompleteListener {
+                        done.invoke(it.isSuccessful)
+                    }
+                }
+            }
+            ImageUploader.uploadImage(PickPhotoFragment.Image(chekPath)) {
+                if (it.isNullOrEmpty().not()) {
+                    url = it!!
+                    upload.invoke()
+                } else {
+                    done.invoke(false)
+                }
+            }
+        }
+    }
+
     suspend fun uploadNewMyNomzod(nomzod: Nomzod, done: () -> Unit) {
         if (nomzod.id.isEmpty()) return
         val uploadNext = {
@@ -65,7 +94,7 @@ class NomzodRepository {
             uploadNext.invoke()
         }
     }
-    
+
     fun increaseNomzodViews(nomzodId: String) {
         if (nomzodId.isEmpty()) return
         try {
@@ -122,6 +151,8 @@ class NomzodRepository {
         yoshChegarasi: Int = 0,
         imkonChek: Boolean = false,
         hasPhotoOnly: Boolean = false,
+        verify: Boolean = false,
+        state: Int? = null,
         loaded: (list: List<Nomzod>, count: Long) -> Unit
     ) {
         var task = nomzodlarReference.limit(12)
@@ -130,6 +161,13 @@ class NomzodRepository {
         } else {
             task.orderBy(Nomzod::tugilganYili.name)
                 .orderBy(Nomzod::id.name, Query.Direction.DESCENDING)
+        }
+        if (verify) {
+            task = task.whereNotEqualTo(Nomzod::state.name, NomzodState.VISIBLE)
+        } else {
+            if (state != null) {
+                task = task.whereEqualTo(Nomzod::state.name, NomzodState.VISIBLE)
+            }
         }
         if (lastNomzod != null) {
             task = if (yoshChegarasi == 0) {
@@ -163,6 +201,26 @@ class NomzodRepository {
             val data = it.result.toObjects(Nomzod::class.java)
             loaded.invoke(data, 0)
         }
+    }
+
+    fun verify(nomzod: Nomzod) {
+        if (nomzod.id.isEmpty()) return
+        val updateMap = mutableMapOf<String, Any>().apply {
+            put(
+                Nomzod::state.name,
+                NomzodState.VISIBLE,
+            )
+            put(
+                Nomzod::visibleDate.name, System.currentTimeMillis()
+            )
+            if (nomzod.tarif != NomzodTarif.STANDART.name) {
+                put(Nomzod::top.name, true)
+                showToast("set top")
+            }
+        }
+        nomzodlarReference.document(nomzod.id).update(
+            updateMap
+        )
     }
 
     fun deleteNomzod(id: String) {

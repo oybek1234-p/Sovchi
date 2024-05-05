@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+
+        <include
+            layout="@layout/nomzod_item"
+            android:id="@+id/nomzod_item" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/statusView"
+            style="@style/Text1_14"
+            android:textColor="?colorOnSurface"
+            android:text="@string/tekshirilmoqda"
+            android:layout_margin="@dimen/dimen_4" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tarifView"
+            style="@style/Text1_14"
+            android:textColor="?colorOnSurface"
+            android:text="Standart"
+            android:layout_margin="@dimen/dimen_4" />
+
+        <TextView
+            android:id="@+id/has_chek"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Text1_14"
+            android:textColor="?colorPrimary"
+            android:text="Chek bor"
+            android:layout_margin="@dimen/dimen_4" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/verify_button"
+            android:text="Tasdiqlash" />
+    </LinearLayout>
+</layout>

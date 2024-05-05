@@ -5,14 +5,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.messaging.FirebaseMessaging
 import com.uz.sovchi.R
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.nomzod.Nomzod
 import com.uz.sovchi.data.valid
 import com.uz.sovchi.databinding.NomzodFragmentBinding
 import com.uz.sovchi.ui.base.BaseFragment
-import com.uz.sovchi.ui.search.SearchAdapter
 import com.uz.sovchi.visibleOrGone
 import kotlinx.coroutines.launch
 
@@ -21,7 +19,7 @@ class NomzodFragment : BaseFragment<NomzodFragmentBinding>() {
     override val layId: Int
         get() = R.layout.nomzod_fragment
 
-    private var searchAdapter: SearchAdapter? = null
+    private var searchAdapter: MyNomzodAdapter? = null
 
     private val viewModel: NomzodViewModel by activityViewModels()
 
@@ -61,9 +59,17 @@ class NomzodFragment : BaseFragment<NomzodFragmentBinding>() {
                 })
             }
             recyclerView.apply {
-                searchAdapter = SearchAdapter(userViewModel,onClick = {
+                searchAdapter = MyNomzodAdapter({
+                     val bundle = Bundle().apply {
+                        putString("value", it.id)
+                        putString("tarif", it.tarif)
+                    }
+                    navigate(R.id.paymentGetCheckFragment, bundle)
+                }, loadNext = {
+
+                }, {
                     openAddNomzodFragment.invoke(it.id)
-                }, next = {}).also {
+                }).also {
                     adapter = it
                 }
                 layoutManager =

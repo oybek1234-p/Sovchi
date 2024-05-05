@@ -33,23 +33,30 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-
+                <TextView
+                    android:id="@+id/chek_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chek"
+                    android:layout_marginTop="18dp"
+                    android:visibility="gone"
+                    android:textColor="?colorOnSurface"
+                    style="@style/Title2_20"
+                    />
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:layout_marginHorizontal="@dimen/dimen_24"
+                    android:id="@+id/check_view"
+                    android:visibility="gone"
+                    />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/rasmlar"
                     android:layout_marginTop="18dp"
                     android:textColor="?colorOnSurface"
-                    style="@style/Title3_17"
-                    />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_8"
-                    android:text="Rasmingiz faqat o'z nomzodini joylagan foydalanuvchiga ko'rinadi, va tezroq juftinigizni topasiz"
-                    style="@style/Text1_14"
-                    android:textColor="?colorOnSurfaceVariant"
+                    style="@style/Title2_20"
                     />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -67,16 +74,9 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/add_photo_button"
                     android:text="@string/rasm_qo_shish"
+                    app:icon="@drawable/add_ic"
+                    app:iconGravity="textStart"
                     android:layout_marginTop="@dimen/dimen_4"
-                    />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_8"
-                    android:text="5 marta ko'proq odam ko'radi, rasm bo'lsa"
-                    style="@style/Text1_16"
-                    android:textColor="?colorOnSurfaceVariant"
                     />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -255,7 +255,7 @@
                     android:text="Yosh chegarasi"
                     android:layout_marginTop="18dp"
                     android:textColor="?colorOnSurface"
-                    style="@style/Title3_17"
+                    style="@style/Title2_20"
                     />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -290,7 +290,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/talablar"
                     android:layout_marginTop="18dp"
-                    style="@style/Subtitle2_14"
+                    android:textColor="?colorOnSurface"
+                    style="@style/Title2_20"
                     />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -306,10 +307,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="@string/qo_shimcha_malumot"
+                    android:hint="Nomzodga aytmoqchi gaplaringiz"
                     app:counterEnabled="true"
                     app:counterMaxLength="500"
-                    app:helperText="Kamida 70 ta harf, Birinchi o'ziz haqizda to'liqroq yozing, keyin talablaringizni yozib qoldiring"
+                    app:helperText="Kamida 70 ta harf"
                     app:helperTextEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -323,6 +324,7 @@
                     android:id="@+id/imkonchek_check_box"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     android:layout_marginTop="@dimen/dimen_12"
                     android:text="@string/imkoniyati_cheklangan" />
 
@@ -347,7 +349,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="Nomzod ismi"
+                    android:hint="Ism Familiya"
                     app:helperTextEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -355,6 +357,15 @@
                         android:layout_height="wrap_content" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/bog_lanish"
+                    android:layout_marginTop="18dp"
+                    android:textColor="?colorOnSurface"
+                    style="@style/Title2_20"
+                    />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/telegram_view"
@@ -375,7 +386,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="Mobil qaram (Majburiy emas)">
+                    android:hint="Telefon raqam">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
@@ -400,7 +411,7 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/delete_button"
                     style="@style/Widget.Material3.Button.ElevatedButton"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/dimen_12"
