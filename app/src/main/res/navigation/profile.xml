@@ -29,4 +29,16 @@
         android:id="@+id/addNomzodFragment"
         android:name="com.uz.sovchi.ui.nomzod.AddNomzodFragment"
         android:label="AddNomzodFragment" />
+    <fragment
+        android:id="@+id/paymentGetCheckFragment"
+        android:name="com.uz.sovchi.ui.payment.PaymentGetCheckFragment"
+        android:label="PaymentGetCheckFragment" />
+    <dialog
+        android:id="@+id/paymentFragment"
+        android:name="com.uz.sovchi.ui.payment.PaymentFragment"
+        android:label="PaymentFragment" />
+    <fragment
+        android:id="@+id/nomzodUploadSuccessFragment"
+        android:name="com.uz.sovchi.ui.nomzod.NomzodUploadSuccessFragment"
+        android:label="NomzodUploadSuccessFragment" />
 </navigation>

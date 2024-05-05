@@ -84,8 +84,8 @@ class MessagesAdapter(val fragment: MessagesFragment, val next: () -> Unit,val n
 
                             dateView.text = DateUtils.formatDate(model.date)
                             showNomzod.isVisible = likeModel.hasNomzod
-                            showNomzod.setOnClickListener {
-                                nomzodRepository.loadNomzods(-1,null,likeModel.likedUserId,"","") { list,count->
+                            root.setOnClickListener {
+                                NomzodRepository.loadNomzods(-1,null,likeModel.likedUserId,"","", limit = 1) { list,count->
                                     if (list.isEmpty().not()) {
                                         val item = list.first()
                                         fragment.navigate(R.id.nomzodDetailsFragment, Bundle().apply {
@@ -93,11 +93,6 @@ class MessagesAdapter(val fragment: MessagesFragment, val next: () -> Unit,val n
                                         })
                                     }
                                 }
-                            }
-                            root.setOnClickListener {
-                                fragment.navigate(R.id.nomzodDetailsFragment, Bundle().apply {
-                                    putString("nomzodId", likeModel.nomzodId)
-                                })
                             }
                         }
                     }

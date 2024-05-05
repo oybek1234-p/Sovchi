@@ -60,15 +60,23 @@ class NomzodFragment : BaseFragment<NomzodFragmentBinding>() {
             }
             recyclerView.apply {
                 searchAdapter = MyNomzodAdapter({
-                     val bundle = Bundle().apply {
+                    val bundle = Bundle().apply {
                         putString("value", it.id)
                         putString("tarif", it.tarif)
                     }
                     navigate(R.id.paymentGetCheckFragment, bundle)
                 }, loadNext = {
 
-                }, {
-                    openAddNomzodFragment.invoke(it.id)
+                }, { nomzod, setings ->
+                    if (!setings) {
+                        navigate(R.id.nomzodDetailsFragment, Bundle().apply {
+                            putString("nomzodId", nomzod.id)
+                        })
+                    } else {
+                        navigate(R.id.settingsFragment, Bundle().apply {
+                            putString("nomzodId", nomzod.id)
+                        })
+                    }
                 }).also {
                     adapter = it
                 }

@@ -37,4 +37,8 @@
         android:id="@+id/nomzodUploadSuccessFragment"
         android:name="com.uz.sovchi.ui.nomzod.NomzodUploadSuccessFragment"
         android:label="NomzodUploadSuccessFragment" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.uz.sovchi.ui.SettingsFragment"
+        android:label="SettingsFragment" />
 </navigation>

@@ -35,6 +35,7 @@ class AppNotificationService : FirebaseMessagingService() {
         
         val intent = Intent(applicationContext, MainActivity::class.java)
         intent.putExtra("nomzodId", message.data["nomzodId"])
+        intent.putExtra("type", message.data["type"])
         intent.setAction(System.currentTimeMillis().toString())
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
         val pendingIntent = PendingIntent.getActivity(

@@ -19,6 +19,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/statusView"
             style="@style/Text1_14"
+            android:visibility="gone"
             android:textColor="?colorOnSurface"
             android:text="@string/tekshirilmoqda"
             android:layout_margin="@dimen/dimen_4" />

@@ -16,22 +16,6 @@
             android:id="@+id/nomzod_id" />
 
         <TextView
-            android:id="@+id/views_view"
-            style="@style/Headline2_16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:layout_marginStart="@dimen/dimen_8"
-            android:text="1"
-            android:gravity="center"
-            android:drawablePadding="@dimen/dimen_4"
-            android:textColor="?colorOnSurfaceVariant"
-            android:drawableEnd="@drawable/visib_ic"
-            app:drawableTint="?colorOnSurfaceVariant"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/type_view" />
-
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/statusView"
@@ -40,14 +24,37 @@
             android:text="@string/tekshirilmoqda"
             android:layout_margin="@dimen/dimen_8" />
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tarifView"
-            style="@style/Text1_16"
-            android:textColor="?colorOnSurface"
-            android:text="Standart"
-            android:layout_marginStart="@dimen/dimen_8" />
+            android:layout_marginBottom="@dimen/dimen_18"
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tarifView"
+                style="@style/Text1_16"
+                android:textColor="?colorOnSurface"
+                android:text="Standart"
+                android:layout_marginStart="@dimen/dimen_8" />
+
+            <TextView
+                android:id="@+id/views_view"
+                style="@style/Headline2_16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dimen_24"
+                android:text="1"
+                android:gravity="center"
+                android:drawablePadding="@dimen/dimen_4"
+                android:textColor="?colorOnSurfaceVariant"
+                android:drawableStart="@drawable/visib_ic"
+                app:drawableTint="?colorOnSurfaceVariant"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/type_view" />
+
+        </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
             android:layout_width="match_parent"
@@ -60,7 +67,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/settings_button"
-            android:visibility="gone"
+            app:icon="@drawable/settings_ic"
+            app:iconGravity="textEnd"
             android:text="Sozlamalar" />
     </LinearLayout>
 </layout>

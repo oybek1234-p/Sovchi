@@ -13,7 +13,7 @@ import com.uz.sovchi.ui.base.EmptyDiffUtil
 class MyNomzodAdapter(
     private val pay: (nomzod: Nomzod) -> Unit,
     private val loadNext: () -> Unit,
-    private val click: (nomzod: Nomzod) -> Unit
+    private val click: (nomzod: Nomzod,settings:Boolean) -> Unit,
 ) : BaseAdapter<Nomzod, NomzodMyItemBinding>(R.layout.nomzod_my_item, EmptyDiffUtil()) {
 
     override fun bind(holder: ViewHolder<*>, model: Nomzod, pos: Int) {
@@ -23,8 +23,12 @@ class MyNomzodAdapter(
             }
             binding.apply {
                 (this as NomzodMyItemBinding)
+                settingsButton.setOnClickListener {
+                    click.invoke(model,true)
+                }
                 statusView.text = model.getStatusText()
                 nomzodId.setNomzod(model, false, false)
+                nomzodId.qoshimchaView.isVisible = false
                 try {
                     tarifView.text =
                         root.context.getString(NomzodTarif.valueOf(model.tarif).nameRes)
@@ -37,7 +41,7 @@ class MyNomzodAdapter(
                 }
                 viewsView.text = model.views.toString()
                 root.setOnClickListener {
-                    click.invoke(model)
+                    click.invoke(model,false)
                 }
                 payButton.setOnClickListener {
                     pay.invoke(model)

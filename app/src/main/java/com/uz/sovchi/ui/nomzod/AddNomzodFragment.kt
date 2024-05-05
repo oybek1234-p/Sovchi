@@ -151,14 +151,13 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
             if (nomzodTarif != NomzodTarif.STANDART) NomzodState.NOT_PAID else NomzodState.CHECKING
         val photos = photoAdapter.currentList
         val upDate = uploadDate ?: System.currentTimeMillis()
-        val nomzod = Nomzod(
-            id = if (nomzodId.isNullOrEmpty()) System.currentTimeMillis()
-                .toString() else nomzodId!!,
-            userId = LocalUser.user.uid,
+        val nomzod = Nomzod(id = if (nomzodId.isNullOrEmpty()) System.currentTimeMillis()
+            .toString() else nomzodId!!,
+            userId = currentNomzod?.userId?.ifEmpty { LocalUser.user.uid } ?: LocalUser.user.uid,
             name = name.trim().capitalize(Locale.ROOT),
             type = nomzodType,
             state = state,
-            tarif = nomzodTarif.name,
+            tarif = currentNomzod?.tarif?.ifEmpty { nomzodTarif.name } ?: nomzodTarif.name,
             currentNomzod?.paymentCheckPhotoUrl ?: "",
             photos.map { it.path },
             tugilganYili,
@@ -217,7 +216,7 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
     }
 
     private val photoAdapter: PhotoAdapter by lazy {
-        PhotoAdapter { del, pos, model,view ->
+        PhotoAdapter { del, pos, model, view ->
             if (del) {
                 photoAdapter.currentList.toMutableList().apply {
                     remove(model)
@@ -230,18 +229,8 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
     private var currentNomzod: Nomzod? = null
     private fun initUi() {
         binding?.apply {
-            deleteButton.visibleOrGone(nomzodId.isNullOrEmpty().not())
-            deleteButton.setOnClickListener {
-                nomzodViewModel.repository.deleteNomzod(nomzodId!!)
-                lifecycleScope.launch {
-                    if (nomzodViewModel.repository.myNomzods.size == 0) {
-                        userViewModel.repository.setHasNomzod(false)
-                    }
-                }
-                findNavController().popBackStack()
-            }
             with(currentNomzod!!) {
-                if (isAdmin) {
+                if (isAdmin && paymentCheckPhotoUrl.isNotEmpty()) {
                     checkView.isVisible = true
                     chekTitle.isVisible = true
                     val check = paymentCheckPhotoUrl
@@ -335,8 +324,7 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                         farzandlarView.isVisible = true
                     }
                 }
-                val nomzodTypeAdapter = ArrayAdapter(
-                    requireContext(),
+                val nomzodTypeAdapter = ArrayAdapter(requireContext(),
                     R.layout.list_item,
                     nomzodTypes.map { it.second })
                 typeView.editText?.apply {
@@ -362,6 +350,8 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                                 }
                             }
                             talablarAdapter.submitList(list)
+                            talablarView.isVisible = true
+                            talabTitle.isVisible = true
                         }
                         nomzodType = type
 

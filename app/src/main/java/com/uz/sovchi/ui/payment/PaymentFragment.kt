@@ -18,6 +18,13 @@ class PaymentFragment : DialogFragment() {
 
     private var payAdapter = PaymentAdapter()
 
+    private var paid = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        paid = arguments?.getBoolean("paid") ?: false
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -28,7 +35,11 @@ class PaymentFragment : DialogFragment() {
             toolbar.setUpBackButton(this@PaymentFragment)
             recyclerView.apply {
                 adapter = payAdapter.apply {
-                    submitList(NomzodTarif.entries)
+                    var entries: List<NomzodTarif> = NomzodTarif.entries
+                    if (paid) {
+                        entries = entries.filter { it.priceSum > 0 }
+                    }
+                    submitList(entries)
                 }
                 layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)

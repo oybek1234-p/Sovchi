@@ -86,7 +86,8 @@ class SearchViewModel : ViewModel() {
                 }
             }else {
                 lastNomzod = nomzodlar.lastOrNull()
-                repo.loadNomzods(
+                NomzodRepository.
+                loadNomzods(
                     lastNomzod = lastNomzod,
                     type = if (forVerify) -1 else nomzodTuri,
                     manzil = if (forVerify) "" else searchLocation,

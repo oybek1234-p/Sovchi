@@ -286,9 +286,11 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
+                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/talablar"
+                    android:id="@+id/talab_title"
                     android:layout_marginTop="18dp"
                     android:textColor="?colorOnSurface"
                     style="@style/Title2_20"
@@ -407,18 +409,6 @@
                         android:text="O'zi"
                         android:layout_height="wrap_content" />
                 </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/delete_button"
-                    style="@style/Widget.Material3.Button.ElevatedButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/dimen_12"
-                    android:padding="@dimen/dimen_8"
-                    android:text="@string/o_chirish"
-                    android:textColor="?colorOnSurface"
-                    android:visibility="gone" />
 
                 <ProgressBar
                     android:layout_width="wrap_content"

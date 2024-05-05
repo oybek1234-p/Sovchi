@@ -32,6 +32,9 @@ import com.google.firebase.messaging.messaging
 import com.uz.sovchi.ad.AdMobApp
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.filter.MyFilter
+import com.uz.sovchi.data.messages.MESSAGE_TYPE_NOMZOD_FOR_YOU
+import com.uz.sovchi.data.messages.MESSAGE_TYPE_NOMZOD_LIKED
+import com.uz.sovchi.data.nomzod.NomzodRepository
 import com.uz.sovchi.data.saved.SavedRepository
 import com.uz.sovchi.data.valid
 import com.uz.sovchi.data.viewed.ViewedNomzods
@@ -67,8 +70,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.apply {
-            navHost =
-                (supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment)
+            navHost = (supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment)
             navcontroller = navHost.navController
             bottomNavView.setupWithNavController(navcontroller)
         }
@@ -177,12 +179,37 @@ class MainActivity : AppCompatActivity() {
     private fun checkDeeplink(intent: Intent?) {
         if (intent != null) {
             val nomzodId = intent.extras?.getString("nomzodId")
+            val type = intent.extras?.getString("type")
             if (nomzodId != null) {
                 lifecycleScope.launch {
                     delay(200)
-                    navcontroller.navigate(R.id.nomzodDetailsFragment, Bundle().apply {
-                        putString("nomzodId", nomzodId)
-                    })
+                    when (type) {
+                        MESSAGE_TYPE_NOMZOD_LIKED.toString() -> {
+                            try {
+                                val userId = nomzodId.toString()
+                                NomzodRepository.loadNomzods(-1, null, userId, "", "", limit = 1) { list, c ->
+                                    val item = list.firstOrNull()
+                                    if (item != null) {
+                                        navcontroller.navigate(R.id.nomzodDetailsFragment, Bundle().apply {
+                                            putString("nomzodId", item.id)
+                                        })
+                                    }
+                                }
+                            }catch (e: Exception) {
+                                //
+                            }
+                        }
+
+                        MESSAGE_TYPE_NOMZOD_FOR_YOU.toString() -> {
+                            try {
+                                navcontroller.navigate(R.id.nomzodDetailsFragment, Bundle().apply {
+                                    putString("nomzodId", nomzodId)
+                                })
+                            }catch (e: Exception) {
+                                //
+                            }
+                        }
+                    }
                 }
             }
         }

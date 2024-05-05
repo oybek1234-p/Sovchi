@@ -43,6 +43,7 @@
             <ImageView
                 android:id="@+id/like_button"
                 android:layout_width="56dp"
+                android:visibility="gone"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical|end"
                 android:background="?selectableItemBackground"

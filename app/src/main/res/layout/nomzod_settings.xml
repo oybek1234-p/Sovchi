@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:background="?colorSurface"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+
+        <com.uz.sovchi.ui.base.MyToolBar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title="Sozlamalar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/dimen_18">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Asosiy"
+                    style="@style/Headline2_16"
+                    android:textColor="?colorOnSurface"
+                    android:paddingVertical="@dimen/dimen_12" />
+
+                <TextView
+                    android:id="@+id/edit_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="O'zgartirish"
+                    android:drawableStart="@drawable/edit"
+                    android:gravity="center_vertical"
+                    android:drawablePadding="@dimen/dimen_12"
+                    android:drawableTint="?colorPrimary"
+                    style="@style/Headline2_16"
+                    android:textColor="?colorOnSurface"
+                    android:paddingVertical="@dimen/dimen_12" />
+
+                <TextView
+                    android:id="@+id/delete_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="O'chirish"
+                    android:drawableStart="@drawable/delete_ic"
+                    android:gravity="center_vertical"
+                    android:drawablePadding="@dimen/dimen_12"
+                    android:drawableTint="?colorPrimary"
+                    style="@style/Headline2_16"
+                    android:textColor="?colorOnSurface"
+                    android:paddingVertical="@dimen/dimen_12" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Reklama"
+                    style="@style/Headline2_16"
+                    android:textColor="?colorOnSurface"
+                    android:paddingVertical="@dimen/dimen_12" />
+
+                <TextView
+                    android:id="@+id/top_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Top ga chiqarish"
+                    android:drawableStart="@drawable/trending"
+                    android:gravity="center_vertical"
+                    android:drawablePadding="@dimen/dimen_12"
+                    android:drawableTint="?colorPrimary"
+                    style="@style/Headline2_16"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textColor="?colorPrimary"
+                    android:paddingVertical="@dimen/dimen_12" />
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+</layout>

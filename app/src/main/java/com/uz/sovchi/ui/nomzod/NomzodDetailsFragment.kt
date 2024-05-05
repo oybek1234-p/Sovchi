@@ -223,6 +223,7 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
 
         binding.apply {
             nomzod.apply {
+                likeButton.isVisible = true
                 //Photos
                 nomzodViewModel.repository.increaseNomzodViews(id)
                 initSimilar()
@@ -278,6 +279,9 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
                 if (oilaviyHolati == OilaviyHolati.AJRASHGAN.name || oilaviyHolati == OilaviyHolati.Beva.name) {
                     farzandlarView.apply {
                         visibleOrGone(true)
+                        if (farzandlar.isEmpty()) {
+                            farzandlar = getString(R.string.yoq)
+                        }
                         text =
                             Html.fromHtml("${getString(R.string.farzandlar)}:  <b>$farzandlar<\b>")
                     }

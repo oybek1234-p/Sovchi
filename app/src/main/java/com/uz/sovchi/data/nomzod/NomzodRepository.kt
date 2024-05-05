@@ -30,8 +30,6 @@ class NomzodRepository {
         return null
     }
 
-    private var nomzodlarReference = FirebaseFirestore.getInstance().collection("nomzodlar")
-
     private suspend fun loadNomzod(id: String) = suspendCoroutine { sus ->
         nomzodlarReference.document(id).get().addOnCompleteListener {
             val nomzod = it.result.toObject(Nomzod::class.java)
@@ -142,65 +140,72 @@ class NomzodRepository {
         done.invoke(fits)
     }
 
-    fun loadNomzods(
-        type: Int,
-        lastNomzod: Nomzod?,
-        userId: String,
-        manzil: String,
-        oilaviyHolati: String,
-        yoshChegarasi: Int = 0,
-        imkonChek: Boolean = false,
-        hasPhotoOnly: Boolean = false,
-        verify: Boolean = false,
-        state: Int? = null,
-        loaded: (list: List<Nomzod>, count: Long) -> Unit
-    ) {
-        var task = nomzodlarReference.limit(12)
-        task = if (yoshChegarasi == 0) {
-            task.orderBy(Nomzod::id.name, Query.Direction.DESCENDING)
-        } else {
-            task.orderBy(Nomzod::tugilganYili.name)
-                .orderBy(Nomzod::id.name, Query.Direction.DESCENDING)
-        }
-        if (verify) {
-            task = task.whereNotEqualTo(Nomzod::state.name, NomzodState.VISIBLE)
-        } else {
-            if (state != null) {
-                task = task.whereEqualTo(Nomzod::state.name, NomzodState.VISIBLE)
-            }
-        }
-        if (lastNomzod != null) {
+    companion object {
+
+        private var nomzodlarReference = FirebaseFirestore.getInstance().collection("nomzodlar")
+
+        fun loadNomzods(
+            type: Int,
+            lastNomzod: Nomzod?,
+            userId: String,
+            manzil: String,
+            oilaviyHolati: String,
+            yoshChegarasi: Int = 0,
+            imkonChek: Boolean = false,
+            hasPhotoOnly: Boolean = false,
+            verify: Boolean = false,
+            state: Int? = null,
+            limit: Int = 12,
+            loaded: (list: List<Nomzod>, count: Long) -> Unit
+        ) {
+            var task = nomzodlarReference.limit(limit.toLong())
             task = if (yoshChegarasi == 0) {
-                task.startAfter(lastNomzod.id)
+                task.orderBy(Nomzod::id.name, Query.Direction.DESCENDING)
             } else {
-                task.startAfter(lastNomzod)
+                task.orderBy(Nomzod::tugilganYili.name)
+                    .orderBy(Nomzod::id.name, Query.Direction.DESCENDING)
+            }
+            if (verify) {
+                task = task.whereNotEqualTo(Nomzod::state.name, NomzodState.VISIBLE)
+            } else {
+                if (state != null) {
+                    task = task.whereEqualTo(Nomzod::state.name, NomzodState.VISIBLE)
+                }
+            }
+            if (lastNomzod != null) {
+                task = if (yoshChegarasi == 0) {
+                    task.startAfter(lastNomzod.id)
+                } else {
+                    task.startAfter(lastNomzod)
+                }
+            }
+            if (type != -1) {
+                task = task.whereEqualTo(Nomzod::type.name, type)
+            }
+            if (userId.isNotEmpty()) {
+                task = task.whereEqualTo(Nomzod::userId.name, userId)
+            }
+            if (hasPhotoOnly) {
+                task = task.whereNotEqualTo(Nomzod::photos.name, emptyList<Any>())
+            }
+            if (imkonChek) {
+                task = task.whereEqualTo(Nomzod::imkoniyatiCheklangan.name, imkonChek)
+            }
+            if (manzil.isNotEmpty() && manzil != City.Hammasi.name) {
+                task = task.whereEqualTo(Nomzod::manzil.name, manzil)
+            }
+            if (oilaviyHolati.isNotEmpty() && oilaviyHolati != OilaviyHolati.Aralash.name) {
+                task = task.whereEqualTo(Nomzod::oilaviyHolati.name, oilaviyHolati)
+            }
+            if (yoshChegarasi > 0) {
+                task = task.whereLessThanOrEqualTo(Nomzod::tugilganYili.name, yoshChegarasi)
+            }
+            task.get().addOnCompleteListener { it ->
+                val data = it.result.toObjects(Nomzod::class.java)
+                loaded.invoke(data, 0)
             }
         }
-        if (type != -1) {
-            task = task.whereEqualTo(Nomzod::type.name, type)
-        }
-        if (userId.isNotEmpty()) {
-            task = task.whereEqualTo(Nomzod::userId.name, userId)
-        }
-        if (hasPhotoOnly) {
-            task = task.whereNotEqualTo(Nomzod::photos.name, emptyList<Any>())
-        }
-        if (imkonChek) {
-            task = task.whereEqualTo(Nomzod::imkoniyatiCheklangan.name, imkonChek)
-        }
-        if (manzil.isNotEmpty() && manzil != City.Hammasi.name) {
-            task = task.whereEqualTo(Nomzod::manzil.name, manzil)
-        }
-        if (oilaviyHolati.isNotEmpty() && oilaviyHolati != OilaviyHolati.Aralash.name) {
-            task = task.whereEqualTo(Nomzod::oilaviyHolati.name, oilaviyHolati)
-        }
-        if (yoshChegarasi > 0) {
-            task = task.whereLessThanOrEqualTo(Nomzod::tugilganYili.name, yoshChegarasi)
-        }
-        task.get().addOnCompleteListener { it ->
-            val data = it.result.toObjects(Nomzod::class.java)
-            loaded.invoke(data, 0)
-        }
+
     }
 
     fun verify(nomzod: Nomzod) {
@@ -226,6 +231,12 @@ class NomzodRepository {
     fun deleteNomzod(id: String) {
         nomzodlarReference.document(id).delete()
         myNomzods.removeIf { it.id == id }
+    }
+
+    fun deleteTop(nomzodId: String) {
+        if (nomzodId.isEmpty()) return
+        nomzodlarReference.document(nomzodId)
+            .update(Nomzod::top.name, false, Nomzod::tarif.name, NomzodTarif.STANDART.name)
     }
 
 }
