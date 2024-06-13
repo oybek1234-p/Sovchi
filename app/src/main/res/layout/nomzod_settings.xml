@@ -7,18 +7,18 @@
     </data>
 
     <LinearLayout
-        android:background="?colorSurface"
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="?colorSurface"
+        android:orientation="vertical">
 
         <com.uz.sovchi.ui.base.MyToolBar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="Sozlamalar"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="Sozlamalar" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -31,60 +31,71 @@
                 android:paddingHorizontal="@dimen/dimen_18">
 
                 <TextView
+                    android:visibility="gone"
+                    style="@style/Headline2_16"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingVertical="@dimen/dimen_12"
                     android:text="Asosiy"
-                    style="@style/Headline2_16"
-                    android:textColor="?colorOnSurface"
-                    android:paddingVertical="@dimen/dimen_12" />
+                    android:textColor="?colorOnSurfaceVariant" />
 
-                <TextView
-                    android:id="@+id/edit_button"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/boglanish_button"
+                    style="@style/Widget.Material3.Button.ElevatedButton"
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:text="O'zgartirish"
-                    android:drawableStart="@drawable/edit"
-                    android:gravity="center_vertical"
-                    android:drawablePadding="@dimen/dimen_12"
-                    android:drawableTint="?colorPrimary"
-                    style="@style/Headline2_16"
-                    android:textColor="?colorOnSurface"
-                    android:paddingVertical="@dimen/dimen_12" />
-
-                <TextView
-                    android:id="@+id/delete_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:text="O'chirish"
-                    android:drawableStart="@drawable/delete_ic"
-                    android:gravity="center_vertical"
-                    android:drawablePadding="@dimen/dimen_12"
-                    android:drawableTint="?colorPrimary"
-                    style="@style/Headline2_16"
-                    android:textColor="?colorOnSurface"
-                    android:paddingVertical="@dimen/dimen_12" />
-
-                <TextView
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Reklama"
-                    style="@style/Headline2_16"
-                    android:textColor="?colorOnSurface"
-                    android:paddingVertical="@dimen/dimen_12" />
+                    android:layout_marginTop="@dimen/dimen_18"
+                    android:drawableTint="?colorPrimary"
+                    android:text="@string/biz_bilan_bog_lanish"
+                    app:icon="@drawable/admin_ic"
+                    app:iconGravity="textStart" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/rate_button"
+                    style="@style/Widget.Material3.Button.ElevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_8"
+                    android:text="@string/programmani_baholash"
+                    app:icon="@drawable/rate_ic"
+                    app:iconGravity="textStart" />
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/allUsers"
+                    style="@style/Widget.Material3.Button.ElevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_12"
+                    android:text="@string/foydalanuvchilar"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/phone_View"
+                    app:layout_constraintStart_toStartOf="@+id/phone_View"
+                    app:layout_constraintTop_toBottomOf="@+id/phone_View" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/verify_button"
+                    style="@style/Widget.Material3.Button.ElevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_12"
+                    android:text="Verifikatsiya"
+                    android:visibility="gone" />
 
                 <TextView
-                    android:id="@+id/top_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:text="Top ga chiqarish"
-                    android:drawableStart="@drawable/trending"
-                    android:gravity="center_vertical"
-                    android:drawablePadding="@dimen/dimen_12"
-                    android:drawableTint="?colorPrimary"
+                    android:id="@+id/sign_out"
                     style="@style/Headline2_16"
+                    android:layout_marginTop="@dimen/dimen_48"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/dimen_12"
                     android:fontFamily="@font/roboto_bold"
-                    android:textColor="?colorPrimary"
-                    android:paddingVertical="@dimen/dimen_12" />
+                    android:gravity="center_vertical"
+                    android:paddingVertical="@dimen/dimen_8"
+                    android:text="@string/logout_"
+                    android:textColor="#E91E63"
+                    app:drawableStartCompat="@drawable/arrow_back"
+                    app:drawableTint="#E91E63" />
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

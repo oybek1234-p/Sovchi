@@ -10,6 +10,7 @@ import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.nomzod.Nomzod
 import com.uz.sovchi.data.valid
 import com.uz.sovchi.databinding.NomzodFragmentBinding
+import com.uz.sovchi.showToast
 import com.uz.sovchi.ui.base.BaseFragment
 import com.uz.sovchi.visibleOrGone
 import kotlinx.coroutines.launch
@@ -24,6 +25,7 @@ class NomzodFragment : BaseFragment<NomzodFragmentBinding>() {
     private val viewModel: NomzodViewModel by activityViewModels()
 
     private fun loadMyNomzods() {
+        binding?.emptyView?.visibleOrGone(false)
         lifecycleScope.launch {
             val nomzods: List<Nomzod> = viewModel.repository.myNomzods
             if (nomzods.isEmpty()) {
@@ -37,6 +39,9 @@ class NomzodFragment : BaseFragment<NomzodFragmentBinding>() {
 
     private fun nomzodsLoaded(nomzods: List<Nomzod>) {
         searchAdapter?.submitList(nomzods)
+        if (nomzods.isEmpty()) {
+            binding?.emptyView?.visibleOrGone(userViewModel.user.valid)
+        }
     }
 
     override fun viewCreated(bind: NomzodFragmentBinding) {
@@ -46,6 +51,9 @@ class NomzodFragment : BaseFragment<NomzodFragmentBinding>() {
             authView.apply {
                 authButton.setOnClickListener {
                     findNavController().navigate(R.id.auth_graph)
+                }
+                boglanishButton.setOnClickListener {
+                    mainActivity()?.showSupportSheet()
                 }
                 root.visibleOrGone(authed.not())
             }
@@ -63,6 +71,7 @@ class NomzodFragment : BaseFragment<NomzodFragmentBinding>() {
                     val bundle = Bundle().apply {
                         putString("value", it.id)
                         putString("tarif", it.tarif)
+                        putInt("type",it.type)
                     }
                     navigate(R.id.paymentGetCheckFragment, bundle)
                 }, loadNext = {
@@ -98,7 +107,6 @@ class NomzodFragment : BaseFragment<NomzodFragmentBinding>() {
     private fun updateAddButton() {
         val showAddButton =
             searchAdapter?.currentList?.size == 0 && viewModel.repository.myNomzodsLoading.value == false
-        binding?.emptyView?.visibleOrGone(showAddButton)
         binding?.addNomzodButton?.visibleOrGone(showAddButton || LocalUser.user.phoneNumber == "+998971871415")
     }
 }

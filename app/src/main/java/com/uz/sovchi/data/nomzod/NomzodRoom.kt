@@ -12,10 +12,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.uz.sovchi.appContext
 
-@Database(entities = [ViewedNomzod::class], version = 1)
+@Database(entities = [ViewedNomzod::class,DislikedNomzod::class], version = 2)
 abstract class AppRoomDatabase : RoomDatabase() {
 
     abstract fun viewedNomzodsDao(): ViewNomzodDao
+
+    abstract fun dislikedNomzodsDao(): DislikedNomzodDao
 
     companion object {
         private var database: AppRoomDatabase? = null
@@ -25,7 +27,7 @@ abstract class AppRoomDatabase : RoomDatabase() {
             return Room.databaseBuilder(
                 appContext,
                 AppRoomDatabase::class.java, "myDatabase"
-            ).build().also {
+            ).fallbackToDestructiveMigration().build().also {
                 database = it
             }
         }
@@ -35,6 +37,10 @@ abstract class AppRoomDatabase : RoomDatabase() {
 
 @Entity
 data class ViewedNomzod(@PrimaryKey val id: String)
+
+@Entity
+data class DislikedNomzod(@PrimaryKey val id: String)
+
 
 @Dao
 interface ViewNomzodDao {
@@ -47,4 +53,17 @@ interface ViewNomzodDao {
 
     @Delete
     fun delete(nomzod: ViewedNomzod)
+}
+
+@Dao
+interface DislikedNomzodDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun setViewed(nomzod: DislikedNomzod)
+
+    @Query("SELECT * FROM dislikednomzod")
+    fun getAll(): List<DislikedNomzod>
+
+    @Delete
+    fun delete(nomzod: DislikedNomzod)
 }

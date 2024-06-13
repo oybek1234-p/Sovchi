@@ -32,11 +32,19 @@ abstract class BaseFragment<T : ViewDataBinding> : Fragment() {
     var showBottomSheet = false
 
     fun navigate(@IdRes resId: Int, args: Bundle? = null) {
-        findNavController().navigate(
-            resId,
-            args,
-            navOptions = animNavOptions,
-        )
+        try {
+            findNavController().navigate(
+                resId,
+                args,
+                navOptions = animNavOptions,
+            )
+        } catch (e: Exception) {
+            //
+        }
+    }
+
+    open fun onInternetAvailable() {
+
     }
 
     override fun onCreateView(

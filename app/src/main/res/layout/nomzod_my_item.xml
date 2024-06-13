@@ -34,18 +34,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/tarifView"
-                style="@style/Text1_16"
+                style="@style/Headline3_15"
                 android:textColor="?colorOnSurface"
                 android:text="Standart"
                 android:layout_marginStart="@dimen/dimen_8" />
 
             <TextView
                 android:id="@+id/views_view"
-                style="@style/Headline2_16"
+                style="@style/Subtitle3_13"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dimen_24"
                 android:text="1"
+                android:visibility="gone"
                 android:gravity="center"
                 android:drawablePadding="@dimen/dimen_4"
                 android:textColor="?colorOnSurfaceVariant"
@@ -61,7 +62,10 @@
             android:layout_height="wrap_content"
             android:id="@+id/pay_button"
             android:visibility="gone"
-            android:text="To'lash" />
+            android:gravity="center"
+            app:icon="@drawable/pay_ic"
+            app:iconGravity="textStart"
+            android:text="@string/to_lash" />
 
         <com.google.android.material.button.MaterialButton
             android:layout_width="match_parent"
@@ -69,6 +73,6 @@
             android:id="@+id/settings_button"
             app:icon="@drawable/settings_ic"
             app:iconGravity="textEnd"
-            android:text="Sozlamalar" />
+            android:text="@string/sozlamalar" />
     </LinearLayout>
 </layout>

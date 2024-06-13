@@ -41,4 +41,12 @@
         android:id="@+id/settingsFragment"
         android:name="com.uz.sovchi.ui.SettingsFragment"
         android:label="SettingsFragment" />
+    <fragment
+        android:id="@+id/voiceRecordFragment"
+        android:name="com.uz.sovchi.ui.record.VoiceRecordFragment"
+        android:label="VoiceRecordFragment" />
+    <fragment
+        android:id="@+id/getUserNameFragment"
+        android:name="com.uz.sovchi.ui.auth.GetUserNameFragment"
+        android:label="GetUserNameFragment" />
 </navigation>

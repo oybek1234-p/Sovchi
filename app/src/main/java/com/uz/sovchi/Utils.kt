@@ -25,8 +25,7 @@ fun ImageView.openImageViewer(urls: List<String>, startPos: Int = 0) {
 var gson: Gson? = null
     get() {
         if (field == null) {
-            field = Gson().apply {
-            }
+            field = Gson()
         }
         return field
     }

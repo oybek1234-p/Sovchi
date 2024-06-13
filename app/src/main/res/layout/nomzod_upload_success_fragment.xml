@@ -9,6 +9,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:background="?colorSurface"
         android:layout_height="match_parent">
 
         <ImageView
@@ -32,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dimen_24"
-            android:text="Nomzodingiz yuklandi!"
+            android:text="Profilingiz tekshirilmoqda!"
             android:textColor="?colorOnSurface"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -43,8 +44,9 @@
             style="@style/Text1_16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dimen_48"
             android:layout_marginTop="@dimen/dimen_12"
-            android:text="Tez orada platformada ko'rinadi, tekshirilmoqda!"
+            android:text="Tez orada platformada ko'rinadi!"
             android:textColor="?colorOnSurfaceVariant"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -56,6 +58,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dimen_24"
             android:text="@string/davom_etish"
+            app:icon="@drawable/arrow_right"
+            app:iconGravity="textEnd"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

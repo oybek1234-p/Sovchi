@@ -14,16 +14,15 @@
 
         <com.uz.sovchi.ui.base.MyToolBar
             android:id="@+id/toolbar"
-            android:background="?colorSurface"
-            app:elevation="@dimen/dimen_12"
-            android:visibility="gone"
-            android:elevation="@dimen/dimen_12"
+            android:background="?colorSurfaceContainer"
+            app:elevation="@dimen/dimen_18"
+            android:elevation="@dimen/dimen_18"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:title="@string/suhbatlar" />
+            app:title="@string/xabarlar" />
 
         <ProgressBar
             android:id="@+id/progress_bar"
@@ -48,7 +47,6 @@
                 android:layout_width="match_parent"
                 android:orientation="vertical"
                 android:paddingBottom="84dp"
-                android:paddingTop="@dimen/dimen_18"
                 android:clipToPadding="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:layout_height="match_parent"

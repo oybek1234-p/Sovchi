@@ -32,5 +32,16 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/akkauntga_kirish" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/boglanish_button"
+            style="@style/Widget.Material3.Button.ElevatedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_18"
+            app:icon="@drawable/admin_ic"
+            app:iconGravity="textStart"
+            android:drawableTint="?colorPrimary"
+            android:text="@string/biz_bilan_bog_lanish" />
     </LinearLayout>
 </layout>

@@ -54,6 +54,24 @@ class MessagesRepository {
                                     hashMap[NomzodLikedModel::hasNomzod.name] as Boolean
                                 } catch (e: Exception) {
                                     false
+                                },
+                                try {
+                                    hashMap[NomzodLikedModel::photo.name].toString()
+                                }catch (e: Exception) {
+                                    ""
+                                }
+                            )
+                        }
+
+                        MESSAGE_TYPE_NOMZOD_REQUEST -> {
+                            data = NomzodRequestModel(
+                                hashMap["nomzodId"].toString(),
+                                hashMap[NomzodRequestModel::likedUserName.name].toString(),
+                                hashMap[NomzodRequestModel::likedUserId.name].toString(),
+                                try {
+                                    hashMap[NomzodRequestModel::hasNomzod.name] as Boolean
+                                } catch (e: Exception) {
+                                    false
                                 }
                             )
                         }

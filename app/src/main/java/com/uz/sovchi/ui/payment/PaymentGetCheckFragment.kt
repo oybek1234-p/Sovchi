@@ -30,11 +30,13 @@ class PaymentGetCheckFragment : BaseFragment<PaymentCheckFragmentBinding>() {
     private var checkPath: String? = null
 
     private var nomzodId: String? = null
+    private var type = 0
     private var tarif: NomzodTarif = NomzodTarif.TOP_3
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         nomzodId = arguments?.getString("value")
+        type = arguments?.getInt("type") ?: 0
         val tarifName = arguments?.getString("tarif")
         if (tarifName.isNullOrEmpty().not()) {
             try {
@@ -48,7 +50,7 @@ class PaymentGetCheckFragment : BaseFragment<PaymentCheckFragmentBinding>() {
     override fun viewCreated(bind: PaymentCheckFragmentBinding) {
         bind.apply {
             toolbar.setUpBackButton(this@PaymentGetCheckFragment)
-            textView10.text = tarif.priceSum.toString() + " sum"
+            textView10.text = tarif.getPrice(type).toString() + " sum"
             PaymentInfo.loadPaymentCard {
                 cardNumber.text = it
             }

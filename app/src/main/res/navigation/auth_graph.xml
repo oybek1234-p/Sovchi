@@ -14,11 +14,7 @@
     <fragment
         android:id="@+id/verifyFragment"
         android:name="com.uz.sovchi.ui.auth.VerifyFragment"
-        android:label="VerifyFragment" >
-        <action
-            android:id="@+id/action_verifyFragment_to_getUserNameFragment"
-            app:destination="@id/getUserNameFragment" />
-    </fragment>
+        android:label="VerifyFragment" />
     <fragment
         android:id="@+id/getUserNameFragment"
         android:name="com.uz.sovchi.ui.auth.GetUserNameFragment"

@@ -10,333 +10,257 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        app:cardElevation="2dp"
-        app:cardBackgroundColor="#EDEDED"
-        app:strokeColor="?backgroundColor"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/dimen_12"
+        app:cardElevation="4dp"
         app:strokeWidth="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container"
+            android:background="?colorSurfaceContainerLow"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?colorSurface"
-            android:paddingHorizontal="@dimen/dimen_18"
-            android:paddingTop="@dimen/dimen_18"
-            android:paddingBottom="@dimen/dimen_12">
+            android:layout_height="match_parent">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/photo_View"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@drawable/rounded_layout"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
-                android:id="@+id/linearLayout"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:elevation="@dimen/dimen_4"
                 android:orientation="vertical"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/photo_View"
-                    android:layout_width="match_parent"
-                    android:layout_height="260dp"
-                    android:layout_marginBottom="@dimen/dimen_12"
-                    android:background="@drawable/rounded_layout"
-                    android:scaleType="centerCrop"
-                    app:shapeAppearanceOverlay="@style/RadiusImageView12" />
-
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/type_view"
-                        style="@style/Text1_14"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/kuyovlikga_nomzod"
-                        android:textColor="?colorOnSurfaceVariant"
-                        android:visibility="gone"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                </FrameLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    >
-
-                    <TextView
-                        android:id="@+id/name_age_view"
-                        style="@style/Title3_17"
-                        android:fontFamily="@font/roboto_bold"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:textColor="#451DB1"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/type_view"
-                        />
-
-                    <TextView
-                        android:id="@+id/params_view"
-                        style="@style/Text1_14"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/parametrlar"
-                        android:maxLines="1"
-                        android:ellipsize="end"
-                        android:layout_marginStart="8dp"
-                        android:textColor="?colorOnSurfaceVariant"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/type_view" />
-
-                </LinearLayout>
+                android:layout_margin="@dimen/dimen_8"
+                app:layout_constraintBottom_toBottomOf="@+id/photo_View"
+                app:layout_constraintStart_toStartOf="@+id/photo_View">
 
                 <TextView
-                    android:id="@+id/rasmi_bor_view"
+                    android:id="@+id/liked_you"
                     style="@style/Text1_14"
-                    android:visibility="gone"
                     android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:background="@drawable/round_lay"
+                    android:gravity="center"
+                    android:backgroundTint="#7C000000"
+                    android:drawablePadding="@dimen/dimen_8"
+                    android:paddingHorizontal="@dimen/dimen_8"
+                    android:paddingVertical="@dimen/dimen_4"
+                    android:text="@string/liked_you"
+                    android:textColor="@color/white"
+                    app:drawableStartCompat="@drawable/ic_liked"
+                    app:drawableTint="@color/white"
+                    android:layout_marginEnd="@dimen/dimen_12"
+                    app:layout_constraintBottom_toTopOf="@+id/linearLayout3" />
+
+                <TextView
+                    android:id="@+id/farzand_view"
+                    style="@style/Text1_14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/round_lay"
+                    android:backgroundTint="?colorSurfaceContainerLow"
+                    android:drawablePadding="@dimen/dimen_8"
+                    android:paddingHorizontal="@dimen/dimen_8"
+                    android:paddingVertical="@dimen/dimen_4"
+                    android:text="Farzand"
+                    android:textColor="?colorOnSurface"
+                    app:drawableStartCompat="@drawable/child_ic"
+                    app:drawableTint="?colorOnSurface"
+                    app:layout_constraintBottom_toTopOf="@+id/linearLayout3" />
+
+            </LinearLayout>
+
+            >
+            <LinearLayout
+                android:id="@+id/linearLayout4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_12"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+                tools:layout_editor_absoluteX="18dp">
+
+                <TextView
+                    android:id="@+id/name_age_view"
+                    style="@style/Title2_20"
+                    tools:text = "Oybek 21"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_12"
-                    android:textColor="?colorOnSurfaceVariant"
-                    android:drawableStart="@drawable/image_placeholder"
-                    android:drawablePadding="@dimen/dimen_4"
-                    android:text="Rasmini ko'rish uchun o'z nomzodingizni joylang" />
+                    android:fontFamily="@font/roboto_bold"
+                    android:gravity="center_vertical"
+                    android:textColor="?colorOnSurface"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/type_view" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="@dimen/dimen_12"
-                    >
+                    android:orientation="horizontal">
+
                     <TextView
                         android:id="@+id/new_badge"
-                        style="@style/Subtitle2_14"
+                        style="@style/Caption2_12"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:layout_marginEnd="@dimen/dimen_12"
-                        android:text="@string/yangi"
-                        android:paddingVertical="@dimen/dimen_4"
-                        android:paddingHorizontal="@dimen/dimen_12"
                         android:background="@drawable/round_lay"
-                        android:backgroundTint="?colorPrimary"
+                        android:backgroundTint="#FF5722"
+                        android:paddingHorizontal="@dimen/dimen_8"
+                        android:paddingVertical="@dimen/dimen_2"
+                        android:text="@string/yangi"
                         android:textColor="?colorOnPrimary" />
 
                     <TextView
                         android:id="@+id/top_badge"
-                        style="@style/Subtitle2_14"
+                        style="@style/Caption2_12"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
                         android:layout_gravity="start"
                         android:layout_marginEnd="@dimen/dimen_12"
-                        android:text="@string/top"
-                        android:paddingVertical="@dimen/dimen_4"
-                        android:layout_marginTop="@dimen/dimen_12"
-                        android:paddingHorizontal="@dimen/dimen_12"
                         android:background="@drawable/round_lay"
-                        android:backgroundTint="?colorPrimary"
+                        android:backgroundTint="#4CAF50"
+                        android:paddingHorizontal="@dimen/dimen_8"
+                        android:paddingVertical="@dimen/dimen_2"
+                        android:text="@string/top"
                         android:textColor="?colorOnPrimary" />
 
+                    <TextView
+                        android:id="@+id/audio_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="26dp"
+                        android:background="@drawable/round_lay"
+                        android:backgroundTint="#2196F3"
+                        android:drawablePadding="4dp"
+                        android:paddingHorizontal="@dimen/dimen_12"
+                        android:paddingVertical="@dimen/dimen_4"
+                        android:text="Ovozli habar"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:visibility="gone"
+                        app:drawableStartCompat="@drawable/mic_ic"
+                        app:drawableTint="@color/white"
+                        app:layout_constraintStart_toStartOf="@+id/linearLayout"
+                        app:layout_constraintTop_toTopOf="@+id/linearLayout" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    >
+                    <TextView
+                        android:id="@+id/manzil_view"
+                        style="@style/Text2_15"
+                        android:drawablePadding="@dimen/dimen_8"
+                        android:drawableStart="@drawable/location_ic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_8"
+                        android:text="Toshkent"
+                        android:textColor="?colorOnSurface"
+                        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+                        tools:layout_editor_absoluteX="18dp" />
 
                     <TextView
                         android:id="@+id/oilaviy_view"
-                        style="@style/Headline3_15"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingHorizontal="@dimen/dimen_12"
-                        android:background="@drawable/round_lay"
-                        android:backgroundTint="?backgroundColor"
-                        android:paddingVertical="@dimen/dimen_4"
-                        android:text="@string/oilaviy_holati"
-                        android:textColor="?colorOnSurface"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/type_view" />
-
-                    <TextView
-                        android:id="@+id/farzandlar_view"
                         style="@style/Text2_15"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingVertical="@dimen/dimen_4"
-                        android:layout_marginStart="@dimen/dimen_18"
-                        android:paddingHorizontal="12dp"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:text="@string/farzandlar"
-                        android:textColor="?colorOnSurfaceVariant"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/type_view" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    >
-
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:orientation="horizontal"
-                    >
-
-                    <TextView
-                        android:id="@+id/manzil_view"
-                        style="@style/Headline3_15"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:drawableTint="#009688"
-                        android:drawablePadding="@dimen/dimen_8"
-                        android:drawableStart="@drawable/location_ic"
-                        android:text="@string/manzili_toshkent"
-                        android:textColor="?colorOnSurfaceVariant"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/type_view" />
-
-                    <TextView
-                        android:id="@+id/ish_view"
-                        style="@style/Text1_16"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/ish_joyi"
-                        android:drawableStart="@drawable/work_ic"
-                        android:drawablePadding="8dp"
-                        android:gravity="center"
-                        android:layout_marginStart="@dimen/dimen_18"
-                        android:textColor="?colorOnSurfaceVariant"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/type_view"
-                        app:drawableTint="#FF9800" />
-
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/millati_view"
-                    style="@style/Text1_14"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_12"
-                    android:text="@string/millati"
-                    android:visibility="gone"
-                    android:textColor="?colorOnSurface"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/type_view" />
-
-                <TextView
-                    android:id="@+id/oqish_view"
-                    style="@style/Text1_14"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:text="@string/o_qish_malumoti"
-                    android:textColor="?colorOnSurface"
-                    android:visibility="gone"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/type_view" />
-
-                <TextView
-                    android:id="@+id/qoshimcha_view"
-                    style="@style/Text1_16"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:lineSpacingExtra="@dimen/dimen_4"
-                    android:ellipsize="end"
-                    android:maxLines="6"
-                    android:text="Qo'shimcha malumot"
-                    android:textColor="?colorOnSurfaceVariant"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/type_view" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/talablar_view"
-                    android:orientation="horizontal"
-                    android:translationX="-12dp"
-                    android:clickable="false"
-                    android:requiresFadingEdge="horizontal"
-                    android:fadingEdgeLength="60dp"
-                    android:focusableInTouchMode="false"
-                    android:focusable="false"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/talablar_item"
-                    />
-
-                <TextView
-                    android:id="@+id/imkon_chek_info"
-                    style="@style/Text1_16"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_12"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:text="@string/ma_lumot"
-                    android:textColor="?colorOnSurface"
-                    android:visibility="gone"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/type_view" />
-
-                <TextView
-                    android:id="@+id/yosh_chegarasi_view"
-                    style="@style/Subtitle3_13"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:text="@string/yosh_chegarasi"
-                    android:textColor="?colorOnSurfaceVariant"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/type_view" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    >
-                    <TextView
-                        android:id="@+id/date_view"
-                        style="@style/Subtitle3_13"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/dimen_18"
-                        android:text="4 kun oldin"
-                        android:textColor="?colorOnSurfaceVariant"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/type_view" />
+                        android:layout_marginTop="@dimen/dimen_8"
+                        android:text="Arjarshgan"
+                        android:layout_marginStart="@dimen/dimen_12"
+                        android:textColor="?colorOnSurface"
+                        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+                        tools:layout_editor_absoluteX="18dp" />
 
                 </LinearLayout>
             </LinearLayout>
-            
+
+            <ImageView
+                android:id="@+id/info_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/oval_back"
+                android:backgroundTint="@color/white"
+                android:elevation="6dp"
+                android:layout_margin="@dimen/dimen_12"
+                android:padding="@dimen/dimen_12"
+                android:src="@drawable/info_ic"
+                app:layout_constraintBottom_toBottomOf="@+id/photo_View"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:tint="?colorOnSurface" />
+            <LinearLayout
+                android:id="@+id/linearLayout3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/dimen_12"
+                android:paddingVertical="@dimen/dimen_12"
+                android:clipToPadding="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:orientation="horizontal"
+                android:clipChildren="false"
+                app:layout_constraintStart_toStartOf="parent" >
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/dislike_button"
+                    android:padding="@dimen/dimen_12"
+                    android:elevation="6dp"
+                    android:backgroundTint="@color/white"
+                    android:background="@drawable/oval_back"
+                    android:src="@drawable/close_ic"
+                    app:tint="?colorOnSurface"
+                    />
+
+                <ImageView
+                    android:layout_marginStart="@dimen/dimen_48"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/like_button"
+                    android:elevation="6dp"
+                    android:padding="@dimen/dimen_12"
+                    android:backgroundTint="@color/white"
+                    android:background="@drawable/oval_back"
+                    android:src="@drawable/like_ic"
+                    app:tint="?colorOnSurface" />
+            </LinearLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView
-            android:id="@+id/like_button"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_gravity="bottom|end"
-            android:background="?selectableItemBackground"
-            android:elevation="@dimen/dimen_2"
-            android:scaleType="center"
+            android:layout_margin="@dimen/dimen_24"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/like_button_thumb"
+            android:elevation="6dp"
+            android:layout_gravity="left"
+            android:padding="@dimen/dimen_12"
+            android:backgroundTint="@color/likeColor"
+            android:background="@drawable/oval_back"
             android:src="@drawable/like_ic"
-            app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
-        
+            android:visibility="gone"
+            app:tint="@color/white" />
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:visibility="gone"
+            android:id="@+id/dislike_button_thumb"
+            android:padding="@dimen/dimen_12"
+            android:elevation="6dp"
+            android:backgroundTint="@color/green"
+            android:background="@drawable/oval_back"
+            android:src="@drawable/close_ic"
+            android:layout_margin="@dimen/dimen_24"
+            android:layout_gravity="end"
+            app:tint="@color/white"
+            />
     </com.google.android.material.card.MaterialCardView>
 </layout>

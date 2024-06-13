@@ -2,6 +2,7 @@ package com.uz.sovchi
 
 import android.app.Application
 import android.content.Context
+import com.facebook.FacebookSdk
 import com.google.firebase.Firebase
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
@@ -16,6 +17,8 @@ class MyApplication : Application() {
         super.onCreate()
         appContext = this
         initFirebase()
+        FacebookSdk.fullyInitialize()
+        FacebookSdk.setAdvertiserIDCollectionEnabled(true)
     }
 
     private fun initFirebase() {

@@ -1,33 +1,51 @@
 package com.uz.sovchi
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
+import android.view.View
+import android.view.animation.AccelerateInterpolator
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.core.content.edit
+import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
+import androidx.core.view.postDelayed
+import androidx.fragment.app.clearFragmentResultListener
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.slider.LabelFormatter
 import com.google.android.material.slider.RangeSlider
+import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.filter.FilterViewUtils
 import com.uz.sovchi.data.filter.MyFilter
 import com.uz.sovchi.data.nomzod.KELIN
 import com.uz.sovchi.data.nomzod.KUYOV
+import com.uz.sovchi.data.nomzod.Nomzod
 import com.uz.sovchi.data.nomzod.OilaviyHolati
 import com.uz.sovchi.databinding.AgeWhatSheetBinding
+import com.uz.sovchi.databinding.NomzodItemBinding
 import com.uz.sovchi.databinding.SearchFragmentBinding
 import com.uz.sovchi.databinding.WeWillNotifySheetBinding
 import com.uz.sovchi.databinding.WhoYouNeedBinding
+import com.uz.sovchi.ui.base.BaseAdapter
 import com.uz.sovchi.ui.base.BaseFragment
 import com.uz.sovchi.ui.nomzod.NomzodDetailsFragment
 import com.uz.sovchi.ui.search.SearchAdapter
 import com.uz.sovchi.ui.search.SearchViewModel
+import com.yuyakaido.android.cardstackview.CardStackLayoutManager
+import com.yuyakaido.android.cardstackview.CardStackListener
+import com.yuyakaido.android.cardstackview.Direction
+import com.yuyakaido.android.cardstackview.Duration
+import com.yuyakaido.android.cardstackview.SwipeAnimationSetting
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SearchFragment : BaseFragment<SearchFragmentBinding>() {
     override val layId: Int
@@ -38,52 +56,35 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
 
     private var new: Boolean = false
 
+    private var draging = false
+    private var needUpdate = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         new = arguments?.getBoolean("new") ?: false
         showBottomSheet = !new
-        viewModel.isNew = new
         viewModel.loadNextNomzodlar()
     }
 
     private fun initFilters() {
         binding?.apply {
-            yoshChegarasiView.setOnClickListener {
+            filterView.setOnClickListener {
                 navigate(R.id.filterFragment)
             }
-            updateYoshChegarasi()
-            FilterViewUtils.apply {
-                setLocationView(locationFilter.editText as AutoCompleteTextView) {
-                    viewModel.apply {
-                        searchLocation = MyFilter.filter.manzil
-                        refresh()
-                    }
-                }
-                setNomzodTypeView(typeFilter.editText as AutoCompleteTextView) {
-                    viewModel.apply {
-                        nomzodTuri = MyFilter.filter.nomzodType
-                        refresh()
-                    }
-                }
-            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        try {
+            currentNomzod = viewModel.nomzodlar[savedPosition]
+        } catch (e: Exception) {
+            //
         }
     }
 
     private val whoNeedCache: SharedPreferences =
         appContext.getSharedPreferences("whoNeedShowed", Context.MODE_PRIVATE)
-
-    @SuppressLint("SetTextI18n")
-    private fun updateYoshChegarasi() {
-        binding?.yoshChegarasiView?.apply {
-            val has =
-                MyFilter.filter.yoshChegarasiDan > 17 && MyFilter.filter.yoshChegarasiGacha > 17
-            if (has) {
-                text =
-                    "Yosh: ${MyFilter.filter.yoshChegarasiDan} - ${MyFilter.filter.yoshChegarasiGacha}"
-            }
-            isVisible = has
-        }
-    }
 
     private fun showWhoNeedSheet() {
         val showed = whoNeedCache.getBoolean("showedFilter", false)
@@ -98,7 +99,6 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
         bottomSheet.setContentView(binding.root)
         bottomSheet.setCancelable(false)
         bottomSheet.setOnDismissListener {
-            updateYoshChegarasi()
             viewModel.refresh()
         }
         bottomSheet.show()
@@ -138,7 +138,6 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
         bottomSheet.show()
         bottomSheet.setOnDismissListener {
             mainActivity()?.requestNotificationPermission()
-            updateYoshChegarasi()
             checkFilterChangedFromDefault()
             viewModel.checkNeedRefresh()
         }
@@ -181,7 +180,12 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
             save.setOnClickListener {
                 bottomSheet.dismiss()
             }
+        }
+    }
 
+    override fun onInternetAvailable() {
+        if (listAdapter?.itemCount == 0) {
+            viewModel.refresh()
         }
     }
 
@@ -190,37 +194,58 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
         binding?.filterDotView?.visibleOrGone(changed)
     }
 
+    private fun updateUnReadLabel(unread: Int) {
+        val badge = binding?.filterDotView?: return
+        badge.isVisible = unread > 0
+    }
+
+    private fun observeUnMessages() {
+        updateUnReadLabel(LocalUser.user.unreadMessages)
+        userViewModel.repository.observeUnReadMessages {
+            updateUnReadLabel(it)
+        }
+    }
+
+    private var stackLayManager: CardStackLayoutManager? = null
+
     override fun viewCreated(bind: SearchFragmentBinding) {
         showBottomSheet = true
         showWhoNeedSheet()
         bind.apply {
-            listAdapter = SearchAdapter(userViewModel, onClick = {
-                NomzodDetailsFragment.navigateToHere(this@SearchFragment, it)
-            }, next = {
-                viewModel.loadNextNomzodlar()
-            }, onLiked = { liked, nomzodId ->
-                mainActivity()?.showSnack(if (liked) "Yoqtirganlarga qo'shildi!" else "Yoqtirganlardan olib tashlandi")
-            })
-            recyclerView.apply {
-                adapter = listAdapter
-                layoutManager =
-                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            notifyView.setOnClickListener {
+                navigate(R.id.messagesFragment)
             }
-            filterView.setOnClickListener {
-                navigate(R.id.filterFragment)
-            }
+            initAdapter()
+            //Observe
+            observe()
+
+            initFilters()
+            initSwipe()
+            checkFilterChangedFromDefault()
+            observeUnMessages()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.checkNeedRefresh()
+        stackLayManager?.onRestoreInstanceState(layManagerState)
+    }
+
+    private fun observe() {
+        binding?.apply {
+            //List
             viewModel.nomzodlarLive.observe(viewLifecycleOwner) {
-                listAdapter?.submitList(it)
+                updateList()
             }
-            imkonChekTextView.visibleOrGone(MyFilter.filter.imkonChek)
+            //Progress
             viewModel.nomzodlarLoading.observe(viewLifecycleOwner) {
                 val listEmpty = viewModel.nomzodlar.isEmpty()
                 progressBar.visibleOrGone(it && listEmpty)
                 emptyView.apply {
                     visibleOrGone(listEmpty && !it)
                     if (listEmpty) {
-                        val shaxar = locationFilter.editText?.text?.toString()
-                        var message = "$shaxar shaxrida"
+                        var message = ""
                         if (MyFilter.filter.oilaviyHolati != OilaviyHolati.Aralash.name) {
                             val oilaviyHolati =
                                 getString(OilaviyHolati.valueOf(MyFilter.filter.oilaviyHolati).resourceId)
@@ -234,14 +259,191 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
                     }
                 }
             }
-            initFilters()
-            swipeRefresh.setOnRefreshListener {
-                viewModel.refresh()
-                swipeRefresh.isRefreshing = false
-            }
-            viewModel.checkNeedRefresh()
-            checkFilterChangedFromDefault()
         }
+    }
+
+    private fun initSwipe() {
+        binding?.swipeRefresh?.isEnabled = false
+    }
+
+    private var currentNomzod: Nomzod? = null
+
+    private fun initAdapter() {
+        binding?.apply {
+            setFragmentResultListener("liked") { requestKey, bundle ->
+                clearFragmentResultListener("liked")
+                val liked = bundle.getBoolean("liked")
+                if (currentNomzod != null) {
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        delay(500)
+                        val pos = viewModel.nomzodlar.indexOfFirst { it.id == currentNomzod!!.id }
+                        onItemLiked(liked, currentNomzod!!.id, pos,true)
+                    }
+                }
+            }
+            listAdapter = SearchAdapter(userViewModel, onClick = {
+                NomzodDetailsFragment.navigateToHere(this@SearchFragment, it, true)
+            }, next = {}, onLiked = { _, nomzodId ->
+                skipSwipeCallback = true
+                onItemLiked(true, nomzodId, 0)
+            }, disliked = { id, pos ->
+                skipSwipeCallback = true
+                onItemLiked(false, id, pos)
+            })
+            recyclerView.apply {
+                adapter = listAdapter
+                itemAnimator = null
+                layoutManager = CardStackLayoutManager(requireContext(), cardStackListener).apply {
+                    stackLayManager = this
+                }
+                setSwipeSettings(true)
+            }
+        }
+    }
+
+    private var skipSwipeCallback = false
+
+    private var lastSwipeDirection: Direction? = null
+    private var lastAppearedView: View? = null
+
+    private var cardStackListener = object : CardStackListener {
+        override fun onCardDragging(direction: Direction?, ratio: Float) {
+            lastSwipeDirection = direction
+            draging = true
+            try {
+                val viewHolder = binding?.recyclerView?.findViewHolderForLayoutPosition(lastPos)
+                if (viewHolder is BaseAdapter.ViewHolder<*>) {
+                    val binding = viewHolder.binding as NomzodItemBinding
+                    if (ratio > 0.2f) {
+                        if (direction == Direction.Right) {
+                            binding.likeButtonThumb.isVisible = true
+                        } else {
+                            binding.dislikeButtonThumb.isVisible = true
+                        }
+                    } else {
+                        binding.likeButtonThumb.isVisible = false
+                        binding.dislikeButtonThumb.isVisible = false
+                    }
+                }
+            }catch (e: Exception) {
+                //
+            }
+        }
+
+        override fun onCardSwiped(direction: Direction?) {
+            lastSwipeDirection = direction
+            draging = false
+            if (needUpdate) {
+                needUpdate = false
+                updateList()
+            }
+        }
+
+        override fun onCardRewound() {
+
+        }
+
+        override fun onCardCanceled() {
+            draging = false
+            if (needUpdate) {
+                needUpdate = false
+                updateList()
+            }
+            try {
+                val viewHolder = binding?.recyclerView?.findViewHolderForLayoutPosition(lastPos)
+                if (viewHolder is BaseAdapter.ViewHolder<*>) {
+                    val binding = viewHolder.binding as NomzodItemBinding
+                    binding.likeButtonThumb.isVisible = false
+                    binding.dislikeButtonThumb.isVisible = false
+                }
+            } catch (e: Exception) {
+                //
+            }
+        }
+
+        override fun onCardAppeared(view: View?, position: Int) {
+            lastPos = position
+            lastAppearedView = view
+            if (position == listAdapter?.itemCount?.let { it - 2 }) {
+                viewModel.loadNextNomzodlar()
+            } else {
+                if (needUpdate) {
+                    needUpdate = false
+                    updateList()
+                }
+            }
+            try {
+                val viewHolder = binding?.recyclerView?.findViewHolderForLayoutPosition(position)
+                if (viewHolder is BaseAdapter.ViewHolder<*>) {
+                    val binding = viewHolder.binding as NomzodItemBinding
+                    binding.likeButtonThumb.isVisible = false
+                    binding.dislikeButtonThumb.isVisible = false
+                }
+            } catch (e: Exception) {
+                //
+            }
+        }
+
+        override fun onCardDisappeared(view: View?, position: Int) {
+            if (skipSwipeCallback.not() && lastSwipeDirection != null) {
+                if (lastSwipeDirection == Direction.Right) {
+                    onItemLiked(
+                        true, listAdapter?.currentList?.get(position)?.id ?: return, position
+                    )
+                } else {
+                    onItemLiked(
+                        false, listAdapter?.currentList?.get(position)?.id ?: return, position
+                    )
+                }
+            }
+            skipSwipeCallback = false
+        }
+    }
+
+    private var lastPos = 0
+    private var savedPosition = 0
+    private fun updateList() {
+        if (draging) {
+            needUpdate = true
+            return
+        }
+        view?.postDelayed(50) {
+            listAdapter?.submitList(viewModel.nomzodlar)
+        }
+    }
+
+    private fun onItemLiked(liked: Boolean, nomzodId: String, pos: Int, skipLike: Boolean = false) {
+        val nomzod = viewModel.nomzodlar.firstOrNull { it.id == nomzodId } ?: return
+        if (skipLike.not()) {
+            val done = SearchAdapter.likeOrDislike(nomzod, liked)
+            if (done.not()) return
+        }
+        viewModel.nomzodlar.removeIf { it.id == nomzodId }
+        setSwipeSettings(liked)
+        binding?.recyclerView?.doOnLayout {
+            binding?.recyclerView?.swipe()
+        }
+    }
+
+    private fun setSwipeSettings(right: Boolean) {
+        stackLayManager?.apply {
+            val setting = SwipeAnimationSetting.Builder()
+                .setDirection(if (right) Direction.Right else Direction.Left)
+                .setDuration(Duration.Normal.duration).setInterpolator(AccelerateInterpolator())
+                .build()
+            setCanScrollVertical(false)
+            setScaleInterval(0.95f)
+            setSwipeThreshold(0.5f)
+            setMaxDegree(30f)
+            setSwipeAnimationSetting(setting)
+        }
+    }
+
+    private var layManagerState: Parcelable? = null
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        layManagerState = stackLayManager?.onSaveInstanceState()
     }
 }
 

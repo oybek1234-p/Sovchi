@@ -6,9 +6,12 @@ data class User(
     var phoneNumber: String,
     var lastSeenTime: Long,
     var hasNomzod: Boolean,
-    var unreadMessages: Int
+    var unreadMessages: Int,
+    var premium: Boolean,
+    var premiumExpires: Long,
+    var unreadChats: Int
 ) {
-    constructor() : this("", "", "", 0L, false, 0)
+    constructor() : this("", "", "", 0L, false, 0, false, 0,0)
 }
 
 val User?.valid: Boolean get() = this?.uid?.isEmpty()?.not() ?: false

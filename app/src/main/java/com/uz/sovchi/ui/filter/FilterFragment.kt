@@ -21,7 +21,6 @@ class FilterFragment : BaseFragment<FragmentFilterBinding>() {
             FilterViewUtils.setLocationView(locationFilter.editText as AutoCompleteTextView) { }
             FilterViewUtils.setNomzodTypeView(typeFilter.editText as AutoCompleteTextView) {}
             FilterViewUtils.setOilaviyHolati(oilaviyView.editText as AutoCompleteTextView) {}
-            FilterViewUtils.setImkoniyatiCheklangan(imkonchekCheckBox) {}
 
             ageSlider.labelBehavior = LabelFormatter.LABEL_VISIBLE
             ageSlider.values = listOf(

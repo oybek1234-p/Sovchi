@@ -90,7 +90,7 @@ class VerifyFragment : BaseFragment<FragmentVerifyBinding>() {
             if (user.valid.not()) return@launch
             MyFilter.update()
             if (user!!.name.isEmpty()) {
-                navigate(R.id.action_verifyFragment_to_getUserNameFragment)
+                navigate(R.id.getUserNameFragment)
             } else {
                 mainActivity()?.recreateUi()
             }

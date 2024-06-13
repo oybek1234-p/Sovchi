@@ -11,42 +11,75 @@
         android:background="?backgroundColor"
         android:layout_height="match_parent">
 
-        <include
-            android:id="@+id/auth_view"
-            layout="@layout/auth_need_view" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabMode="auto"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/my_likes"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:icon="@drawable/ic_liked"
+                android:text="@string/yoqgan" />
+
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/liked_me"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:icon="@drawable/like_ic"
+                android:text="@string/sizni_yoqtrigan" />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/matched"
+                android:icon="@drawable/two_hearts_ic"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/tanishing" />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/disliked"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:icon="@drawable/close_ic"
+                android:text="@string/yoqmagan" />
+        </com.google.android.material.tabs.TabLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:paddingBottom="100dp"
+            android:layout_marginHorizontal="@dimen/dimen_12"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
 
         <ProgressBar
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:paddingBottom="100dp"
-            android:paddingHorizontal="@dimen/dimen_12"
-            android:clipToPadding="false"
-            android:layout_height="match_parent" />
 
         <TextView
             android:id="@+id/empty_view"
-            style="@style/Headline2_16"
+            style="@style/Text1_16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/saqlanganlar_bo_sh"
             android:textColor="?colorOnSurface"
-            android:visibility="gone"
-            android:drawablePadding="@dimen/dimen_12"
-            android:drawableStart="@drawable/like_ic"
-            android:drawableTint="?colorPrimary"
+            app:drawableStartCompat="@drawable/ic_liked"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

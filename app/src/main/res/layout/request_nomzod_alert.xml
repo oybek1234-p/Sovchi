@@ -45,5 +45,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/skip_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/OutlineButton"
+            android:visibility="gone"
+            android:layout_marginTop="@dimen/dimen_12"
+            android:text="@string/keyinroq"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ok_button" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

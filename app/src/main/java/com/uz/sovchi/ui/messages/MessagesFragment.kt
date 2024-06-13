@@ -78,7 +78,8 @@ class MessagesFragment : BaseFragment<MessagesFragmentBinding>() {
 
     override fun viewCreated(bind: MessagesFragmentBinding) {
         bind.apply {
-            toolbar.showArrowBack = false
+            toolbar.showArrowBack = true
+            toolbar.setUpBackButton(this@MessagesFragment)
             observe()
             initRecycler()
             initSwipeRefresh()

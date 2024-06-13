@@ -9,12 +9,7 @@
     <item
         android:id="@+id/like_nav"
         android:icon="@drawable/ic_liked"
-        android:title="@string/saqlangan" />
-
-    <item
-        android:id="@+id/nomzod_nav"
-        android:icon="@drawable/person_ic"
-        android:title="@string/nomzodim" />
+        android:title="@string/yoqtirgan" />
 
     <item
         android:id="@+id/messages_nav"

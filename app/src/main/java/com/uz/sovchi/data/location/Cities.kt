@@ -21,6 +21,12 @@ enum class City(val resId: Int) {
     Xorazm(R.string.xorazm);
 
     companion object {
-        fun asListNames() = City.entries.map { appContext.getString(it.resId) }
+        fun asListNames(includeAll: Boolean = true) = City.entries.toMutableList().apply {
+            if (includeAll.not()) {
+                remove(Hammasi)
+            }
+        }.map {
+            appContext.getString(it.resId)
+        }
     }
 }

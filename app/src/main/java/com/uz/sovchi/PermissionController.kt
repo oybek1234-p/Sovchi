@@ -19,6 +19,8 @@ class PermissionController {
         fun getInstance() =
             if (INSTANCE != null) INSTANCE!! else PermissionController().also { INSTANCE = it }
 
+        const val ANY_REQUEST_CODE = -1
+
         fun checkPermissions(context: Context, permissions: Array<String>): Array<String>? {
             var shouldRequest: ArrayList<String>? = null
 
@@ -77,12 +79,12 @@ class PermissionController {
     private var activityResultCallbacks = hashMapOf<Int,(any: Any?,resultOk: Boolean) -> Unit>()
 
     fun doOnActivityResult(requestId: Int,result: (any: Any?,resultOk: Boolean) -> Unit) {
-        activityResultCallbacks[requestId] = result
+        activityResultCallbacks.put(requestId,result)
     }
 
     fun onActivityResult(requestCode: Int,any: Any?,ok: Boolean) {
         activityResultCallbacks.forEach {
-            if (it.key == requestCode) {
+            if (it.key == requestCode || it.key == ANY_REQUEST_CODE) {
                 it.value.invoke(any,ok)
                 activityResultCallbacks.remove(requestCode)
             }

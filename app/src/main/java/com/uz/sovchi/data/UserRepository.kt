@@ -1,22 +1,22 @@
 package com.uz.sovchi.data
 
-import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.uz.sovchi.appContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class UserRepository(val context: Context) {
+object UserRepository {
 
     init {
-        LocalUser.getUser(context)
+        LocalUser.getUser(appContext)
     }
 
-    private val usersReference: DatabaseReference by lazy {
+    val usersReference: DatabaseReference by lazy {
         FirebaseDatabase.getInstance().getReference("users")
     }
 
@@ -26,6 +26,18 @@ class UserRepository(val context: Context) {
     private fun saveUserNetwork() {
         if (user.valid) {
             usersReference.child(user.uid).setValue(user)
+        }
+    }
+
+    fun getLastSeen(userId: String, done: (time: Long) -> Unit) {
+        try {
+            usersReference.child(userId).child(User::lastSeenTime.name).get()
+                .addOnCompleteListener {
+                    val time = it.result.getValue(Long::class.java) ?: System.currentTimeMillis()
+                    done.invoke(time)
+                }
+        } catch (e: Exception) {
+            //
         }
     }
 
@@ -64,13 +76,13 @@ class UserRepository(val context: Context) {
     fun signOut() {
         FirebaseAuth.getInstance().signOut()
         LocalUser.user = User()
-        LocalUser.saveUser(context)
+        LocalUser.saveUser(appContext)
     }
 
     private fun createNewUserAndSet(user: User) {
         if (user.valid) {
             LocalUser.user = user
-            LocalUser.saveUser(context)
+            LocalUser.saveUser(appContext)
 
             saveUserNetwork()
         }
@@ -79,7 +91,7 @@ class UserRepository(val context: Context) {
     fun updateUser(user: User) {
         if (user.valid && user.uid == LocalUser.user.uid) {
             LocalUser.user = user
-            LocalUser.saveUser(context)
+            LocalUser.saveUser(appContext)
 
             saveUserNetwork()
         }
@@ -111,13 +123,21 @@ class UserRepository(val context: Context) {
         isNewUser = networkUser.valid.not()
         return if (isNewUser) {
             val newUser = User(
-                uid = id, "", firebaseUser.phoneNumber ?: "", System.currentTimeMillis(), false, 0
+                uid = id,
+                "",
+                firebaseUser.phoneNumber ?: "",
+                System.currentTimeMillis(),
+                false,
+                0,
+                false,
+                0,
+                0
             )
             createNewUserAndSet(newUser)
             newUser
         } else {
             LocalUser.user = networkUser!!
-            LocalUser.saveUser(context)
+            LocalUser.saveUser(appContext)
             networkUser
         }
     }
@@ -142,7 +162,7 @@ class UserRepository(val context: Context) {
             val loadedUser = it.result.getValue(User::class.java)
             if (loadedUser.valid) {
                 LocalUser.user = loadedUser!!
-                LocalUser.saveUser(context)
+                LocalUser.saveUser(appContext)
             }
             sus.resume(
                 if (loadedUser.valid) Result.success(loadedUser!!) else Result.failure(

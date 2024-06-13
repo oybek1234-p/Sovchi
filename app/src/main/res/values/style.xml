@@ -33,11 +33,11 @@
 
     <style name="SheetStyle" parent="Theme.Design.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+        <item name="android:colorBackground">?colorSurface</item>
     </style>
 
     <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="shapeAppearance">@style/SheetAppearance</item>
-        <item name="backgroundTint">?colorSurface</item>
     </style>
 
     <style name="SheetAppearance" parent="ShapeAppearance.MaterialComponents.LargeComponent">

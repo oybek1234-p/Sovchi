@@ -33,11 +33,10 @@
 
 
                 <TextView
-                    style="@style/Title3_17"
+                    style="@style/Headline2_16"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/dimen_8"
-                    android:text="Nomzod turi"
+                    android:text="Kim kerak"
                     android:textColor="?colorOnSurface" />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -65,11 +64,10 @@
 
 
                 <TextView
-                    style="@style/Title3_17"
+                    style="@style/Headline2_16"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dimen_24"
-                    android:layout_marginBottom="@dimen/dimen_8"
                     android:text="Manzil"
                     android:textColor="?colorOnSurface" />
 
@@ -99,11 +97,10 @@
 
 
                 <TextView
-                    style="@style/Title3_17"
+                    style="@style/Headline2_16"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dimen_24"
-                    android:layout_marginBottom="@dimen/dimen_8"
                     android:text="Oilaviy holati"
                     android:textColor="?colorOnSurface" />
 
@@ -134,12 +131,11 @@
 
                 <TextView
                     android:id="@+id/similar_title"
-                    style="@style/Title3_17"
+                    style="@style/Headline2_16"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dimen_24"
-                    android:layout_marginBottom="@dimen/dimen_8"
-                    android:text="Yosh chegarasi"
+                    android:text="Nomzod yosh chegarasi"
                     android:textColor="?colorOnSurface" />
 
                 <com.google.android.material.slider.RangeSlider

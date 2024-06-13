@@ -5,6 +5,8 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.FirebaseTooManyRequestsException
+import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.uz.sovchi.R
 import com.uz.sovchi.data.AuthController
@@ -52,21 +54,34 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    fun signInGoogle(context: Context, credential: AuthCredential, verified: (done: Boolean) -> Unit) {
+        verifyState.postValue(VerifyState.Verifying)
+        FirebaseAuth.getInstance().signInWithCredential(credential).addOnSuccessListener {
+            verified.invoke(true)
+        }.addOnFailureListener {
+            verified.invoke(false)
+        }
+    }
+
     fun verifyCode(context: Context, code: String, verificationCode: String) {
         verifyState.postValue(VerifyState.Verifying)
-        AuthController.verifyCode(code, verificationCode) { success, exception ->
-            if (success) {
-                verifyState.postValue(VerifyState.Success)
-            } else {
-                if (exception != null) {
-                    val message = when (exception) {
-                        is FirebaseAuthInvalidCredentialsException -> context.getString(R.string.parol_noturgri)
-                        is FirebaseTooManyRequestsException -> context.getString(R.string.keyinroq_urinib_koring)
-                        else -> context.getString(R.string.xatolik_yuz_berdi)
+        try {
+            AuthController.verifyCode(code, verificationCode) { success, exception ->
+                if (success) {
+                    verifyState.postValue(VerifyState.Success)
+                } else {
+                    if (exception != null) {
+                        val message = when (exception) {
+                            is FirebaseAuthInvalidCredentialsException -> context.getString(R.string.parol_noturgri)
+                            is FirebaseTooManyRequestsException -> context.getString(R.string.keyinroq_urinib_koring)
+                            else -> context.getString(R.string.xatolik_yuz_berdi)
+                        }
+                        verifyState.postValue(VerifyState.Error(java.lang.Exception(message)))
                     }
-                    verifyState.postValue(VerifyState.Error(java.lang.Exception(message)))
                 }
             }
+        } catch (e: Exception) {
+            //
         }
     }
 

@@ -30,11 +30,15 @@ class AdminVerificationFragment : BaseFragment<AdminVerifyFragmentBinding>() {
             putString("nId", it.id)
             putBoolean("admin", true)
         })
+    },{model->
+        nomzodViewModel.repository.deleteNomzod(model.id)
+        searchViewModel.nomzodlar.removeIf { it.id == model.id }
+        searchViewModel.nomzodlarLive.postValue(searchViewModel.nomzodlar)
     })
 
     override fun viewCreated(bind: AdminVerifyFragmentBinding) {
         bind.apply {
-            searchViewModel.isNew = true
+            searchViewModel.mainFilter = SearchViewModel.FILTER_NEW
             searchViewModel.forVerify = true
             searchViewModel.nomzodlarLoading.observe(viewLifecycleOwner) {
                 progressBar.isVisible = it && vAdapter.itemCount == 0

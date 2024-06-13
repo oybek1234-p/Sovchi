@@ -1,12 +1,17 @@
 package com.uz.sovchi.ui.nomzod
 
+import android.view.ViewGroup
+import androidx.appcompat.app.ActionBar.LayoutParams
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import com.uz.sovchi.R
+import com.uz.sovchi.appContext
 import com.uz.sovchi.data.nomzod.Nomzod
 import com.uz.sovchi.data.nomzod.NomzodState
 import com.uz.sovchi.data.nomzod.NomzodTarif
 import com.uz.sovchi.data.nomzod.getStatusText
 import com.uz.sovchi.databinding.NomzodMyItemBinding
+import com.uz.sovchi.toDp
 import com.uz.sovchi.ui.base.BaseAdapter
 import com.uz.sovchi.ui.base.EmptyDiffUtil
 
@@ -26,16 +31,13 @@ class MyNomzodAdapter(
                 settingsButton.setOnClickListener {
                     click.invoke(model,true)
                 }
-                statusView.text = model.getStatusText()
-                nomzodId.setNomzod(model, false, false)
-                nomzodId.qoshimchaView.isVisible = false
-                try {
-                    tarifView.text =
-                        root.context.getString(NomzodTarif.valueOf(model.tarif).nameRes)
-                } catch (e: Exception) {
-                    //
+                nomzodId.photoView.updateLayoutParams<ViewGroup.LayoutParams> {
+                    height = toDp(200f, appContext)
                 }
+                statusView.text = model.getStatusText()
+                nomzodId.setNomzod(model, false, false,true)
                 nomzodId.likeButton.isVisible = false
+                nomzodId.dislikeButton.isVisible = false
                 if (model.state == NomzodState.NOT_PAID) {
                     payButton.isVisible = true
                 }

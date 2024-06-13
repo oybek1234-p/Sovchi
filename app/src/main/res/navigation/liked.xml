@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/likedFragment"
-        android:name="com.uz.sovchi.LikedFragment"
+        android:name="com.uz.sovchi.ui.like.LikedFragment"
         android:label="LikedFragment" />
     <include app:graph="@navigation/auth_graph" />
     <fragment

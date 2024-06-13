@@ -1,5 +1,7 @@
 package com.uz.sovchi.data.recombee
 
+import android.util.Log
+import com.google.firebase.functions.FirebaseFunctions
 import com.recombee.api_client.RecombeeClient
 import com.recombee.api_client.api_requests.AddBookmark
 import com.recombee.api_client.api_requests.AddDetailView
@@ -8,10 +10,12 @@ import com.recombee.api_client.api_requests.DeleteBookmark
 import com.recombee.api_client.api_requests.DeletePurchase
 import com.recombee.api_client.api_requests.RecommendItemsToItem
 import com.recombee.api_client.api_requests.RecommendItemsToUser
-import com.recombee.api_client.api_requests.RecommendNextItems
+import com.recombee.api_client.bindings.Recommendation
+import com.recombee.api_client.bindings.RecommendationResponse
 import com.recombee.api_client.util.Region
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.filter.MyFilter
+import com.uz.sovchi.data.like.LikeController
 import com.uz.sovchi.data.location.City
 import com.uz.sovchi.data.nomzod.Nomzod
 import com.uz.sovchi.data.nomzod.OilaviyHolati
@@ -32,32 +36,36 @@ object RecombeeDatabase {
     private val scope = CoroutineScope(SupervisorJob())
 
     fun getSimilarNomzods(nomzodId: String, count: Int, result: (list: List<Nomzod>) -> Unit) {
-        scope.launch {
-            try {
-                val filter = buildFilter(
-                    MyFilter.filter.nomzodType,
-                    "",
-                    "",
-                    MyFilter.filter.oilaviyHolati,
-                    MyFilter.filter.yoshChegarasiGacha,
-                    MyFilter.filter.yoshChegarasiDan
-                )
-                val list = arrayListOf<Nomzod>()
-                val response = client.send(
-                    RecommendItemsToItem(
-                        nomzodId, null, count.toLong()
-                    ).setReturnProperties(true).setFilter("$filter AND 'nid' != $nomzodId")
-                )
-                response.forEach { it ->
-                    val rec = it.values
-                    rec.toNomzod()?.let {
-                        list.add(it)
+        try {
+            scope.launch {
+                try {
+                    val filter = buildFilter(
+                        MyFilter.filter.nomzodType,
+                        "",
+                        "",
+                        MyFilter.filter.oilaviyHolati,
+                        MyFilter.filter.yoshChegarasiGacha,
+                        MyFilter.filter.yoshChegarasiDan
+                    )
+                    val list = arrayListOf<Nomzod>()
+                    val response = client.send(
+                        RecommendItemsToItem(
+                            nomzodId, null, count.toLong()
+                        ).setReturnProperties(true).setFilter("$filter AND 'nid' != $nomzodId")
+                    )
+                    response.forEach { it ->
+                        val rec = it.values
+                        rec.toNomzod()?.let {
+                            list.add(it)
+                        }
                     }
+                    result.invoke(list)
+                } catch (e: Exception) {
+                    //
                 }
-                result.invoke(list)
-            } catch (e: Exception) {
-                //
             }
+        } catch (e: Exception) {
+            //
         }
     }
 
@@ -67,7 +75,9 @@ object RecombeeDatabase {
         userId: String,
         oilaviyHolati: String,
         yoshChegarasiGacha: Int = 0,
-        yoshChegarasiDan: Int = 0
+        yoshChegarasiDan: Int = 0,
+        includeDisliked: Boolean = true,
+        hasPhotoOnly: Boolean = false
     ): String {
         var filter = "'type' == $type"
         if (manzil.isNotEmpty() && manzil != City.Hammasi.name) {
@@ -79,9 +89,18 @@ object RecombeeDatabase {
         if (yoshChegarasiGacha > MyFilter.AGE_MIN) {
             filter += " AND '${Nomzod::tugilganYili.name}' <= $yoshChegarasiGacha"
         }
+        if (hasPhotoOnly) {
+            filter += " AND size('photos') > 0"
+        }
         if (yoshChegarasiDan > MyFilter.AGE_MIN) {
             filter += " AND '${Nomzod::tugilganYili.name}' >= $yoshChegarasiDan"
         }
+//        val disliked = LikeController.likes.map { it.nomzodId }
+//        if (includeDisliked && disliked.isNotEmpty()) {
+//            val dislikedIds = disliked.map { "\"${it}\"" }.joinToString(",") { it }
+//
+//            filter += " AND 'itemId' not in {${dislikedIds}}"
+//        }
         return filter
     }
 
@@ -109,6 +128,50 @@ object RecombeeDatabase {
         }
     }
 
+    private val likedModels = arrayListOf<String>()
+
+    private fun getLikedModelsFor(nomzods: List<Nomzod>, result: (list: List<Nomzod>?) -> Unit) {
+
+    }
+
+    private var firebaseFunctions = FirebaseFunctions.getInstance()
+
+    private fun getNomzods(
+        recomId: String = "",
+        type: Int = 0,
+        manzil: String = "",
+        userId: String = "",
+        oilaviyHolati: String = "",
+        yoshChegarasiGacha: Int = 0,
+        yoshChegarasiDan: Int = 0,
+        limit: Int = 6,
+        result: (
+            recomId: String, list: List<Nomzod>
+        ) -> Unit
+    ) {
+        val data = hashMapOf<String, Any>(
+            "type" to type,
+            "manzil" to manzil,
+            "userId" to userId,
+            "recomId" to recomId,
+            "oilaviyHolati" to oilaviyHolati,
+            "yoshChegarasiGacha" to yoshChegarasiGacha,
+            "yoshChegarasiDan" to yoshChegarasiDan,
+            "limit" to limit
+        )
+
+        firebaseFunctions.getHttpsCallable("getNomzods").call(data).continueWith {
+            if (it.result.data != null) {
+                val response = gson!!.fromJson(
+                    it.result.data.toString(), RecommendationModel::class.java
+                )
+                result.invoke(response.recommId, response.recomms.map { it.values })
+            } else {
+                showToast("Data null")
+            }
+        }
+    }
+
     fun getRecommendForUser(
         recomId: String,
         type: Int,
@@ -118,37 +181,22 @@ object RecombeeDatabase {
         yoshChegarasiGacha: Int = 0,
         yoshChegarasiDan: Int = 0,
         limit: Int = 6,
-        result: (recomId: String, list: List<Nomzod>) -> Unit
+        result: (
+            recomId: String, list: List<Nomzod>
+        ) -> Unit
     ) {
         scope.launch {
-            try {
-                val response = if (recomId.isEmpty()) {
-                    var req = RecommendItemsToUser(
-                        userId.ifEmpty { null }, limit.toLong()
-                    ).setReturnProperties(true)
-                    val filter = buildFilter(
-                        type, manzil, userId, oilaviyHolati, yoshChegarasiGacha, yoshChegarasiDan
-                    )
-                    if (filter.isNotEmpty()) {
-                        req = req.setFilter(filter)
-                    }
-                    client.send(req.setScenario("homePage"))
-                } else {
-                    client.send(RecommendNextItems(recomId, limit.toLong()))
-                }
-                val list = arrayListOf<Nomzod>()
-
-                response.forEach { it ->
-                    val rec = it.values
-                    rec.toNomzod()?.let {
-                        list.add(it)
-                    }
-                }
-                result.invoke(response.recommId, list)
-            } catch (e: Exception) {
-                //
-                showToast(e.message.toString())
-            }
+            getNomzods(
+                recomId,
+                type,
+                manzil,
+                userId,
+                oilaviyHolati,
+                yoshChegarasiGacha,
+                yoshChegarasiDan,
+                limit,
+                result
+            )
         }
     }
 

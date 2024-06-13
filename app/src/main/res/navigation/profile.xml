@@ -33,7 +33,7 @@
         android:id="@+id/paymentGetCheckFragment"
         android:name="com.uz.sovchi.ui.payment.PaymentGetCheckFragment"
         android:label="PaymentGetCheckFragment" />
-    <dialog
+    <fragment
         android:id="@+id/paymentFragment"
         android:name="com.uz.sovchi.ui.payment.PaymentFragment"
         android:label="PaymentFragment" />
@@ -41,4 +41,16 @@
         android:id="@+id/nomzodUploadSuccessFragment"
         android:name="com.uz.sovchi.ui.nomzod.NomzodUploadSuccessFragment"
         android:label="NomzodUploadSuccessFragment" />
+    <fragment
+        android:id="@+id/voiceRecordFragment"
+        android:name="com.uz.sovchi.ui.record.VoiceRecordFragment"
+        android:label="VoiceRecordFragment" />
+    <fragment
+        android:id="@+id/getUserNameFragment"
+        android:name="com.uz.sovchi.ui.auth.GetUserNameFragment"
+        android:label="GetUserNameFragment" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.uz.sovchi.ui.SettingsFragment"
+        android:label="SettingsFragment" />
 </navigation>

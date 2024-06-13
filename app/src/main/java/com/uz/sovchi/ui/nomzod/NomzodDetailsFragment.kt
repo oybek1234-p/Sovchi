@@ -3,8 +3,6 @@ package com.uz.sovchi.ui.nomzod
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
@@ -12,8 +10,10 @@ import android.text.Html
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
@@ -21,10 +21,12 @@ import com.bumptech.glide.request.transition.Transition
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.gms.ads.AdRequest
 import com.google.android.material.color.MaterialColors
+import com.google.android.material.snackbar.Snackbar
 import com.uz.sovchi.DateUtils
 import com.uz.sovchi.R
-import com.uz.sovchi.SocialMedia
 import com.uz.sovchi.appContext
+import com.uz.sovchi.data.LocalUser
+import com.uz.sovchi.data.like.LikeController
 import com.uz.sovchi.data.location.City
 import com.uz.sovchi.data.nomzod.KUYOV
 import com.uz.sovchi.data.nomzod.Nomzod
@@ -36,20 +38,20 @@ import com.uz.sovchi.data.nomzod.getTugilganJoyi
 import com.uz.sovchi.data.nomzod.getYoshChegarasi
 import com.uz.sovchi.data.nomzod.paramsText
 import com.uz.sovchi.data.recombee.RecombeeDatabase
-import com.uz.sovchi.data.saved.SavedRepository
 import com.uz.sovchi.data.valid
 import com.uz.sovchi.data.viewed.ViewedNomzods
 import com.uz.sovchi.databinding.NomzodDetailsBinding
 import com.uz.sovchi.databinding.RequestNomzodAlertBinding
 import com.uz.sovchi.gson
 import com.uz.sovchi.openImageViewer
-import com.uz.sovchi.openPhoneCall
+import com.uz.sovchi.showToast
 import com.uz.sovchi.ui.base.BaseFragment
 import com.uz.sovchi.ui.photo.PhotoAdapter
 import com.uz.sovchi.ui.photo.PickPhotoFragment
 import com.uz.sovchi.ui.search.SearchAdapter
 import com.uz.sovchi.visibleOrGone
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -65,10 +67,11 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
     private var nomzodId = ""
 
     companion object {
-        fun navigateToHere(fragment: BaseFragment<*>, nomzod: Nomzod) {
+        fun navigateToHere(fragment: BaseFragment<*>, nomzod: Nomzod,needResult: Boolean = false) {
             val json = gson!!.toJson(nomzod)
             val bundle = Bundle().apply {
                 putString("data", json)
+                putBoolean("needResult",needResult)
             }
             fragment.navigate(R.id.nomzodDetailsFragment, bundle)
         }
@@ -78,6 +81,7 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
         super.onCreate(savedInstanceState)
         val json = arguments?.getString("data")
         nomzodId = arguments?.getString("nomzodId") ?: ""
+        needResult = arguments?.getBoolean("needResult") ?: false
         if (json.isNullOrEmpty().not()) {
             nomzod = gson!!.fromJson(json!!, Nomzod::class.java)
             if (nomzod != null) {
@@ -100,7 +104,6 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
             }
             progressBar.isVisible = show
             container.isVisible = show.not()
-            phoneView.isVisible = show.not()
         }
     }
 
@@ -124,6 +127,7 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
                 })
                 isVisible = true
                 adapter = photosAdapter.apply {
+                    showPhotos = nomzod!!.needShowPhotos()
                     deleteShown = false
                     matchParent = true
                     submitList(nomzod!!.photos.map { PickPhotoFragment.Image(it) })
@@ -174,6 +178,13 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
         }
     }
 
+    override fun onInternetAvailable() {
+        super.onInternetAvailable()
+        if (nomzodSet.not()) {
+            loadNomzod()
+        }
+    }
+
     private fun loadNomzod() {
         if (nomzodId.isNotEmpty()) {
             setLoading(true)
@@ -198,194 +209,301 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
             navigateToHere(this, it)
         }, next = {}, onLiked = { liked, _ ->
             mainActivity()?.showSnack(if (liked) "Yoqtirganlarga qo'shildi!" else "Yoqtirganlardan olib tashlandi")
+        }, isBackGray = true, disliked = { id, pos ->
+            if (binding == null) return@SearchAdapter
+            try {
+                Snackbar.make(
+                    binding!!.similarRecyclerView,
+                    "Nomzod boshqa ko'rinmaydi!",
+                    Snackbar.LENGTH_SHORT
+                ).setAction("Qaytarish") {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        delay(500)
+                        ViewedNomzods.removeDisliked(id)
+                        val list = similarListAdapter.currentList.toMutableList()
+                        list.add(pos, nomzod)
+                        similarListAdapter.submitList(list)
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            binding?.similarRecyclerView?.scrollToPosition(pos)
+                        }
+                    }
+
+                }.show()
+            } catch (e: Exception) {
+                //
+            }
         })
     }
 
-    private fun initSimilar() {
-        val nomzodId = nomzod?.id ?: return
-        RecombeeDatabase.getSimilarNomzods(nomzodId, 6) {
-            lifecycleScope.launch {
-                if (it.isNotEmpty()) {
-                    binding?.apply {
-                        similarContainer.isVisible = true
-                        similarRecyclerView.adapter = similarListAdapter.apply {
-                            submitList(it)
+    private fun updateLastSeen() {
+        if (nomzod == null) return
+        try {
+            val userId = nomzod!!.userId
+            if (userId.isNotEmpty()) {
+                if (context == null || isDetached) return
+                userViewModel.repository.getLastSeen(userId) {
+                    try {
+                        val date = DateUtils.formatDate(it)
+                        val now = date == getString(R.string.yaqinda)
+                        binding?.lastSeenTime?.apply {
+                            text = "Onlayn $date"
+                            setTextColor(
+                                MaterialColors.getColor(
+                                    this,
+                                    if (now) androidx.appcompat.R.attr.colorPrimary else com.google.android.material.R.attr.colorOnSurfaceVariant
+                                )
+                            )
                         }
+                    } catch (e: Exception) {
+                        //
                     }
                 }
             }
+        } catch (e: Exception) {
+            //
         }
     }
+
+    private var exoPlayerInit = false
+
+    private val exoPlayer: ExoPlayer by lazy {
+        exoPlayerInit = true
+        ExoPlayer.Builder(requireContext()).build()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (exoPlayerInit) {
+            exoPlayer.release()
+        }
+    }
+
+    private var nomzodSet = false
 
     @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables")
     private fun setView(binding: NomzodDetailsBinding, nomzod: Nomzod?) {
         if (nomzod == null || isAdded.not() || context == null) return
-
-        binding.apply {
-            nomzod.apply {
-                likeButton.isVisible = true
-                //Photos
-                nomzodViewModel.repository.increaseNomzodViews(id)
-                initSimilar()
-                showPhotos()
-                nomzodQuyish.setOnClickListener {
-                    showAddNomzodAlert()
-                }
-                //Like
-                val isLiked = SavedRepository.isNomzodLiked(nomzod.id)
-                likeButton.imageTintList = ColorStateList.valueOf(
-                    if (isLiked) MaterialColors.getColor(
-                        likeButton, androidx.appcompat.R.attr.colorPrimary
-                    ) else Color.LTGRAY
-                )
-                likeButton.setOnClickListener {
-                    val liked = !SearchAdapter.likeItem(nomzod)
-                    likeButton.imageTintList = ColorStateList.valueOf(
-                        if (liked) MaterialColors.getColor(
-                            likeButton, androidx.appcompat.R.attr.colorPrimary
-                        ) else Color.LTGRAY
-                    )
-                }
-//                nameAgeView.setCompoundDrawablesWithIntrinsicBounds(
-//                    requireContext().getDrawable(if (type == KUYOV) R.drawable.man_ic else R.drawable.woman_ic),
-//                    null,
-//                    null,
-//                    null
-//                )
-                photoCon.isVisible = nomzod.photos.isNotEmpty()
-                nomzodQuyish.isVisible = false
-
-                val getString: (id: Int) -> String = { it ->
-                    container.context.getString(it)
-                }
-                var parmText = "${
-                    name.ifEmpty {
-                        if (nomzod.type == KUYOV) getString(
-                            R.string.kuyovlikga
-                        ) else getString(R.string.kelinlikga)
+        try {
+            binding.apply {
+                nomzod.apply {
+                    nomzodSet = true
+                    updateLastSeen()
+                    //Photos
+                    nomzodViewModel.repository.increaseNomzodViews(id)
+                    showPhotos()
+                    //Like
+                    photoCon.isVisible = nomzod.photos.isNotEmpty()
+                    val getString: (id: Int) -> String = { it ->
+                        container.context.getString(it)
                     }
-                }"
-                parmText += "   ${tugilganYili}-yosh"
-                nameAgeView.text = parmText
-                paramsView.text = paramsText()
-                paramsView.isVisible = paramsView.text.trim().isNotEmpty()
-                millatiView.text = "$millati"
-
-                val oilaviyHolatiText = try {
-                    appContext.getString(OilaviyHolati.valueOf(oilaviyHolati).resourceId)
-                } catch (e: Exception) {
-                    oilaviyHolati
-                }
-                if (oilaviyHolati == OilaviyHolati.AJRASHGAN.name || oilaviyHolati == OilaviyHolati.Beva.name) {
-                    farzandlarView.apply {
-                        visibleOrGone(true)
-                        if (farzandlar.isEmpty()) {
-                            farzandlar = getString(R.string.yoq)
+                    var parmText = "${
+                        name.ifEmpty {
+                            if (nomzod.type == KUYOV) getString(
+                                R.string.kuyovlikga
+                            ) else getString(R.string.kelinlikga)
                         }
-                        text =
-                            Html.fromHtml("${getString(R.string.farzandlar)}:  <b>$farzandlar<\b>")
+                    }"
+                    parmText += "   ${tugilganYili}-yosh"
+                    nameAgeView.text = parmText
+                    paramsView.text = paramsText()
+                    paramsView.isVisible = paramsView.text.trim().isNotEmpty()
+                    millatiView.text = "$millati"
+
+                    val oilaviyHolatiText = try {
+                        appContext.getString(OilaviyHolati.valueOf(oilaviyHolati).resourceId)
+                    } catch (e: Exception) {
+                        oilaviyHolati
                     }
-                } else {
-                    farzandlarView.visibleOrGone(false)
-                }
-                oilaviyView.text = "$oilaviyHolatiText"
-
-                val oqishText = try {
-                    getString(
-                        OqishMalumoti.valueOf(
-                            oqishMalumoti
-                        ).resId
-                    )
-                } catch (e: Exception) {
-                    oqishMalumoti
-                }
-                oqishView.text = Html.fromHtml("${getString(R.string.ma_lumoti)} $oqishText")
-
-                if (ishJoyi.isNotEmpty()) {
-                    ishView.text = "${getString(R.string.kasbi)} $ishJoyi"
-                } else {
-                    ishView.isVisible = false
-                }
-                val manzilText = getString(City.valueOf(manzil).resId)
-                manzilView.text = getManzilText()
-                if (tugilganJoyi != manzilText) {
-                    tgjView.text = getTugilganJoyi()
-                } else {
-                    tgjView.isVisible = false
-                }
-                qoshimchaView.text = "$talablar"
-                dateView.text = DateUtils.formatDate(uploadDate)
-                imkonChekBadgeTextView.visibleOrGone(imkoniyatiCheklangan)
-                imkonChekBadgeTextView.visibleOrGone(imkoniyatiCheklangan)
-                imkonCheckInfo.text = imkoniyatiCheklanganHaqida
-
-                val joyOdam = nomzod.joylaganOdam
-                if (joyOdam.isEmpty()) {
-                    joylaganOdamView.visibleOrGone(false)
-                } else {
-                    joylaganOdamView.text = "${nomzod!!.joylaganOdam}"
-                }
-                qoshimchaView.maxLines = Int.MAX_VALUE
-
-                if (yoshChegarasiDan == 0 && yoshChegarasiGacha == 0) {
-                    yoshChegarasiView.isVisible = false
-                } else {
-                    yoshChegarasiView.text = getYoshChegarasi()
-                }
-                if (!yoshChegarasiView.isVisible && talablarList.isEmpty()) {
-                    talablarTitle.isVisible = false
-                    talablarListView.isVisible = false
-                }
-                if (imkoniyatiCheklangan) {
-                    imkonCheckInfo.text =
-                        "${getString(R.string.ma_lumot)}: $imkoniyatiCheklanganHaqida"
-                }
-                //Talablar
-                if (context != null) {
-                    talablarListView.layoutManager = FlexboxLayoutManager(requireContext())
-                    talablarListView.adapter = TalablarAdapter().apply {
-                        showCheckBox = false
-                        try {
-                            submitList(talablarList.map { Talablar.valueOf(it) })
-                        } catch (e: Exception) {
-                            //
+                    if (oilaviyHolati == OilaviyHolati.AJRASHGAN.name || oilaviyHolati == OilaviyHolati.Beva.name || oilaviyHolati == OilaviyHolati.Oilali.name) {
+                        farzandlarView.apply {
+                            visibleOrGone(hasChild != null || farzandlar.isNotEmpty())
+                            if (hasChild != null || farzandlar.isNotEmpty()) {
+                                var textT = ""
+                                if (hasChild != null) {
+                                    textT =
+                                        (if (hasChild!!) getString(R.string.bor) else getString(R.string.yoq))
+                                }
+                                if (farzandlar.isNotEmpty()) {
+                                    textT += "  $farzandlar"
+                                }
+                                text = Html.fromHtml("${getString(R.string.farzandlar)}: $textT")
+                            }
                         }
-                    }
-                }
-                if (mobilRaqam.isNotEmpty()) {
-                    callview.isVisible = true
-                    callview.setOnClickListener {
-                        openPhoneCall(requireActivity(), mobilRaqam)
-                        RecombeeDatabase.setConnectedToNomzod(userViewModel.user.uid, nomzod.id)
-                    }
-                }
-                requestButton.setOnClickListener {
-                    RecombeeDatabase.setConnectedToNomzod(userViewModel.user.uid, nomzod.id)
-                    if (userViewModel.user.hasNomzod.not()) {
-                        showAddNomzodAlert()
                     } else {
-                        SocialMedia.openLink(
-                            requireActivity(), SocialMedia.parseTelegramLink(nomzod.telegramLink)
+                        farzandlarView.visibleOrGone(false)
+                    }
+                    oilaviyView.text = "$oilaviyHolatiText"
+
+                    val oqishText = try {
+                        getString(
+                            OqishMalumoti.valueOf(
+                                oqishMalumoti
+                            ).resId
                         )
+                    } catch (e: Exception) {
+                        oqishMalumoti
+                    }
+                    oqishView.text = Html.fromHtml("${getString(R.string.ma_lumoti)} $oqishText")
+
+                    if (ishJoyi.isNotEmpty()) {
+                        ishView.text = "${getString(R.string.kasbi)} $ishJoyi"
+                    } else {
+                        ishView.isVisible = false
+                    }
+                    val manzilText = getString(City.valueOf(manzil).resId)
+                    manzilView.text = getManzilText()
+                    if (tugilganJoyi != manzilText) {
+                        tgjView.text = getTugilganJoyi()
+                    } else {
+                        tgjView.isVisible = false
+                    }
+                    qoshimchaView.text = "$talablar"
+                    qoshimchaView.isVisible = talablar.trim().isNotEmpty().also {
+                        aboutTitle.isVisible = it
+                        aboutLine.isVisible = it
+                    }
+
+                    dateView.text = DateUtils.formatDate(uploadDate)
+                    imkonChekBadgeTextView.visibleOrGone(imkoniyatiCheklangan)
+                    imkonChekBadgeTextView.visibleOrGone(imkoniyatiCheklangan)
+                    imkonCheckInfo.text = imkoniyatiCheklanganHaqida
+
+                    qoshimchaView.maxLines = Int.MAX_VALUE
+
+                    initLikeButtons()
+
+                    if (yoshChegarasiDan == 0 && yoshChegarasiGacha == 0) {
+                        yoshChegarasiView.isVisible = false
+                    } else {
+                        yoshChegarasiView.text = getYoshChegarasi()
+                    }
+                    if (!yoshChegarasiView.isVisible && talablarList.isEmpty()) {
+                        talablarTitle.isVisible = false
+                        talablarListView.isVisible = false
+                    }
+                    if (imkoniyatiCheklangan) {
+                        imkonCheckInfo.text =
+                            "${getString(R.string.ma_lumot)}: $imkoniyatiCheklanganHaqida"
+                    }
+                    //Talablar
+                    if (context != null) {
+                        talablarListView.layoutManager = FlexboxLayoutManager(requireContext())
+                        talablarListView.adapter = TalablarAdapter().apply {
+                            showCheckBox = false
+                            try {
+                                submitList(talablarList.map { Talablar.valueOf(it) })
+                            } catch (e: Exception) {
+                                //
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            //
+        }
+    }
+
+    private fun setLikeDisabled(liked: Boolean) {
+        binding?.apply {
+            dislikeButton.isClickable = false
+            likeButton.isClickable = false
+            if (liked) {
+                likeButton.alpha = 0.5f
+                likeButton.isEnabled = false
+                likeButton.isClickable = false
+                dislikeButton.isVisible = false
+            } else {
+                dislikeButton.alpha = 0.5f
+                dislikeButton.isEnabled = false
+                dislikeButton.isClickable = false
+                likeButton.isVisible = false
+            }
+        }
+    }
+
+    private fun likeItem(nomzod: Nomzod, like: Boolean) {
+        val doLike = {
+            val done = SearchAdapter.likeOrDislike(nomzod, like)
+            if (done) {
+//                if (like) {
+//                 ////   mainActivity()?.showSnack(getString(R.string.added_toLikes))
+//                } else {
+//                 //   mainActivity()?.showSnack(getString(R.string.didnt_like_item))
+//                }
+                setLikeDisabled(like)
+                lifecycleScope.launch(Dispatchers.Main) {
+                    delay(400)
+                    if (needResult) {
+                        setLikeResult(like)
+                    }
+                }
+            }
+        }
+        if (LocalUser.user.hasNomzod.not()) {
+            showAddNomzodAlert {}
+        } else {
+            doLike.invoke()
+        }
+    }
+
+    private var needResult = false
+
+    private fun setLikeResult(liked: Boolean) {
+        setFragmentResult("liked", Bundle().apply {
+            putBoolean("liked", liked)
+        })
+        closeFragment()
+    }
+
+    private fun initLikeButtons() {
+        binding?.apply {
+            likeContainer.isVisible = false
+            dislikeButton.setOnClickListener {
+                likeItem(nomzod!!, false)
+            }
+            likeButton.setOnClickListener {
+                likeItem(nomzod!!, true)
+            }
+            LikeController.getLikeInfo(nomzod!!) { iLiked, likedMe, matched ->
+                if (view != null && isResumed) {
+                    likeContainer.isVisible = true
+                    if (iLiked != null) {
+                        setLikeDisabled(iLiked)
+                    }
+                    if (likedMe == true) {
+                        likedYou.isVisible = true
                     }
                 }
             }
         }
     }
 
-    private fun showAddNomzodAlert() {
+    private fun showAddNomzodAlert(skip: () -> Unit) {
         if (userViewModel.user.valid.not()) {
-            navigate(R.id.auth_graph)
+            try {
+                navigate(R.id.auth_graph)
+            } catch (e: Exception) {
+                //
+            }
             return
         }
-        val alertDialog = AlertDialog.Builder(requireContext())
+        val alertDialog = AlertDialog.Builder(requireContext(), R.style.RoundedCornersDialog)
         val view = RequestNomzodAlertBinding.inflate(layoutInflater, null, false)
         alertDialog.setView(view.root)
         val dialog = alertDialog.create()
         view.apply {
             okButton.setOnClickListener {
-                navigate(R.id.addNomzodFragment)
+                try {
+                    navigate(R.id.addNomzodFragment)
+                } catch (e: Exception) {
+                    //
+                }
                 dialog.dismiss()
+            }
+            skipButton.setOnClickListener {
+                dialog.dismiss()
+                skip.invoke()
             }
         }
         dialog.show()

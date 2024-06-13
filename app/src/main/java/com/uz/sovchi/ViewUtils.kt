@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.core.view.postDelayed
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.color.MaterialColors
+import com.google.firebase.BuildConfig
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 

@@ -13,8 +13,8 @@
         android:elevation="1dp"
         android:foreground="?selectableItemBackground"
         android:paddingEnd="@dimen/dimen_12"
-        android:background="?colorSurface"
-        android:layout_marginTop="1dp"
+        android:background="?colorSurfaceContainerLowest"
+        android:layout_marginTop="2dp"
         android:layout_height="wrap_content">
 
         <com.google.android.material.imageview.ShapeableImageView
@@ -24,10 +24,8 @@
             android:layout_height="50dp"
             android:scaleType="center"
             android:layout_marginStart="@dimen/dimen_12"
-            app:tint="?colorPrimary"
-            android:tint="?colorOnSurfaceVariant"
             android:src="@drawable/person_filled"
-            android:background="?backgroundColor"
+            android:background="?colorSurfaceContainerHigh"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/CircleImageView" />
@@ -73,21 +71,22 @@
 
         <TextView
             android:id="@+id/show_nomzod"
+            style="@style/Text1_14"
             android:layout_width="wrap_content"
-            android:textColor="?colorPrimary"
-            style="@style/Headline3_15"
-            android:drawableEnd="@drawable/arrow_right"
-            android:drawableTint="?colorPrimary"
-            android:drawablePadding="@dimen/dimen_12"
-            android:background="@drawable/round_lay"
-            android:paddingVertical="@dimen/dimen_4"
-            android:paddingHorizontal="@dimen/dimen_12"
-            android:layout_marginTop="@dimen/dimen_4"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_8"
+            android:background="@drawable/round_lay"
+            android:backgroundTint="?colorSurfaceContainerHigh"
             android:clickable="false"
+            android:drawableEnd="@drawable/arrow_right"
+            android:drawablePadding="@dimen/dimen_12"
+            android:drawableTint="?colorOnSurface"
             android:focusableInTouchMode="false"
+            android:paddingHorizontal="@dimen/dimen_12"
+            android:paddingVertical="@dimen/dimen_4"
             android:text="@string/nomzodni_ko_rish"
-            app:layout_constraintStart_toStartOf="@+id/subtitle_view"
+            android:textColor="?colorOnSurface"
+            app:layout_constraintStart_toStartOf="@+id/title_view"
             app:layout_constraintTop_toBottomOf="@+id/subtitle_view" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

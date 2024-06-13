@@ -6,4 +6,7 @@
     <color name="iconColor">#6D6D6D</color>
     <color name="primary_dark">#44288F</color>
     <color name="likeColor">#E91E63</color>
+    <color name="yellow">#BB7000</color>
+    <color name="green">#016A60</color>
+    <color name="rejected">#9D0C01</color>
 </resources>

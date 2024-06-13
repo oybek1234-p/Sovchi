@@ -4,6 +4,8 @@ import android.text.Html
 import android.text.Spanned
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.firebase.firestore.Exclude
+import com.google.gson.annotations.SerializedName
 import com.uz.sovchi.R
 import com.uz.sovchi.appContext
 import com.uz.sovchi.data.location.City
@@ -33,26 +35,33 @@ fun getNomzodTypeText(id: Int) = nomzodTypes.find { it.first == id }?.second
 object NomzodState {
     const val VISIBLE = 1
     const val NOT_PAID = 2
-    const val DELETED = 3
+    const val INVISIBLE = 3
     const val CHECKING = 4
 }
 
 enum class NomzodTarif(val nameRes: Int, val priceSum: Int, val infoRes: Int) {
-    STANDART(R.string.standartname, 0, 0), TOP_3(
-        R.string.top3name, 29000, 0
+    STANDART(R.string.standartname, 0, R.string.oddiy_joylash), TOP_3(
+        R.string.top3name, 14500, R.string._3_kun_listni_tepasida_turadi
     ),
-    TOP_7(R.string.top7name, 39000, 0), PREMIUM(R.string.premium, 69000, 0)
+    TOP_7(R.string.top7name, 22500, R.string._7_kun_listni_tepasida_turadi);
+
+    fun getPrice(type: Int): Int {
+        if (this == STANDART && type == KUYOV) {
+            return 9800
+        }
+        return priceSum
+    }
 }
 
 @Entity
 data class Nomzod(
-    @PrimaryKey var id: String = "",
-    var userId: String = "",
+    @SerializedName("id", alternate = ["nid"]) @PrimaryKey var id: String = "",
+    @SerializedName("userId", alternate = ["userUid"]) var userId: String = "",
     var name: String = "",
     var type: Int = -1,
     var state: Int = NomzodState.CHECKING,
-    var tarif: String = NomzodTarif.STANDART.name,
-    var paymentCheckPhotoUrl: String = "",
+    var tarif: String? = NomzodTarif.STANDART.name,
+    var paymentCheckPhotoUrl: String? = "",
     var photos: List<String> = listOf(),
     var tugilganYili: Int = 0,
     var tugilganJoyi: String = "",
@@ -60,6 +69,7 @@ data class Nomzod(
     var buyi: Int = 0,
     var vazni: Int = 0,
     var farzandlar: String = "",
+    var hasChild: Boolean? = null,
     var millati: String = "",
     var oilaviyHolati: String = "",
     var oqishMalumoti: String = "",
@@ -68,18 +78,22 @@ data class Nomzod(
     var yoshChegarasiGacha: Int = 0,
     //Qo'shimcha
     var talablar: String = "",
+    var showPhotos: Boolean = true,
     var imkoniyatiCheklangan: Boolean = false,
     var imkoniyatiCheklanganHaqida: String = "",
     //Talablar
     val talablarList: List<String> = listOf(),
     var telegramLink: String = "",
+
     var joylaganOdam: String = "",
     var mobilRaqam: String = "",
     var uploadDate: Long = System.currentTimeMillis(),
     var uploadDateString: String = "",
     var views: Int = 0,
     var top: Boolean = false,
-    var visibleDate: Long = 0
+    var visibleDate: Long = 0,
+    @SerializedName("likedMe")
+    @Exclude var likedMe: Boolean = false
 ) {
     constructor() : this(id = "")
 }
@@ -97,26 +111,36 @@ fun Nomzod.paramsText(): String {
 }
 
 fun Nomzod.getTugilganJoyi(): Spanned {
-    return Html.fromHtml(appContext.getString(R.string.tugilgan_joyi) + ": <b>${tugilganJoyi}<\b>")
+    val text =
+        "<span style='font-size:12sp;'>" + appContext.getString(R.string.tugilgan) + ":</span> " + "<span style='font-size:15sp;'>" + tugilganJoyi + "</span>"
+    return Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT)
 }
 
 fun Nomzod.getManzilText(): Spanned {
-    return Html.fromHtml("Manzil" + ": <b>${appContext.getString(City.valueOf(manzil).resId)}<\b>")
+    return Html.fromHtml(
+        appContext.getString(R.string.yashaydi) + ": <b>${
+            appContext.getString(
+                City.valueOf(
+                    manzil
+                ).resId
+            )
+        }<b>"
+    )
 }
 
 fun Nomzod.getStatusText(): String {
     return when (state) {
-        NomzodState.CHECKING -> "Tekshirilmoqda"
-        NomzodState.DELETED -> "O'chirilgan"
-        NomzodState.NOT_PAID -> "To'lanmagan"
-        NomzodState.VISIBLE -> "Aktiv"
+        NomzodState.CHECKING -> appContext.getString(R.string.tekshirilmoqda)
+        NomzodState.INVISIBLE -> appContext.getString(R.string.off)
+        NomzodState.NOT_PAID -> appContext.getString(R.string.unpaid)
+        NomzodState.VISIBLE -> appContext.getString(R.string.aktiv)
         else -> ""
     }
 }
 
 fun Nomzod.getYoshChegarasi(): Spanned {
     var text =
-        "${if (type == KUYOV) appContext.getString(R.string.kelinlikga) else appContext.getString(R.string.kuyovlikga)} yosh chegarasi:"
+        "${appContext.getString(R.string.yosh_chegarasi)}:"
     if (yoshChegarasiGacha > 0 || yoshChegarasiDan > 0) {
         text += "<b>"
         if (yoshChegarasiDan > 0) {
@@ -136,7 +160,9 @@ fun Nomzod.getYoshChegarasi(): Spanned {
 }
 
 enum class OilaviyHolati(val resourceId: Int) {
-    Aralash(R.string.aralash), AJRASHGAN(R.string.ajrashgan), Buydoq(R.string.bo_ydoq), Beva(R.string.beva)
+    Aralash(R.string.aralash), AJRASHGAN(R.string.ajrashgan), Buydoq(R.string.bo_ydoq), Beva(R.string.beva), Oilali(
+        R.string.oilali
+    )
 }
 
 enum class OqishMalumoti(val resId: Int) {

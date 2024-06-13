@@ -2,79 +2,44 @@ package com.uz.sovchi.ui
 
 import android.app.AlertDialog
 import android.os.Bundle
-import androidx.core.view.isVisible
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResultListener
-import androidx.lifecycle.lifecycleScope
 import com.uz.sovchi.R
-import com.uz.sovchi.data.nomzod.NomzodState
-import com.uz.sovchi.databinding.DeleteDialogBinding
+import com.uz.sovchi.data.nomzod.MyNomzodController
 import com.uz.sovchi.databinding.NomzodSettingsBinding
 import com.uz.sovchi.ui.base.BaseFragment
-import com.uz.sovchi.ui.nomzod.NomzodViewModel
-import kotlinx.coroutines.launch
 
 class SettingsFragment : BaseFragment<NomzodSettingsBinding>() {
 
     override val layId: Int
         get() = R.layout.nomzod_settings
 
-    private var nomzodId = ""
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        nomzodId = arguments?.getString("nomzodId") ?: ""
-    }
-
-    private val nomzodViewModel: NomzodViewModel by activityViewModels()
-
     override fun viewCreated(bind: NomzodSettingsBinding) {
         bind.apply {
             toolbar.setUpBackButton(this@SettingsFragment)
 
-            editButton.setOnClickListener {
-                val bundle = Bundle()
-                bundle.putString("nId", nomzodId)
-                navigate(R.id.addNomzodFragment, bundle)
+            verifyButton.setOnClickListener {
+                navigate(R.id.adminVerificationFragment)
             }
-            deleteButton.setOnClickListener {
-                val alert = AlertDialog.Builder(requireContext())
-                val binding = DeleteDialogBinding.inflate(layoutInflater, null, false)
-                alert.setView(binding.root)
-                val dialog = alert.create()
-                binding.apply {
-                    okButton.setOnClickListener {
-                        nomzodViewModel.repository.deleteNomzod(nomzodId)
-                        dialog.dismiss()
-                        closeFragment()
-                    }
-                    cancelButton.setOnClickListener {
-                        dialog.dismiss()
-                    }
+            allUsers.setOnClickListener {
+                navigate(R.id.allUsersFragment)
+            }
+            rateButton.setOnClickListener {
+                mainActivity()?.requestReview()
+            }
+            boglanishButton.setOnClickListener {
+                mainActivity()?.showSupportSheet()
+            }
+            signOut.setOnClickListener {
+                val dialog = AlertDialog.Builder(requireContext())
+                dialog.setTitle(getString(R.string.logout))
+                dialog.setPositiveButton(getString(R.string.close)) { _, _ ->
+                    MyNomzodController.clear()
+                    userViewModel.signOut()
+                    mainActivity()?.recreateUi()
                 }
-                dialog.show()
-            }
-            topButton.setOnClickListener {
-                setFragmentResultListener("payResult") { _, bundle ->
-                    val name = bundle.getString("result") ?: return@setFragmentResultListener
-                    val nomzod = nomzodViewModel.repository.myNomzods.find { it.id == nomzodId } ?: return@setFragmentResultListener
-                    lifecycleScope.launch {
-                        nomzod.tarif = name
-                        nomzod.state = NomzodState.NOT_PAID
-                        nomzodViewModel.repository.uploadNewMyNomzod(nomzod) {
-                            val b = Bundle().apply {
-                                putString("value",nomzodId)
-                                putString("tarif",name)
-                            }
-                            navigate(R.id.paymentGetCheckFragment,b)
-                        }
-                    }
+                dialog.setNegativeButton(getString(R.string.cancek)) { _, _ ->
                 }
-                navigate(R.id.paymentFragment,Bundle().apply {
-                    putBoolean("paid",true)
-                })
+                dialog.create().show()
             }
-
         }
     }
 }

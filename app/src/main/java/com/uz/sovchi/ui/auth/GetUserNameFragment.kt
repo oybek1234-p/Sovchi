@@ -57,7 +57,8 @@ class GetUserNameFragment : BaseFragment<FragmentUserNameBinding>() {
                     userViewModel.updateUser(LocalUser.user.apply {
                         name = nameInput()!!
                     })
-                    mainActivity()?.recreateUi()
+                    mainActivity()?.recreateUi(true)
+
                 }
             }
         }

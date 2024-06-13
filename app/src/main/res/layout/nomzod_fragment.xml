@@ -13,20 +13,9 @@
         android:background="?backgroundColor"
         android:clipToPadding="false">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dimen_18"
-            android:elevation="@dimen/dimen_12"
-            android:fontFamily="@font/roboto_medium"
-            android:text="@string/mening_nomzodim"
-            android:textColor="?colorOnSurface"
-            android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <ProgressBar
+            android:visibility="gone"
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -51,7 +40,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title"
+            app:layout_constraintTop_toTopOf="parent"
             tools:listitem="@layout/nomzod_item" />
 
         <com.google.android.material.button.MaterialButton
@@ -74,11 +63,11 @@
             style="@style/Headline3_15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nomzod qo'shish uchun + ni bosing"
             android:visibility="gone"
+            android:text="Nomzod qo'shish uchun + ni bosing"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/title" />
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

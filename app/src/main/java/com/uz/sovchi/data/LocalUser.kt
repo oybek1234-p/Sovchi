@@ -3,6 +3,7 @@ package com.uz.sovchi.data
 import android.content.Context
 import android.content.SharedPreferences
 import com.uz.sovchi.appContext
+import com.uz.sovchi.showToast
 
 object LocalUser {
 
@@ -11,7 +12,7 @@ object LocalUser {
     private fun preference(context: Context): SharedPreferences =
         (context.getSharedPreferences("localUser", Context.MODE_PRIVATE))
 
-    fun getUser(context: Context) {
+    fun getUser(context: Context = appContext) {
         val pref = preference(appContext)
         with(pref) {
             user.apply {

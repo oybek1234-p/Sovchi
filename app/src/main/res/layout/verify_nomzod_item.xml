@@ -42,10 +42,26 @@
             android:text="Chek bor"
             android:layout_margin="@dimen/dimen_4" />
 
+        <TextView
+            android:id="@+id/user_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Text1_16"
+            android:textColor="?colorOnSurface"
+            android:layout_margin="@dimen/dimen_4" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/delete_button"
+            android:text="O'chirish" />
+
         <com.google.android.material.button.MaterialButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/verify_button"
             android:text="Tasdiqlash" />
+
+
     </LinearLayout>
 </layout>

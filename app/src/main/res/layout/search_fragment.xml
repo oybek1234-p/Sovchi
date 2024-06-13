@@ -10,7 +10,7 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:background="?backgroundColor"
+        android:background="?colorSurface"
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -37,32 +37,19 @@
                     android:layout_height="wrap_content"
                     android:text="@string/rasmi_borlar" />
 
-                <TextView
-                    android:id="@+id/imkon_chek_textView"
-                    style="@style/Text2_15"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?colorSurface"
-                    android:elevation="@dimen/dimen_4"
-                    android:padding="@dimen/dimen_8"
-                    android:text="Imkoniyati cheklanganlar"
-                    android:textColor="?colorPrimary"
-                    app:layout_constraintTop_toBottomOf="@+id/filters_container" />
-
             </LinearLayout>
 
-            <HorizontalScrollView
+            <FrameLayout
                 android:id="@+id/filters_container"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="?colorSurface"
+                android:layout_height="50dp"
+                android:background="?colorSurfaceContainer"
                 android:elevation="@dimen/dimen_6"
-                android:paddingEnd="60dp"
-                android:requiresFadingEdge="horizontal"
                 android:fadingEdge="none"
                 android:fadingEdgeLength="@dimen/dimen_24"
                 android:paddingHorizontal="@dimen/dimen_12"
-                android:paddingVertical="@dimen/dimen_8"
+                android:paddingEnd="60dp"
+                android:requiresFadingEdge="horizontal"
                 android:scrollbarSize="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -70,82 +57,25 @@
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/location_filter"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:elevation="@dimen/dimen_2"
-                        android:hint="@string/manzili_toshkent"
-                        android:textSize="16sp"
-                        app:boxCornerRadiusBottomEnd="@dimen/dimen_12"
-
-                        app:boxCornerRadiusBottomStart="@dimen/dimen_12"
-                        app:boxCornerRadiusTopEnd="@dimen/dimen_12"
-                        app:boxCornerRadiusTopStart="@dimen/dimen_12"
-                        app:boxStrokeColor="?backgroundColor"
-                        app:boxStrokeWidth="1dp"
-                        app:hintAnimationEnabled="false"
-                        app:hintEnabled="false">
-
-                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:inputType="none"
-                            android:maxLines="1"
-                            android:paddingVertical="12dp"
-                            android:textSize="14sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/type_filter"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/dimen_12"
-                        android:hint="@string/kim_kerak"
-                        android:textSize="16sp"
-                        android:visibility="gone"
-                        app:boxCornerRadiusBottomEnd="@dimen/dimen_12"
-                        app:boxCornerRadiusBottomStart="@dimen/dimen_12"
-                        app:boxCornerRadiusTopEnd="@dimen/dimen_12"
-                        app:boxCornerRadiusTopStart="@dimen/dimen_12"
-                        app:hintAnimationEnabled="false">
-
-                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:inputType="none"
-                            android:maxLines="1"
-                            android:paddingVertical="12dp"
-                            android:textSize="14sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/sovchi_logo"
+                        app:shapeAppearanceOverlay="@style/CircleImageView" />
 
                     <TextView
-                        android:id="@+id/yosh_chegarasi_view"
-                        style="@style/Text1_14"
+                        style="@style/Title3_17"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginHorizontal="@dimen/dimen_12"
-                        android:layout_marginVertical="@dimen/dimen_4"
-                        android:background="@drawable/round_lay"
-                        android:backgroundTint="?colorSurface"
-                        android:elevation="2dp"
+                        android:layout_marginStart="@dimen/dimen_12"
                         android:gravity="center"
-                        android:paddingHorizontal="@dimen/dimen_10"
-                        android:paddingVertical="@dimen/dimen_8"
-                        android:text="@string/yosh_chegarasi"
-                        android:textColor="?colorOnSurface"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/type_view" />
-
+                        android:text="@string/app_name" />
                 </LinearLayout>
-            </HorizontalScrollView>
+            </FrameLayout>
 
             <ImageView
                 android:id="@+id/filter_view"
@@ -153,11 +83,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/dimen_12"
                 android:elevation="@dimen/dimen_6"
-                android:translationY="-4dp"
                 android:padding="@dimen/dimen_8"
-                android:backgroundTint="?colorSurface"
-                android:background="@drawable/round_lay"
-                android:src="@drawable/filter_ic"
+                android:src="@drawable/ic_search"
                 app:layout_constraintBottom_toBottomOf="@+id/filters_container"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -169,17 +96,16 @@
                 android:layout_height="14dp"
                 android:background="@drawable/filter_dot"
                 android:elevation="@dimen/dimen_12"
-                android:translationY="-12dp"
-                app:layout_constraintBottom_toBottomOf="@+id/filter_view"
-                app:layout_constraintEnd_toEndOf="@+id/filter_view"
-                app:layout_constraintStart_toEndOf="@+id/filters_container"
-                app:layout_constraintTop_toTopOf="@+id/filter_view" />
+                app:layout_constraintBottom_toBottomOf="@+id/notify_view"
+                app:layout_constraintEnd_toEndOf="@+id/notify_view"
+                app:layout_constraintTop_toTopOf="@+id/notify_view" />
 
-            <androidx.recyclerview.widget.RecyclerView
+            <com.yuyakaido.android.cardstackview.CardStackView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:clipToPadding="false"
+                android:orientation="vertical"
                 android:paddingHorizontal="@dimen/dimen_12"
                 android:paddingBottom="100dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -193,6 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/dimen_48"
                 android:gravity="center"
+                android:visibility="gone"
                 android:textColor="?colorOnSurface"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -207,6 +134,20 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/notify_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="@dimen/dimen_6"
+                android:padding="@dimen/dimen_8"
+                android:layout_marginEnd="@dimen/dimen_12"
+                android:src="@drawable/notify_ic"
+                app:layout_constraintBottom_toBottomOf="@+id/filters_container"
+                app:layout_constraintEnd_toStartOf="@+id/filter_view"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="?colorPrimary" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

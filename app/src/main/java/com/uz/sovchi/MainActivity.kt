@@ -3,9 +3,14 @@ package com.uz.sovchi
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
@@ -20,6 +25,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
@@ -34,13 +40,18 @@ import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.filter.MyFilter
 import com.uz.sovchi.data.messages.MESSAGE_TYPE_NOMZOD_FOR_YOU
 import com.uz.sovchi.data.messages.MESSAGE_TYPE_NOMZOD_LIKED
+import com.uz.sovchi.data.nomzod.MyNomzodController
 import com.uz.sovchi.data.nomzod.NomzodRepository
-import com.uz.sovchi.data.saved.SavedRepository
 import com.uz.sovchi.data.valid
 import com.uz.sovchi.data.viewed.ViewedNomzods
 import com.uz.sovchi.databinding.ActivityMainBinding
+import com.uz.sovchi.databinding.NoInternetDialogBinding
+import com.uz.sovchi.databinding.SupportSheetBinding
+import com.uz.sovchi.ui.base.BaseFragment
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -66,6 +77,7 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
+        LocalUser.getUser(appContext)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -73,6 +85,9 @@ class MainActivity : AppCompatActivity() {
             navHost = (supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment)
             navcontroller = navHost.navController
             bottomNavView.setupWithNavController(navcontroller)
+        }
+        lifecycleScope.launch {
+            ViewedNomzods.init()
         }
         initUser()
 
@@ -85,6 +100,7 @@ class MainActivity : AppCompatActivity() {
             initUpdateManager(launcher)
         }
         checkDeeplink(intent)
+        initInternetConnectivity()
     }
 
     fun showSnack(message: String) {
@@ -125,23 +141,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateUnReadLabel(unread: Int) {
-        val badge = binding.bottomNavView.getOrCreateBadge(R.id.messages_nav)
-        val isVisible = unread > 0
-        badge.isVisible = isVisible
-        if (isVisible) {
-            badge.number = unread
-        }
-    }
-
-    private fun observeUnMessages() {
-        updateUnReadLabel(LocalUser.user.unreadMessages)
-        viewModel.repository.observeUnReadMessages {
-            updateUnReadLabel(it)
-            unreadMessageChangedListener?.invoke(it)
-        }
-    }
-
     fun requestNotificationPermission() {
         val permissionState =
             ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS);
@@ -155,18 +154,91 @@ class MainActivity : AppCompatActivity() {
 
     private var unreadMessageChangedListener: ((count: Int) -> Unit)? = null
 
-    private fun initUser() {
-        LocalUser.getUser(appContext)
-        MyFilter.get()
-        lifecycleScope.launch {
-            ViewedNomzods.init()
+    private fun initInternetConnectivity() {
+        val networkRequest =
+            NetworkRequest.Builder().addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR).build()
+        val connectivityManager =
+            getSystemService(ConnectivityManager::class.java) as ConnectivityManager
+        var hasInternet = connectivityManager.activeNetwork != null
+        if (connectivityManager.activeNetwork == null) {
+            MainScope().launch {
+                internetBottomSheet.show()
+            }
         }
+        val networkCallback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+                try {
+                    if (hasInternet) {
+                        return
+                    }
+                    hasInternet = true
+                    runOnUiThread {
+                        internetBottomSheet.dismiss()
+                    }
+                    runOnUiThread {
+                        try {
+                            val currentFragment = navHost.childFragmentManager.fragments[0]
+                            if (currentFragment is BaseFragment<*>) currentFragment.onInternetAvailable()
+                        } catch (e: Exception) {
+                            //
+                        }
+                    }
+                } catch (e: Exception) {
+                    //
+                }
+            }
+
+            override fun onLost(network: Network) {
+                super.onLost(network)
+                try {
+                    runOnUiThread {
+                        if (!isFinishing) {
+                            internetBottomSheet.show()
+                        }
+                    }
+                } catch (e: Exception) {
+                    //
+                }
+                hasInternet = false
+            }
+        }
+        connectivityManager.requestNetwork(networkRequest, networkCallback)
+    }
+
+    private val internetBottomSheet: BottomSheetDialog by lazy {
+        BottomSheetDialog(this).apply {
+            val binding =
+                NoInternetDialogBinding.inflate(LayoutInflater.from(this@MainActivity), null, false)
+            setContentView(binding.root)
+            binding.button.setOnClickListener {
+                dismiss()
+            }
+        }
+    }
+
+    private fun initUser() {
+        MyFilter.get()
         if (LocalUser.user.valid) {
             MyFilter.update()
-            SavedRepository.loadSaved { }
-            Firebase.messaging.subscribeToTopic(LocalUser.user.phoneNumber.removePrefix("+") + "topic")
+            MyNomzodController.getNomzod()
+
+            Firebase.messaging.subscribeToTopic(LocalUser.user.uid + "topic")
             viewModel.repository.updateLastSeenTime()
-            observeUnMessages()
+            lifecycleScope.launch {
+                try {
+                    viewModel.repository.loadCurrentUser()
+                    runOnUiThread {
+                        if (viewModel.user.name.isEmpty()) {
+                            navcontroller.navigate(R.id.getUserNameFragment)
+                        }
+                    }
+                } catch (e: Exception) {
+                    //
+                }
+            }
         }
 
     }
@@ -174,6 +246,25 @@ class MainActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         checkDeeplink(intent)
+    }
+
+    fun showSupportSheet() {
+        val dialog = BottomSheetDialog(this, R.style.SheetStyle)
+        val binding = SupportSheetBinding.inflate(LayoutInflater.from(this), null, false)
+        dialog.setContentView(binding.root)
+        binding.apply {
+            callview.setOnClickListener {
+                dialog.dismiss()
+                openPhoneCall(this@MainActivity, "+998971871415")
+            }
+            requestButton.setOnClickListener {
+                dialog.dismiss()
+                SocialMedia.openLink(
+                    this@MainActivity, SocialMedia.parseTelegramLink("@oybek_tech")
+                )
+            }
+        }
+        dialog.show()
     }
 
     private fun checkDeeplink(intent: Intent?) {
@@ -187,15 +278,18 @@ class MainActivity : AppCompatActivity() {
                         MESSAGE_TYPE_NOMZOD_LIKED.toString() -> {
                             try {
                                 val userId = nomzodId.toString()
-                                NomzodRepository.loadNomzods(-1, null, userId, "", "", limit = 1) { list, c ->
+                                NomzodRepository.loadNomzods(
+                                    -1, null, userId, "", "", limit = 1
+                                ) { list, c ->
                                     val item = list.firstOrNull()
                                     if (item != null) {
-                                        navcontroller.navigate(R.id.nomzodDetailsFragment, Bundle().apply {
-                                            putString("nomzodId", item.id)
-                                        })
+                                        navcontroller.navigate(R.id.nomzodDetailsFragment,
+                                            Bundle().apply {
+                                                putString("nomzodId", item.id)
+                                            })
                                     }
                                 }
-                            }catch (e: Exception) {
+                            } catch (e: Exception) {
                                 //
                             }
                         }
@@ -205,7 +299,7 @@ class MainActivity : AppCompatActivity() {
                                 navcontroller.navigate(R.id.nomzodDetailsFragment, Bundle().apply {
                                     putString("nomzodId", nomzodId)
                                 })
-                            }catch (e: Exception) {
+                            } catch (e: Exception) {
                                 //
                             }
                         }
@@ -222,9 +316,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun recreateUi() {
+    fun recreateUi(isNew: Boolean = false) {
         finish()
-        startActivity(intent)
+        startActivity(intent.also {
+            it.putExtra("new", isNew)
+        })
     }
 
     override fun onDestroy() {

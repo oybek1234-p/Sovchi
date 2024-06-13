@@ -6,7 +6,7 @@ import com.uz.sovchi.data.UserRepository
 
 class UserViewModel : ViewModel() {
 
-    val repository = UserRepository(appContext)
+    val repository = UserRepository
 
     suspend fun authFirebaseUser(): User? {
         return repository.authFirebaseUser()

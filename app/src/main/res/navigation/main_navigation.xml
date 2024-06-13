@@ -9,4 +9,14 @@
     <include app:graph="@navigation/profile" />
     <include app:graph="@navigation/nomzod" />
     <include app:graph="@navigation/messages_nav" />
+    <fragment
+        android:id="@+id/getUserNameFragment"
+        android:name="com.uz.sovchi.ui.auth.GetUserNameFragment"
+        android:label="GetUserNameFragment" />
+    <include app:graph="@navigation/requests" />
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.uz.sovchi.ui.SplashFragment"
+        android:label="SplashFragment" />
+    <include app:graph="@navigation/auth_graph" />
 </navigation>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:background="?colorSurface"
+        android:orientation="vertical"
+        android:padding="@dimen/dimen_18"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/play_view"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/round_lay"
+            android:backgroundTint="#4CAF50"
+            android:layout_gravity="center"
+            android:scaleType="center"
+            android:src="@drawable/play_ic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_24"
+            android:id="@+id/retry_button"
+            style="@style/OutlineButton"
+            android:text="Bekor qilish" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_12"
+            android:id="@+id/done_button"
+            android:text="Saqlash" />
+    </LinearLayout>
+</layout>

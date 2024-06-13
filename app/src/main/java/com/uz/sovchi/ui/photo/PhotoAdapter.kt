@@ -1,23 +1,23 @@
 package com.uz.sovchi.ui.photo
 
-import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import coil.load
 import com.bumptech.glide.Glide
 import com.uz.sovchi.R
 import com.uz.sovchi.databinding.PhotoMiniItemBinding
 import com.uz.sovchi.ui.base.BaseAdapter
 import com.uz.sovchi.ui.base.EmptyDiffUtil
+import jp.wasabeef.glide.transformations.BlurTransformation
 
-class PhotoAdapter(private val click: (delete: Boolean, pos: Int, model: PickPhotoFragment.Image,view: ImageView) -> Unit) :
+class PhotoAdapter(private val click: (delete: Boolean, pos: Int, model: PickPhotoFragment.Image, view: ImageView) -> Unit) :
     BaseAdapter<PickPhotoFragment.Image, PhotoMiniItemBinding>(
         R.layout.photo_mini_item,
         EmptyDiffUtil()
     ) {
 
+    var showPhotos = true
     var deleteShown = true
     var matchParent = false
 
@@ -26,7 +26,11 @@ class PhotoAdapter(private val click: (delete: Boolean, pos: Int, model: PickPho
             binding.apply {
                 (this as PhotoMiniItemBinding)
                 deleteButton.isVisible = deleteShown
-                Glide.with(imageView).load(model.path).into(imageView)
+                if (showPhotos.not()) {
+                    Glide.with(imageView).load(model.path).transform(BlurTransformation(50)).into(imageView)
+                } else {
+                    Glide.with(imageView).load(model.path).into(imageView)
+                }
             }
         }
     }
@@ -45,10 +49,10 @@ class PhotoAdapter(private val click: (delete: Boolean, pos: Int, model: PickPho
                     }
                 }
                 root.setOnClickListener {
-                    click.invoke(false, adapterPosition, getItem(adapterPosition),imageView)
+                    click.invoke(false, adapterPosition, getItem(adapterPosition), imageView)
                 }
                 deleteButton.setOnClickListener {
-                    click.invoke(true, adapterPosition, getItem(adapterPosition),imageView)
+                    click.invoke(true, adapterPosition, getItem(adapterPosition), imageView)
                 }
             }
         }

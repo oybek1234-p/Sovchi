@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
@@ -11,6 +12,107 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="?colorSurface"
+            android:gravity="start|center_vertical"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/dimen_24">
+
+            <ImageView
+                android:id="@+id/settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/oval_back"
+                android:layout_marginTop="@dimen/dimen_24"
+                android:backgroundTint="?colorSurfaceContainerHigh"
+                android:padding="@dimen/dimen_8"
+                android:src="@drawable/settings_ic"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/photo_view"
+                android:layout_width="140dp"
+                android:scaleType="centerCrop"
+                android:layout_height="140dp"
+                android:src="@drawable/user_photo_placeholder"
+                android:background="?colorSurfaceVariant"
+                android:layout_marginTop="@dimen/dimen_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/CircleImageView" />
+
+            <TextView
+                android:id="@+id/name_view"
+                style="@style/Title2_20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_12"
+                android:text="@string/oybek"
+                android:textColor="?colorOnSurface"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/photo_view" />
+
+            <TextView
+                android:layout_marginTop="8dp"
+                android:id="@+id/status_view"
+                style="@style/Headline3_15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?colorPrimaryVariant"
+                app:layout_constraintEnd_toStartOf="@+id/fillPercent"
+                app:layout_constraintStart_toStartOf="@+id/name_view"
+                app:layout_constraintTop_toBottomOf="@+id/name_view" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/signOut"
+                android:visibility="gone"
+                style="@style/Widget.Material3.Button.ElevatedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/akauntdan_chiqish"
+                app:icon="@drawable/arrow_back"
+                app:iconGravity="textStart"
+                android:layout_marginTop="@dimen/dimen_12"
+                app:layout_constraintTop_toBottomOf="@+id/edit_info_button" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/edit_info_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/fill_profile"
+                app:icon="@drawable/edit"
+                app:iconGravity="textStart"
+                android:layout_marginTop="@dimen/dimen_18"
+                app:layout_constraintTop_toBottomOf="@+id/status_view" />
+
+            <TextView
+                android:id="@+id/fillPercent"
+                style="@style/Caption2_12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dimen_8"
+                android:text="Toldriligan 50%"
+                android:textColor="?colorOnSurfaceVariant"
+                app:layout_constraintBottom_toBottomOf="@+id/status_view"
+                app:layout_constraintEnd_toEndOf="@+id/name_view"
+                app:layout_constraintStart_toEndOf="@+id/status_view"
+                app:layout_constraintTop_toTopOf="@+id/status_view" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
         <include
             android:id="@+id/auth_view"
             layout="@layout/auth_need_view"
@@ -19,98 +121,14 @@
             android:layout_gravity="center"
             android:visibility="gone" />
 
-        <LinearLayout
-            android:id="@+id/main_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:background="?colorSurface"
-            android:gravity="start|center_vertical"
-            android:orientation="vertical"
-            android:paddingHorizontal="@dimen/dimen_48">
-
-            <TextView
-                android:id="@+id/name_view"
-                style="@style/Title2_20"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/oybek"
-                android:textColor="?colorOnSurface"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/phone_View"
-                style="@style/Title3_17"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_8"
-                android:text="@string/_998971871415"
-                android:textColor="?colorOnSurface"
-                app:layout_constraintEnd_toEndOf="@+id/name_view"
-                app:layout_constraintStart_toStartOf="@+id/name_view"
-                app:layout_constraintTop_toBottomOf="@+id/name_view" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/boglanish_button"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_18"
-                android:drawableLeft="@drawable/admin_ic"
-                android:drawableTint="?colorPrimary"
-                android:text="@string/biz_bilan_bog_lanish" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/rate_button"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_8"
-                android:text="@string/programmani_baholash" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/signOut"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_12"
-                android:text="@string/akauntdan_chiqish"
-                app:layout_constraintEnd_toEndOf="@+id/phone_View"
-                app:layout_constraintStart_toStartOf="@+id/phone_View"
-                app:layout_constraintTop_toBottomOf="@+id/phone_View" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/allUsers"
-                android:visibility="gone"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_12"
-                android:text="@string/foydalanuvchilar"
-                app:layout_constraintEnd_toEndOf="@+id/phone_View"
-                app:layout_constraintStart_toStartOf="@+id/phone_View"
-                app:layout_constraintTop_toBottomOf="@+id/phone_View" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/verify_button"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:visibility="gone"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_12"
-                android:text="Verifikatsiya" />
-
-            <TextView
-                style="@style/Subtitle3_13"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_4"
-                android:text="Akkauntdan ciqish uchun 3 sek bosib turing!" />
-        </LinearLayout>
-
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:layout_constraintEnd_toEndOf="@+id/edit_info_button"
+            app:layout_constraintStart_toStartOf="@+id/edit_info_button"
+            app:layout_constraintTop_toBottomOf="@+id/edit_info_button" />
 
     </FrameLayout>
 

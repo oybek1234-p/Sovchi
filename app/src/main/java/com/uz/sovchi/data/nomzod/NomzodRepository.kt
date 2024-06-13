@@ -1,23 +1,25 @@
 package com.uz.sovchi.data.nomzod
 
+import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.uz.sovchi.data.ImageUploader
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.location.City
-import com.uz.sovchi.showToast
 import com.uz.sovchi.ui.photo.PickPhotoFragment
+import java.io.File
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class NomzodRepository {
 
-    var myNomzods = arrayListOf<Nomzod>()
-
     val myNomzodsLoading = MutableLiveData(false)
 
+    val myNomzods = NomzodRepository.myNomzods
     suspend fun getNomzodById(id: String, loadIfNotExists: Boolean): Nomzod? {
         val nomzod = myNomzods.find { it.id == id }
         if (nomzod != null) {
@@ -28,16 +30,6 @@ class NomzodRepository {
             }
         }
         return null
-    }
-
-    private suspend fun loadNomzod(id: String) = suspendCoroutine { sus ->
-        nomzodlarReference.document(id).get().addOnCompleteListener {
-            val nomzod = it.result.toObject(Nomzod::class.java)
-            if (nomzod?.userId == LocalUser.user.uid) {
-                myNomzods.add(nomzod)
-            }
-            sus.resume(nomzod)
-        }
     }
 
     suspend fun uploadPaymentData(
@@ -57,13 +49,17 @@ class NomzodRepository {
                     }
                 }
             }
-            ImageUploader.uploadImage(PickPhotoFragment.Image(chekPath)) {
-                if (it.isNullOrEmpty().not()) {
-                    url = it!!
-                    upload.invoke()
-                } else {
-                    done.invoke(false)
+            try {
+                ImageUploader.uploadImage(PickPhotoFragment.Image(chekPath)) {
+                    if (it.isNullOrEmpty().not()) {
+                        url = it!!
+                        upload.invoke()
+                    } else {
+                        done.invoke(false)
+                    }
                 }
+            } catch (e: Exception) {
+                //
             }
         }
     }
@@ -71,11 +67,12 @@ class NomzodRepository {
     suspend fun uploadNewMyNomzod(nomzod: Nomzod, done: () -> Unit) {
         if (nomzod.id.isEmpty()) return
         val uploadNext = {
-            myNomzods.removeIf { it.id == nomzod.id }
-            myNomzods.add(0, nomzod)
-            nomzodlarReference.document(nomzod.id).set(nomzod).addOnCompleteListener {
-                done.invoke()
+            val next = {
+                MyNomzodController.updateNomzod(nomzod, true) {
+                    done.invoke()
+                }
             }
+            next.invoke()
         }
         if (nomzod.photos.isNotEmpty()) {
             val list = arrayListOf<String?>()
@@ -119,6 +116,21 @@ class NomzodRepository {
 
     private var checkedFit: Boolean = false
 
+    private val voiceStorage: StorageReference by lazy {
+        FirebaseStorage.getInstance().getReference("voices")
+    }
+
+    private fun getRandomVoiceId() = "sovchiVoice${System.nanoTime()}"
+
+    private fun uploadVoice(uri: String, done: (downloadUrl: String) -> Unit) {
+        voiceStorage.child(getRandomVoiceId()).putFile(File(uri).toUri())
+            .addOnCompleteListener { it ->
+                it.result.storage.downloadUrl.addOnCompleteListener {
+                    done.invoke(it.result.toString())
+                }
+            }
+    }
+
     suspend fun checkFitMyNomzod(nomzod: Nomzod, done: (fits: Boolean) -> Unit) {
         var myNomzod = myNomzods.firstOrNull()
         if (myNomzod == null && checkedFit) {
@@ -142,7 +154,24 @@ class NomzodRepository {
 
     companion object {
 
-        private var nomzodlarReference = FirebaseFirestore.getInstance().collection("nomzodlar")
+        var myNomzods = arrayListOf<Nomzod>()
+        var nomzodlarReference = FirebaseFirestore.getInstance().collection("nomzodlar")
+
+        suspend fun loadNomzod(id: String) = suspendCoroutine { sus ->
+            try {
+                nomzodlarReference.document(id).get().addOnSuccessListener {
+                    val nomzod = it.toObject(Nomzod::class.java)
+                    if (nomzod?.userId == LocalUser.user.uid) {
+                        myNomzods.add(nomzod)
+                    }
+                    sus.resume(nomzod)
+                }.addOnFailureListener {
+                    sus.resume(null)
+                }
+            } catch (e: Exception) {
+                //
+            }
+        }
 
         fun loadNomzods(
             type: Int,
@@ -200,9 +229,13 @@ class NomzodRepository {
             if (yoshChegarasi > 0) {
                 task = task.whereLessThanOrEqualTo(Nomzod::tugilganYili.name, yoshChegarasi)
             }
-            task.get().addOnCompleteListener { it ->
-                val data = it.result.toObjects(Nomzod::class.java)
-                loaded.invoke(data, 0)
+            try {
+                task.get().addOnCompleteListener { it ->
+                    val data = it.result.toObjects(Nomzod::class.java)
+                    loaded.invoke(data, 0)
+                }
+            } catch (e: Exception) {
+                //
             }
         }
 
@@ -218,9 +251,12 @@ class NomzodRepository {
             put(
                 Nomzod::visibleDate.name, System.currentTimeMillis()
             )
+            put(
+                Nomzod::uploadDateString.name,
+                java.sql.Timestamp(System.currentTimeMillis()).toString()
+            )
             if (nomzod.tarif != NomzodTarif.STANDART.name) {
                 put(Nomzod::top.name, true)
-                showToast("set top")
             }
         }
         nomzodlarReference.document(nomzod.id).update(
@@ -228,9 +264,14 @@ class NomzodRepository {
         )
     }
 
-    fun deleteNomzod(id: String) {
-        nomzodlarReference.document(id).delete()
-        myNomzods.removeIf { it.id == id }
+    fun deleteNomzod(id: String): Boolean {
+        try {
+            nomzodlarReference.document(id).delete()
+            myNomzods.removeIf { it.id == id }
+        } catch (e: Exception) {
+            //
+        }
+        return myNomzods.isEmpty()
     }
 
     fun deleteTop(nomzodId: String) {

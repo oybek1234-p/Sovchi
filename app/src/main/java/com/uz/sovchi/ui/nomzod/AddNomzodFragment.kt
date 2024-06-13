@@ -11,7 +11,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import coil.load
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.material.textfield.TextInputLayout
@@ -19,6 +21,7 @@ import com.uz.sovchi.R
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.location.City
 import com.uz.sovchi.data.nomzod.KUYOV
+import com.uz.sovchi.data.nomzod.MyNomzodController
 import com.uz.sovchi.data.nomzod.Nomzod
 import com.uz.sovchi.data.nomzod.NomzodState
 import com.uz.sovchi.data.nomzod.NomzodTarif
@@ -33,6 +36,8 @@ import com.uz.sovchi.ui.photo.PhotoAdapter
 import com.uz.sovchi.ui.photo.PickPhotoFragment
 import com.uz.sovchi.visibleOrGone
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -66,6 +71,8 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
     private val imkoniyatChekMalumot: String get() = binding?.imkoniyatiMalumotView?.editText?.text.toString()
     private var imkoniyatiCheklangan = false
 
+    private var hasChild: Boolean? = null
+
     private var uploadDate: Long? = null
 
     private val viewModel: AddNomzodViewModel by viewModels()
@@ -83,6 +90,69 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
         }
     }
 
+    private var exoPlayerInit = false
+
+    private val exoPlayer: ExoPlayer by lazy {
+        exoPlayerInit = true
+        ExoPlayer.Builder(requireContext()).build()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (exoPlayerInit) {
+            exoPlayer.release()
+        }
+    }
+
+    private var audioUrl: String? = null
+
+    private fun initAudioPlayer() {
+        binding?.apply {
+            updateAudioPlayer()
+            setFragmentResultListener("audio") { _, result ->
+                audioUrl = result.getString("url")
+                updateAudioPlayer()
+            }
+            audioButton.setOnClickListener {
+                if (nomzodType == -1) {
+                    showToast("Nomzod turini tanlang!")
+                    return@setOnClickListener
+                }
+                navigate(R.id.voiceRecordFragment, Bundle().apply {
+                    putInt("type", nomzodType)
+                })
+            }
+            exoPlayer.addListener(object : Player.Listener {
+                override fun onPlaybackStateChanged(playbackState: Int) {
+                    if (playbackState == Player.STATE_ENDED) {
+                        exoPlayer.seekTo(0)
+                        exoPlayer.pause()
+                        playView.setImageResource(R.drawable.play_ic)
+                    }
+                }
+            })
+            playView.setOnClickListener {
+                if (exoPlayer.isPlaying) {
+                    exoPlayer.pause()
+                    playView.setImageResource(R.drawable.play_ic)
+                } else {
+                    exoPlayer.play()
+                    playView.setImageResource(R.drawable.pause_ic)
+                }
+            }
+        }
+    }
+
+    private fun updateAudioPlayer() {
+        if (audioUrl.isNullOrEmpty().not()) {
+            exoPlayer.setMediaItem(MediaItem.fromUri(audioUrl!!))
+            exoPlayer.prepare()
+            binding?.playView?.isVisible = true
+        } else {
+            binding?.playView?.isVisible = false
+        }
+    }
+
     private val needNotFillViews = arrayOf(
         R.id.mobil_raqam_view,
         R.id.joylagan_odam_view,
@@ -94,7 +164,8 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
         R.id.yosh_chegarasi_dan_view,
         R.id.yosh_chegarasi_gacha_view,
         R.id.ismi_view,
-        R.id.telegram_view
+        R.id.telegram_view,
+        R.id.talablar_view
     )
 
     private fun checkEditTextsFilled(): Boolean {
@@ -115,17 +186,17 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
             }
         }
         if (telegramLink.isEmpty() && mobilRaqam.isEmpty()) {
+            notFilled = true
             showToast("Telegram yoki mobil raqamni kiriting!")
         }
         if (imkoniyatiCheklangan && imkoniyatChekMalumot.isEmpty()) {
             showToast("Imkoniyati cheklanganligi haqida malumot yozing!")
         }
-        if (photoAdapter.currentList.size == 0 && userViewModel.user.phoneNumber.removePrefix("+") != "998971871415") {
-            showToast("Rasm yuklang")
+        if (hasChild == null) {
+            showToast("Farzandlar belgilang !")
             notFilled = true
         }
         notFilledView?.top?.let {
-            binding?.nestedScrollView?.smoothScrollBy(0, it)
             showToast(getString(R.string.to_ldiring, error))
         }
         return notFilled.not()
@@ -141,69 +212,76 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
             binding?.progressBar?.visibleOrGone(value)
         }
 
-    private fun saveNomzod(cache: Boolean = false) {
+    private var showPhotos = true
+
+    private fun saveNomzod(cache: Boolean = false, checkFields: Boolean = true) {
         if (uploading) return
-        val allFilled = checkEditTextsFilled()
-        if (allFilled.not()) {
-            return
+        if (checkFields) {
+            val allFilled = checkEditTextsFilled()
+            if (allFilled.not()) {
+                return
+            }
         }
-        val state =
-            if (nomzodTarif != NomzodTarif.STANDART) NomzodState.NOT_PAID else NomzodState.CHECKING
+        val state = NomzodState.CHECKING
         val photos = photoAdapter.currentList
         val upDate = uploadDate ?: System.currentTimeMillis()
-        val nomzod = Nomzod(id = if (nomzodId.isNullOrEmpty()) System.currentTimeMillis()
-            .toString() else nomzodId!!,
-            userId = currentNomzod?.userId?.ifEmpty { LocalUser.user.uid } ?: LocalUser.user.uid,
-            name = name.trim().capitalize(Locale.ROOT),
-            type = nomzodType,
-            state = state,
-            tarif = currentNomzod?.tarif?.ifEmpty { nomzodTarif.name } ?: nomzodTarif.name,
-            currentNomzod?.paymentCheckPhotoUrl ?: "",
-            photos.map { it.path },
-            tugilganYili,
-            tugilganJoyi.trim().capitalize(),
-            manzilSelected,
-            buyi,
-            vazni,
-            farzandlarSoni,
-            millati,
-            oilaviyHolatiSelected,
-            oqishMalumotiSelected,
-            ishJoyi.trim().capitalize(),
-            yoshChegarasiDan,
-            yoshChegarasiGacha,
-            talablar.trim().capitalize(),
-            imkoniyatiCheklangan,
-            imkoniyatChekMalumot,
-            talablarList = talablarAdapter.selectedTalablar.map { it.name },
-            telegramLink = telegramLink,
-            joylaganOdam,
-            mobilRaqam,
-            uploadDateString = timestamp(upDate),
-            uploadDate = upDate
-        )
+        val nomzod =
+            Nomzod(id = if (nomzodId.isNullOrEmpty()) LocalUser.user.uid.toString() else nomzodId!!,
+                userId = currentNomzod?.userId?.ifEmpty { LocalUser.user.uid }
+                    ?: LocalUser.user.uid,
+                name = name.trim().capitalize(Locale.ROOT),
+                type = nomzodType,
+                state = state,
+                tarif = currentNomzod?.tarif?.ifEmpty { nomzodTarif.name } ?: nomzodTarif.name,
+                currentNomzod?.paymentCheckPhotoUrl ?: "",
+                photos.map { it.path },
+                tugilganYili,
+                tugilganJoyi.trim().capitalize(),
+                manzilSelected,
+                buyi,
+                vazni,
+                farzandlarSoni,
+                hasChild ?: false,
+                millati,
+                oilaviyHolatiSelected,
+                oqishMalumotiSelected,
+                ishJoyi.trim().capitalize(),
+                yoshChegarasiDan,
+                yoshChegarasiGacha,
+                talablar.trim().capitalize(),
+                showPhotos = showPhotos,
+                imkoniyatiCheklangan,
+                imkoniyatChekMalumot,
+                talablarList = talablarAdapter.selectedTalablar.map { it.name },
+                telegramLink = telegramLink,
+                joylaganOdam,
+                mobilRaqam,
+                uploadDateString = timestamp(upDate),
+                uploadDate = upDate
+            )
         if (cache) {
             currentNomzod = nomzod
             return
         }
         uploading = true
-        lifecycleScope.launch {
+        MainScope().launch(Dispatchers.Main) {
             nomzodViewModel.repository.uploadNewMyNomzod(nomzod) {
                 uploading = false
-                userViewModel.repository.setHasNomzod(true)
-
-                closeFragment()
-                if (nomzodTarif != NomzodTarif.STANDART) {
-                    navigate(R.id.paymentGetCheckFragment, Bundle().apply {
-                        putString("value", nomzod.id)
-                        putString("tarif", nomzod.tarif)
-                    })
-                } else {
+                try {
+                    try {
+                        userViewModel.repository.setHasNomzod(true)
+                    } catch (e: Exception) {
+                        //
+                    }
+                    closeFragment()
                     navigate(R.id.nomzodUploadSuccessFragment)
+                } catch (e: Exception) {
+                    //
                 }
             }
         }
     }
+
 
     private fun timestamp(date: Long): String = java.sql.Timestamp(date).toString()
 
@@ -230,7 +308,13 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
     private fun initUi() {
         binding?.apply {
             with(currentNomzod!!) {
-                if (isAdmin && paymentCheckPhotoUrl.isNotEmpty()) {
+                this@AddNomzodFragment.showPhotos = showPhotos
+                this@AddNomzodFragment.hasChild = this.hasChild
+                hidePhoto.isChecked = showPhotos.not()
+                hidePhoto.setOnCheckedChangeListener { buttonView, isChecked ->
+                    this@AddNomzodFragment.showPhotos = isChecked.not()
+                }
+                if (isAdmin && paymentCheckPhotoUrl?.ifEmpty { "" }?.isNotEmpty() == true) {
                     checkView.isVisible = true
                     chekTitle.isVisible = true
                     val check = paymentCheckPhotoUrl
@@ -249,9 +333,9 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                         }
                     }.open(mainActivity()!!)
                 }
-
-                toolbar.title =
-                    if (id.isEmpty()) getString(R.string.yangi_nomzod) else getString(R.string.nomzod)
+                backButton.setOnClickListener {
+                    closeFragment()
+                }
                 val oilaviyHolati = OilaviyHolati.entries.filter { it != OilaviyHolati.Aralash }
                 val oilaviyHolatiAdapter =
                     ArrayAdapter(requireContext(), R.layout.list_item, oilaviyHolati.map {
@@ -272,15 +356,12 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                                 val sType = oilaviyHolati[position]
                                 oilaviyHolatiSelected = sType.name
                                 val buydoq = sType == OilaviyHolati.Buydoq
-                                farzandlarView.visibleOrGone(!buydoq.also {
-                                    noChildren.isVisible = it.not()
-                                })
                             }
                     }
                 }
 
                 val manzilAdapter =
-                    ArrayAdapter(requireContext(), R.layout.list_item, City.asListNames())
+                    ArrayAdapter(requireContext(), R.layout.list_item, City.asListNames(false))
                 manzilView.editText?.apply {
                     (this as AutoCompleteTextView).apply {
                         val selectedType = City.entries.find { it.name == currentNomzod?.manzil }
@@ -292,9 +373,11 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                     }
 
                     onItemClickListener = AdapterView.OnItemClickListener { _, _, position, id ->
-                        manzilSelected = City.entries[position].name
+                        val cityCurrent =
+                            City.entries.filter { it.name != City.Hammasi.name }[position]
+                        manzilSelected = cityCurrent.name
                         if (tgjView.editText?.text.isNullOrEmpty()) {
-                            tgjView.editText?.setText(getString(City.entries[position].resId))
+                            tgjView.editText?.setText(getString(cityCurrent.resId))
                         }
                     }
                 }
@@ -315,14 +398,21 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                         oqishMalumotiSelected = OqishMalumoti.entries[position].name
                     }
                 }
-
-                noChildren.setOnCheckedChangeListener { _, isChecked ->
-                    if (isChecked) {
+                childrenLay.setOnCheckedStateChangeListener { chipGroup, ints ->
+                    val selected = ints.firstOrNull()
+                    val hasChild = selected == R.id.farzand_yes
+                    farzandlarView.isVisible = hasChild
+                    if (selected != null && hasChild.not()) {
                         farzandlarView.editText?.setText("")
-                        farzandlarView.isVisible = false
-                    } else {
-                        farzandlarView.isVisible = true
                     }
+                    if (selected == null) {
+                        this@AddNomzodFragment.hasChild = null
+                    } else {
+                        this@AddNomzodFragment.hasChild = hasChild
+                    }
+                }
+                if (hasChild != null) {
+                    childrenLay.check(if (hasChild!!) R.id.farzand_yes else R.id.farzand_no)
                 }
                 val nomzodTypeAdapter = ArrayAdapter(requireContext(),
                     R.layout.list_item,
@@ -338,6 +428,7 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                             //Talablar submit
                             val list = arrayListOf<Talablar>()
                             list.addAll(Talablar.entries)
+                            binding?.paid?.isVisible = nomzodType == KUYOV
                             if (nomzodType == KUYOV) {
                                 list.apply {
                                     remove(Talablar.IkkinchiRuzgorgaTaqiq)
@@ -348,6 +439,10 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                                 list.apply {
                                     remove(Talablar.Hijoblik)
                                 }
+                            }
+                            list.apply {
+                                remove(Talablar.FaqatShaxarlik)
+                                remove(Talablar.FaqatViloyat)
                             }
                             talablarAdapter.submitList(list)
                             talablarView.isVisible = true
@@ -394,25 +489,34 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                 imkoniyatiMalumotView.visibleOrGone(isChecked)
             }
             saveView.setOnClickListener {
-                startSaving()
+                try {
+                    saveNomzod(false, true)
+                } catch (e: Exception) {
+                    //
+                }
             }
         }
     }
 
     private var nomzodTarif: NomzodTarif = NomzodTarif.STANDART
 
+    private var saving = false
+
     private fun startSaving() {
-        if (checkEditTextsFilled().not()) {
-            return
+        if (saving) return
+        try {
+            if (checkEditTextsFilled().not()) {
+                return
+            }
+            saving = true
+            saveNomzod(false)
+            lifecycleScope.launch {
+                delay(300)
+                saving = false
+            }
+        } catch (e: Exception) {
+            //
         }
-        setFragmentResultListener("payResult") { key, result ->
-            val type = result.getString("result") ?: ""
-            val tarif = NomzodTarif.valueOf(type)
-            nomzodTarif = tarif
-            saveNomzod()
-        }
-        saveNomzod(true)
-        navigate(R.id.paymentFragment)
     }
 
     private fun Int.toStringOrEmpty(): String {
@@ -426,7 +530,9 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
         if (nomzodId.isNullOrEmpty()) return
         binding?.apply {
             lifecycleScope.launch {
-                val nomzod = nomzodViewModel.repository.getNomzodById(nomzodId!!, true)
+                val nomzod = if (nomzodId == MyNomzodController.nomzod.id) {
+                    MyNomzodController.nomzod
+                } else nomzodViewModel.repository.getNomzodById(nomzodId!!, true)
                 currentNomzod = nomzod
                 launch(Dispatchers.Main) {
                     initUi()
@@ -435,9 +541,14 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        saveNomzod(true, checkFields = false)
+    }
+
     override fun viewCreated(bind: AddNomzodFragmentBinding) {
         bind.apply {
-            toolbar.setUpBackButton(this@AddNomzodFragment)
+            initAudioPlayer()
 
             if (currentNomzod != null) {
                 initUi()
