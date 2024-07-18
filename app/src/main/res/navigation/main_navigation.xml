@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/search_nav">
+    app:startDestination="@id/splashFragment">
 
     <include app:graph="@navigation/search" />
     <include app:graph="@navigation/liked" />

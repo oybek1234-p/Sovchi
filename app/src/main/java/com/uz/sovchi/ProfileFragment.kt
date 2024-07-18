@@ -5,9 +5,12 @@ import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import coil.load
+import com.bumptech.glide.Glide
+import com.google.android.gms.ads.AdRequest
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.nomzod.MyNomzodController
 import com.uz.sovchi.data.nomzod.Nomzod
+import com.uz.sovchi.data.nomzod.NomzodState
 import com.uz.sovchi.data.nomzod.getStatusText
 import com.uz.sovchi.data.valid
 import com.uz.sovchi.databinding.ProfileFragmentBinding
@@ -25,6 +28,16 @@ class ProfileFragment : BaseFragment<ProfileFragmentBinding>() {
             editInfoButton.visibleOrGone(showProgress.not())
         }
     }
+
+    private fun loadAd() {
+        binding?.adView?.loadAd()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadAd()
+    }
+
 
     private fun getProfileFillPercent(nomzod: Nomzod): Int {
         var percent = 0
@@ -69,10 +82,15 @@ class ProfileFragment : BaseFragment<ProfileFragmentBinding>() {
         val photo = nomzod.photos.firstOrNull()
         binding?.apply {
             if (isEmpty.not()) {
-                photoView.load(photo)
+                Glide.with(photoView).load(photo).into(photoView)
                 nameView.text = "${nomzod.name} ${nomzod.tugilganYili}"
 
-                val statusText = nomzod.getStatusText()
+                var statusText = nomzod.getStatusText()
+                if (nomzod.state == NomzodState.VISIBLE) {
+                    if (userViewModel.user.premium) {
+                        statusText += " Premium"
+                    }
+                }
                 statusView.isVisible = statusText.trim().isNotEmpty()
                 statusView.text = statusText
                 initFillPercent(nomzod)
@@ -108,6 +126,14 @@ class ProfileFragment : BaseFragment<ProfileFragmentBinding>() {
                 navigate(R.id.settingsFragment)
             }
             mainLayout.visibleOrGone(userViewModel.user.valid)
+            val hasPremium = LocalUser.user.premium
+            premiumButton.isVisible = hasPremium.not()
+            premiumButton.setOnClickListener {
+                mainActivity()?.showPremiumSheet()
+            }
+            boglanishButton.setOnClickListener {
+                mainActivity()?.showSupportSheet()
+            }
             MyNomzodController.apply {
                 nomzodLive.observe(viewLifecycleOwner) {
                     if (it != null) {

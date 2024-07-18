@@ -10,7 +10,7 @@ open class SocialMedia {
         private const val TELEGRAM_SUFFIX = "https://t.me/"
 
         fun openLink(activity: Activity, link: String) {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(parseTelegramLink(link)))
             activity.startActivity(intent)
         }
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -7,61 +8,81 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <include
-            layout="@layout/nomzod_item"
-            android:id="@+id/nomzod_item" />
+            android:id="@+id/nomzod_item"
+            layout="@layout/nomzod_item" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/statusView"
             style="@style/Text1_14"
-            android:visibility="gone"
-            android:textColor="?colorOnSurface"
-            android:text="@string/tekshirilmoqda"
-            android:layout_margin="@dimen/dimen_4" />
-
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen_4"
+            android:text="@string/tekshirilmoqda"
+            android:textColor="?colorOnSurface"
+            android:visibility="gone" />
+
+        <TextView
             android:id="@+id/tarifView"
             style="@style/Text1_14"
-            android:textColor="?colorOnSurface"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen_4"
             android:text="Standart"
-            android:layout_margin="@dimen/dimen_4" />
+            android:textColor="?colorOnSurface" />
 
         <TextView
             android:id="@+id/has_chek"
+            style="@style/Text1_14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Text1_14"
-            android:textColor="?colorPrimary"
+            android:layout_margin="@dimen/dimen_4"
             android:text="Chek bor"
-            android:layout_margin="@dimen/dimen_4" />
+            android:textColor="?colorPrimary" />
 
         <TextView
             android:id="@+id/user_id"
+            style="@style/Text1_16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Text1_16"
-            android:textColor="?colorOnSurface"
-            android:layout_margin="@dimen/dimen_4" />
+            android:layout_margin="@dimen/dimen_4"
+            android:textColor="?colorOnSurface" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/delete_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/delete_button"
+            style="@style/OutlineButton"
+            app:icon="@drawable/delete_ic"
+            app:iconGravity="textStart"
             android:text="O'chirish" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/verify_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/verify_button"
             android:text="Tasdiqlash" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/verify_premium_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Premiumga tasdiqlash" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/photo_wrong"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Rasm no'togri" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/info_wrong"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Malumot notogri" />
 
     </LinearLayout>
 </layout>

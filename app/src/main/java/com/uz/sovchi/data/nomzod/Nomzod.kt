@@ -37,6 +37,7 @@ object NomzodState {
     const val NOT_PAID = 2
     const val INVISIBLE = 3
     const val CHECKING = 4
+    const val REJECTED = 5
 }
 
 enum class NomzodTarif(val nameRes: Int, val priceSum: Int, val infoRes: Int) {
@@ -92,8 +93,7 @@ data class Nomzod(
     var views: Int = 0,
     var top: Boolean = false,
     var visibleDate: Long = 0,
-    @SerializedName("likedMe")
-    @Exclude var likedMe: Boolean = false
+    @SerializedName("likedMe") @Exclude var likedMe: Boolean = false
 ) {
     constructor() : this(id = "")
 }
@@ -118,13 +118,13 @@ fun Nomzod.getTugilganJoyi(): Spanned {
 
 fun Nomzod.getManzilText(): Spanned {
     return Html.fromHtml(
-        appContext.getString(R.string.yashaydi) + ": <b>${
+        "Manzil: ${
             appContext.getString(
                 City.valueOf(
                     manzil
                 ).resId
             )
-        }<b>"
+        }"
     )
 }
 
@@ -134,13 +134,13 @@ fun Nomzod.getStatusText(): String {
         NomzodState.INVISIBLE -> appContext.getString(R.string.off)
         NomzodState.NOT_PAID -> appContext.getString(R.string.unpaid)
         NomzodState.VISIBLE -> appContext.getString(R.string.aktiv)
+        NomzodState.REJECTED -> appContext.getString(R.string.rejected)
         else -> ""
     }
 }
 
 fun Nomzod.getYoshChegarasi(): Spanned {
-    var text =
-        "${appContext.getString(R.string.yosh_chegarasi)}:"
+    var text = "${appContext.getString(R.string.yosh_chegarasi)}:"
     if (yoshChegarasiGacha > 0 || yoshChegarasiDan > 0) {
         text += "<b>"
         if (yoshChegarasiDan > 0) {

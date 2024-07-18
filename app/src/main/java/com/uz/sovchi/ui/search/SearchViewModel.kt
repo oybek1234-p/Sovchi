@@ -77,6 +77,7 @@ class SearchViewModel : ViewModel() {
         if (nomzodlarLoading.value == true) return
         loadJob?.cancel()
         nomzodlarLoading.postValue(true)
+        nomzodlarLoading.value = true
         loadJob = viewModelScope.launch {
             if (!forVerify) {
                 RecombeeDatabase.getRecommendForUser(
@@ -91,9 +92,10 @@ class SearchViewModel : ViewModel() {
                 ) { recom, list ->
                     if (loadJob?.isCancelled == true) return@getRecommendForUser
                     recomId = recom
+                    nomzodlarLoading.value = false
+                    nomzodlarLoading.postValue(false)
                     nomzodlar.addAll(list)
                     nomzodlarLive.postValue(nomzodlar)
-                    nomzodlarLoading.postValue(false)
                 }
             } else {
                 lastNomzod = nomzodlar.lastOrNull()

@@ -49,6 +49,19 @@
                 app:layout_constraintStart_toStartOf="@+id/title_view"
                 app:layout_constraintTop_toBottomOf="@+id/title_view"
                 tools:text="Toshkent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/chat_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_12"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:drawableEnd="@drawable/telegram_ic"
+                android:text="@string/chatga_o_tish"
+                app:icon="@drawable/chat_ic"
+                app:iconGravity="textEnd"
+                app:layout_constraintStart_toStartOf="@+id/subtitle_view"
+                app:layout_constraintTop_toBottomOf="@+id/subtitle_view" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

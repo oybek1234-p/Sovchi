@@ -26,7 +26,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.InstallStateUpdatedListener
@@ -38,16 +37,21 @@ import com.google.firebase.messaging.messaging
 import com.uz.sovchi.ad.AdMobApp
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.filter.MyFilter
+import com.uz.sovchi.data.messages.MESSAGE_TYPE_CHAT_MESSAGE
 import com.uz.sovchi.data.messages.MESSAGE_TYPE_NOMZOD_FOR_YOU
 import com.uz.sovchi.data.messages.MESSAGE_TYPE_NOMZOD_LIKED
 import com.uz.sovchi.data.nomzod.MyNomzodController
 import com.uz.sovchi.data.nomzod.NomzodRepository
+import com.uz.sovchi.data.premium.PremiumUtil
 import com.uz.sovchi.data.valid
 import com.uz.sovchi.data.viewed.ViewedNomzods
 import com.uz.sovchi.databinding.ActivityMainBinding
+import com.uz.sovchi.databinding.ChatLimitSheetBinding
 import com.uz.sovchi.databinding.NoInternetDialogBinding
+import com.uz.sovchi.databinding.PremiumSheetBinding
 import com.uz.sovchi.databinding.SupportSheetBinding
 import com.uz.sovchi.ui.base.BaseFragment
+import com.uz.sovchi.ui.payment.PaymentGetCheckFragment
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -86,6 +90,12 @@ class MainActivity : AppCompatActivity() {
             navcontroller = navHost.navController
             bottomNavView.setupWithNavController(navcontroller)
         }
+        val inflater = navHost.navController.navInflater
+        val graph = inflater.inflate(R.navigation.main_navigation)
+        graph.setStartDestination(if (LocalUser.user.valid) R.id.search_nav else R.id.splashFragment)
+
+        val navController = navHost.navController
+        navController.setGraph(graph, intent.extras)
         lifecycleScope.launch {
             ViewedNomzods.init()
         }
@@ -101,10 +111,39 @@ class MainActivity : AppCompatActivity() {
         }
         checkDeeplink(intent)
         initInternetConnectivity()
+
     }
 
-    fun showSnack(message: String) {
-        Snackbar.make(binding.snackContainer, message, Snackbar.LENGTH_SHORT).show()
+    fun showChatLimitSheet() {
+        val sheet = BottomSheetDialog(this)
+        val binding = ChatLimitSheetBinding.inflate(layoutInflater, null, false)
+        binding.apply {
+            button.setOnClickListener {
+                sheet.dismiss()
+                showPremiumSheet()
+            }
+            close.setOnClickListener {
+                sheet.dismiss()
+            }
+        }
+        sheet.setContentView(binding.root)
+        sheet.show()
+    }
+
+    fun showPremiumSheet() {
+        PremiumUtil.loadPremiumPrice {
+            val sheet = BottomSheetDialog(this)
+            val binding = PremiumSheetBinding.inflate(layoutInflater, null, false)
+            binding.priceView.text = "$it so'm"
+            binding.apply {
+                button.setOnClickListener {
+                    sheet.dismiss()
+                    navcontroller.navigate(R.id.paymentGetCheckFragment)
+                }
+            }
+            sheet.setContentView(binding.root)
+            sheet.show()
+        }
     }
 
     fun requestReview() {
@@ -152,7 +191,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private var unreadMessageChangedListener: ((count: Int) -> Unit)? = null
+    private fun updateChatsCount() {
+        viewModel.repository.observeUnChatMessages {
+            binding.bottomNavView.getOrCreateBadge(R.id.messages_nav).apply {
+                isVisible = it > 0
+                number = it
+            }
+        }
+    }
 
     private fun initInternetConnectivity() {
         val networkRequest =
@@ -224,9 +270,9 @@ class MainActivity : AppCompatActivity() {
         if (LocalUser.user.valid) {
             MyFilter.update()
             MyNomzodController.getNomzod()
-
             Firebase.messaging.subscribeToTopic(LocalUser.user.uid + "topic")
             viewModel.repository.updateLastSeenTime()
+            updateChatsCount()
             lifecycleScope.launch {
                 try {
                     viewModel.repository.loadCurrentUser()
@@ -291,6 +337,14 @@ class MainActivity : AppCompatActivity() {
                                 }
                             } catch (e: Exception) {
                                 //
+                            }
+                        }
+
+                        MESSAGE_TYPE_CHAT_MESSAGE.toString() -> {
+                            nomzodId.let {
+                                navcontroller.navigate(R.id.chatMessageFragment, Bundle().apply {
+                                    putString("id", it)
+                                })
                             }
                         }
 

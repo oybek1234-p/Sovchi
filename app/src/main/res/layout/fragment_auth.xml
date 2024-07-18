@@ -57,8 +57,7 @@
             style="@style/Headline2_16"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/round_lay"
-            android:backgroundTint="?colorSurface"
+            android:background="@drawable/round_lay_stroke"
             android:elevation="@dimen/dimen_4"
             android:foreground="?selectableItemBackgroundBorderless"
             android:layout_marginTop="@dimen/dimen_24"
@@ -69,7 +68,7 @@
             android:paddingVertical="@dimen/dimen_12"
             android:text="@string/google_orqali_kirish"
             android:textColor="?colorOnSurface"
-            app:drawableStartCompat="@drawable/common_google_signin_btn_icon_light"
+            app:drawableStartCompat="@drawable/google_ic"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/phone_view" />

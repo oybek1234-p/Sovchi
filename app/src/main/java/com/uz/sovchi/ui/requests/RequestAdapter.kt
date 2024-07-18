@@ -55,7 +55,6 @@ class RequestAdapter(val fragment: RequestsFragment) :
         holder.apply {
             binding.apply {
                 (this as RequestItemBinding)
-                nomzodItem.topBadge.isVisible = false
                 nomzodItem.newBadge.isVisible = false
 
                 statusView.isVisible = true

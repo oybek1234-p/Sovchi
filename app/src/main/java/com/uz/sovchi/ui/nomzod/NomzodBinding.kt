@@ -11,7 +11,6 @@ import com.uz.sovchi.data.nomzod.Nomzod
 import com.uz.sovchi.data.nomzod.OilaviyHolati
 import com.uz.sovchi.data.viewed.ViewedNomzods
 import com.uz.sovchi.databinding.NomzodItemBinding
-import com.uz.sovchi.showToast
 import com.uz.sovchi.visibleOrGone
 import jp.wasabeef.glide.transformations.BlurTransformation
 
@@ -48,7 +47,7 @@ fun NomzodItemBinding.setNomzod(
             if (needShowPhotos) {
                 Glide.with(photoView).load(photo).into(photoView)
             } else {
-                Glide.with(photoView).load(photo).transform(BlurTransformation(50)).into(photoView)
+                Glide.with(photoView).load(photo).transform(BlurTransformation(80)).into(photoView)
             }
         }
 
@@ -80,7 +79,6 @@ fun NomzodItemBinding.setNomzod(
         } else {
             farzandText = ""
         }
-        topBadge.isVisible = top
         val manzilText = getString(City.valueOf(manzil).resId)
 
         val oilaviyHolati = getString(OilaviyHolati.valueOf(this.oilaviyHolati).resourceId)
@@ -89,7 +87,6 @@ fun NomzodItemBinding.setNomzod(
         farzandView.text = farzandText
         farzandView.isVisible = farzandText.isNotEmpty()
         manzilView.text = manzilText
-        likedYou.isVisible = nomzod.likedMe
     }
 
 }

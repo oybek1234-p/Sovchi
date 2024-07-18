@@ -1,5 +1,6 @@
 package com.uz.sovchi
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -11,7 +12,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.core.content.edit
-import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.fragment.app.clearFragmentResultListener
@@ -26,10 +26,12 @@ import com.uz.sovchi.data.filter.FilterViewUtils
 import com.uz.sovchi.data.filter.MyFilter
 import com.uz.sovchi.data.nomzod.KELIN
 import com.uz.sovchi.data.nomzod.KUYOV
+import com.uz.sovchi.data.nomzod.MyNomzodController
 import com.uz.sovchi.data.nomzod.Nomzod
-import com.uz.sovchi.data.nomzod.OilaviyHolati
+import com.uz.sovchi.data.valid
 import com.uz.sovchi.databinding.AgeWhatSheetBinding
 import com.uz.sovchi.databinding.NomzodItemBinding
+import com.uz.sovchi.databinding.RequestNomzodAlertBinding
 import com.uz.sovchi.databinding.SearchFragmentBinding
 import com.uz.sovchi.databinding.WeWillNotifySheetBinding
 import com.uz.sovchi.databinding.WhoYouNeedBinding
@@ -195,7 +197,7 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
     }
 
     private fun updateUnReadLabel(unread: Int) {
-        val badge = binding?.filterDotView?: return
+        val badge = binding?.filterDotView ?: return
         badge.isVisible = unread > 0
     }
 
@@ -230,6 +232,7 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
         super.onResume()
         viewModel.checkNeedRefresh()
         stackLayManager?.onRestoreInstanceState(layManagerState)
+        mainActivity()?.requestNotificationPermission()
     }
 
     private fun observe() {
@@ -237,26 +240,14 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
             //List
             viewModel.nomzodlarLive.observe(viewLifecycleOwner) {
                 updateList()
+                checkEmpty()
             }
             //Progress
             viewModel.nomzodlarLoading.observe(viewLifecycleOwner) {
-                val listEmpty = viewModel.nomzodlar.isEmpty()
+                val listEmpty = viewModel.nomzodlar.size == 0
                 progressBar.visibleOrGone(it && listEmpty)
-                emptyView.apply {
-                    visibleOrGone(listEmpty && !it)
-                    if (listEmpty) {
-                        var message = ""
-                        if (MyFilter.filter.oilaviyHolati != OilaviyHolati.Aralash.name) {
-                            val oilaviyHolati =
-                                getString(OilaviyHolati.valueOf(MyFilter.filter.oilaviyHolati).resourceId)
-                            message += " ${oilaviyHolati.lowercase()}lar"
-                        }
-                        if (MyFilter.filter.yoshChegarasiGacha > 0 || MyFilter.filter.yoshChegarasiDan > 0) {
-                            message += " ${MyFilter.filter.yoshChegarasiDan} - ${MyFilter.filter.yoshChegarasiGacha} yoshgacha bo'lgan"
-                        }
-                        message += " nomzodlar topilmadi, filterni o'zgartiring"
-                        text = message
-                    }
+                if (it) {
+                    emptyView.isVisible = false
                 }
             }
         }
@@ -275,9 +266,9 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
                 val liked = bundle.getBoolean("liked")
                 if (currentNomzod != null) {
                     lifecycleScope.launch(Dispatchers.Main) {
-                        delay(500)
+                        delay(400)
                         val pos = viewModel.nomzodlar.indexOfFirst { it.id == currentNomzod!!.id }
-                        onItemLiked(liked, currentNomzod!!.id, pos,true)
+                        onItemLiked(liked, currentNomzod!!.id, pos, true)
                     }
                 }
             }
@@ -289,6 +280,20 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
             }, disliked = { id, pos ->
                 skipSwipeCallback = true
                 onItemLiked(false, id, pos)
+            }, onChatClick = { nomzod ->
+                if (LocalUser.user.hasNomzod.not() || MyNomzodController.nomzod.id.isEmpty()) {
+                    showAddNomzodAlert {}
+                    return@SearchAdapter
+                }
+                if (LocalUser.user.premium || nomzod.likedMe) {
+                    navigate(R.id.chatMessageFragment, Bundle().apply {
+                        putString("id", nomzod.id)
+                        putString("name", nomzod.name)
+                        putString("photo", nomzod.photos.firstOrNull() ?: "")
+                    })
+                } else {
+                    mainActivity()?.showChatLimitSheet()
+                }
             })
             recyclerView.apply {
                 adapter = listAdapter
@@ -301,127 +306,74 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
         }
     }
 
-    private var skipSwipeCallback = false
-
-    private var lastSwipeDirection: Direction? = null
-    private var lastAppearedView: View? = null
-
-    private var cardStackListener = object : CardStackListener {
-        override fun onCardDragging(direction: Direction?, ratio: Float) {
-            lastSwipeDirection = direction
-            draging = true
-            try {
-                val viewHolder = binding?.recyclerView?.findViewHolderForLayoutPosition(lastPos)
-                if (viewHolder is BaseAdapter.ViewHolder<*>) {
-                    val binding = viewHolder.binding as NomzodItemBinding
-                    if (ratio > 0.2f) {
-                        if (direction == Direction.Right) {
-                            binding.likeButtonThumb.isVisible = true
-                        } else {
-                            binding.dislikeButtonThumb.isVisible = true
-                        }
-                    } else {
-                        binding.likeButtonThumb.isVisible = false
-                        binding.dislikeButtonThumb.isVisible = false
-                    }
-                }
-            }catch (e: Exception) {
-                //
-            }
-        }
-
-        override fun onCardSwiped(direction: Direction?) {
-            lastSwipeDirection = direction
-            draging = false
-            if (needUpdate) {
-                needUpdate = false
-                updateList()
-            }
-        }
-
-        override fun onCardRewound() {
-
-        }
-
-        override fun onCardCanceled() {
-            draging = false
-            if (needUpdate) {
-                needUpdate = false
-                updateList()
-            }
-            try {
-                val viewHolder = binding?.recyclerView?.findViewHolderForLayoutPosition(lastPos)
-                if (viewHolder is BaseAdapter.ViewHolder<*>) {
-                    val binding = viewHolder.binding as NomzodItemBinding
-                    binding.likeButtonThumb.isVisible = false
-                    binding.dislikeButtonThumb.isVisible = false
-                }
-            } catch (e: Exception) {
-                //
-            }
-        }
-
-        override fun onCardAppeared(view: View?, position: Int) {
-            lastPos = position
-            lastAppearedView = view
-            if (position == listAdapter?.itemCount?.let { it - 2 }) {
-                viewModel.loadNextNomzodlar()
-            } else {
-                if (needUpdate) {
-                    needUpdate = false
-                    updateList()
-                }
-            }
-            try {
-                val viewHolder = binding?.recyclerView?.findViewHolderForLayoutPosition(position)
-                if (viewHolder is BaseAdapter.ViewHolder<*>) {
-                    val binding = viewHolder.binding as NomzodItemBinding
-                    binding.likeButtonThumb.isVisible = false
-                    binding.dislikeButtonThumb.isVisible = false
-                }
-            } catch (e: Exception) {
-                //
-            }
-        }
-
-        override fun onCardDisappeared(view: View?, position: Int) {
-            if (skipSwipeCallback.not() && lastSwipeDirection != null) {
-                if (lastSwipeDirection == Direction.Right) {
-                    onItemLiked(
-                        true, listAdapter?.currentList?.get(position)?.id ?: return, position
-                    )
-                } else {
-                    onItemLiked(
-                        false, listAdapter?.currentList?.get(position)?.id ?: return, position
-                    )
-                }
-            }
-            skipSwipeCallback = false
-        }
-    }
-
-    private var lastPos = 0
     private var savedPosition = 0
     private fun updateList() {
         if (draging) {
             needUpdate = true
             return
         }
-        view?.postDelayed(50) {
-            listAdapter?.submitList(viewModel.nomzodlar)
+        listAdapter?.submitList(viewModel.nomzodlar)
+    }
+
+    private fun checkEmpty() {
+        try {
+            val loading = viewModel.nomzodlarLoading.value
+            if (viewModel.nomzodlar.isEmpty() && loading != true) {
+                binding?.emptyView?.isVisible = true
+                val message = "Sizga mos nomzodlar qolmadi, har kuni yangilari qo'shiladi"
+                binding?.emptyView?.text = message
+            }
+        } catch (e: Exception) {
+            //
         }
+    }
+
+    private fun showAddNomzodAlert(skip: () -> Unit) {
+        if (userViewModel.user.valid.not()) {
+            try {
+                navigate(R.id.auth_graph)
+            } catch (e: Exception) {
+                //
+            }
+            return
+        }
+        val alertDialog = AlertDialog.Builder(requireContext(), R.style.RoundedCornersDialog)
+        val view = RequestNomzodAlertBinding.inflate(layoutInflater, null, false)
+        alertDialog.setView(view.root)
+        val dialog = alertDialog.create()
+        view.apply {
+            okButton.setOnClickListener {
+                try {
+                    navigate(R.id.addNomzodFragment)
+                } catch (e: Exception) {
+                    //
+                }
+                dialog.dismiss()
+            }
+            skipButton.setOnClickListener {
+                dialog.dismiss()
+                skip.invoke()
+            }
+        }
+        dialog.show()
     }
 
     private fun onItemLiked(liked: Boolean, nomzodId: String, pos: Int, skipLike: Boolean = false) {
         val nomzod = viewModel.nomzodlar.firstOrNull { it.id == nomzodId } ?: return
+        if (LocalUser.user.hasNomzod.not() || MyNomzodController.nomzod.id.isEmpty()) {
+            showAddNomzodAlert {}
+            return
+        }
         if (skipLike.not()) {
             val done = SearchAdapter.likeOrDislike(nomzod, liked)
             if (done.not()) return
         }
         viewModel.nomzodlar.removeIf { it.id == nomzodId }
         setSwipeSettings(liked)
-        binding?.recyclerView?.doOnLayout {
-            binding?.recyclerView?.swipe()
+        binding?.recyclerView?.swipe()
+        draging = true
+        view?.postDelayed(500) {
+            draging = false
         }
     }
 
@@ -429,11 +381,12 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
         stackLayManager?.apply {
             val setting = SwipeAnimationSetting.Builder()
                 .setDirection(if (right) Direction.Right else Direction.Left)
-                .setDuration(Duration.Normal.duration).setInterpolator(AccelerateInterpolator())
+                .setDuration(Duration.Slow.duration).setInterpolator(AccelerateInterpolator())
                 .build()
             setCanScrollVertical(false)
-            setScaleInterval(0.95f)
+            setScaleInterval(0.8f)
             setSwipeThreshold(0.5f)
+            setVisibleCount(2)
             setMaxDegree(30f)
             setSwipeAnimationSetting(setting)
         }

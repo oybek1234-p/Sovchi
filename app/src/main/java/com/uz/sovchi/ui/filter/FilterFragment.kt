@@ -4,6 +4,7 @@ import android.widget.AutoCompleteTextView
 import com.google.android.material.slider.LabelFormatter
 import com.google.android.material.slider.RangeSlider
 import com.uz.sovchi.R
+import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.filter.FilterViewUtils
 import com.uz.sovchi.data.filter.MyFilter
 import com.uz.sovchi.databinding.FragmentFilterBinding
@@ -18,10 +19,17 @@ class FilterFragment : BaseFragment<FragmentFilterBinding>() {
         bind.apply {
             myToolbar.setUpBackButton(this@FilterFragment)
 
-            FilterViewUtils.setLocationView(locationFilter.editText as AutoCompleteTextView) { }
+            FilterViewUtils.setLocationView(locationFilter.editText as AutoCompleteTextView) {
+                if (LocalUser.user.premium.not()) {
+                    mainActivity()?.showPremiumSheet()
+                }
+            }
             FilterViewUtils.setNomzodTypeView(typeFilter.editText as AutoCompleteTextView) {}
-            FilterViewUtils.setOilaviyHolati(oilaviyView.editText as AutoCompleteTextView) {}
-
+            FilterViewUtils.setOilaviyHolati(oilaviyView.editText as AutoCompleteTextView) {
+                if (LocalUser.user.premium.not()) {
+                    mainActivity()?.showPremiumSheet()
+                }
+            }
             ageSlider.labelBehavior = LabelFormatter.LABEL_VISIBLE
             ageSlider.values = listOf(
                 MyFilter.filter.yoshChegarasiDan.toFloat(),

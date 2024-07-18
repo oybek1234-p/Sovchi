@@ -37,13 +37,23 @@ class MessagesRepository {
                 if (data is HashMap<*, *>) {
                     val hashMap = data as HashMap<*, *>
                     when (type) {
+                        MESSAGE_TYPE_PLATFORM -> {
+                            data = PlatformMessage(
+                                hashMap[PlatformMessage::title.name].toString(),
+                                hashMap[PlatformMessage::message.name].toString()
+                            )
+                        }
+
                         MESSAGE_TYPE_NOMZOD_FOR_YOU -> {
                             data = NomzodForYouModel(
                                 hashMap["nomzodId"].toString(),
-                                hashMap["title"].toString(),
-                                hashMap["body"].toString()
+                                hashMap[NomzodForYouModel::nomzodName.name].toString(),
+                                hashMap[NomzodForYouModel::nomzodAge.name].toString().toIntOrNull(),
+                                hashMap[NomzodForYouModel::showPhoto.name].toString().toBoolean(),
+                                hashMap[NomzodForYouModel::photo.name].toString()
                             )
                         }
+
 
                         MESSAGE_TYPE_NOMZOD_LIKED -> {
                             data = NomzodLikedModel(
@@ -57,7 +67,7 @@ class MessagesRepository {
                                 },
                                 try {
                                     hashMap[NomzodLikedModel::photo.name].toString()
-                                }catch (e: Exception) {
+                                } catch (e: Exception) {
                                     ""
                                 }
                             )

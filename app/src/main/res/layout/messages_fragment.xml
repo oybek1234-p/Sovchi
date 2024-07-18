@@ -9,16 +9,16 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:background="?colorSurface"
+        android:background="?colorSurfaceContainerHigh"
         android:layout_height="match_parent">
 
         <com.uz.sovchi.ui.base.MyToolBar
             android:id="@+id/toolbar"
-            android:background="?colorSurfaceContainer"
+            android:background="?colorSurfaceContainerLow"
             app:elevation="@dimen/dimen_18"
             android:elevation="@dimen/dimen_18"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -28,6 +28,7 @@
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:elevation="@dimen/dimen_4"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -37,6 +38,7 @@
             android:layout_width="match_parent"
             android:id="@+id/swipe_refresh"
             android:layout_height="0dp"
+            android:background="?colorSurface"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

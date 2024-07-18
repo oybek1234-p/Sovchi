@@ -53,4 +53,8 @@
         android:id="@+id/settingsFragment"
         android:name="com.uz.sovchi.ui.SettingsFragment"
         android:label="SettingsFragment" />
+    <fragment
+        android:id="@+id/chatMessageFragment"
+        android:name="com.uz.sovchi.ui.chat.ChatMessageFragment"
+        android:label="ChatMessageFragment" />
 </navigation>

@@ -10,10 +10,12 @@ data class LikeModelFull(
     val userPhoto: String,
     val nomzodId: String,
     val nomzodUserId: String,
-    val nomzod: Nomzod,
+    val nomzod: Nomzod?,
+    val likedUserNomzod: Nomzod?,
     val likeState: Int,
-    val matched: Boolean
+    val matched: Boolean,
+    val date: String
 ) {
-    constructor() : this("", "", "",false,"","", "", Nomzod(), 0, false)
+    constructor() : this("", "", "", false, "", "", "", null, null, 0, false, "")
 
 }

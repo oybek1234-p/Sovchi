@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/dimen_18"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/textView19"
+        style="@style/Title4_24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bugunga tugadi"
+        android:textColor="?colorOnSurface"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView17"
+        style="@style/Text1_16"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/dimen_14"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Har kuni 10 ta nomzod ko'ra olasiz yoki Premiumga o'ting"
+        android:textColor="?colorOnSurface"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView19" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button"
+        android:layout_marginTop="@dimen/dimen_18"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/premiumga_o_tish"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView17" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -71,6 +71,14 @@
                     android:text="Manzil"
                     android:textColor="?colorOnSurface" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Premium"
+                    android:layout_marginBottom="@dimen/dimen_4"
+                    android:textColor="?colorPrimary"
+                    style="@style/Caption2_12"
+                    />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/location_filter"
@@ -104,7 +112,14 @@
                     android:text="Oilaviy holati"
                     android:textColor="?colorOnSurface" />
 
-
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Premium"
+                    android:textColor="?colorPrimary"
+                    android:layout_marginBottom="@dimen/dimen_4"
+                    style="@style/Caption2_12"
+                    />
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/oilaviy_view"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"

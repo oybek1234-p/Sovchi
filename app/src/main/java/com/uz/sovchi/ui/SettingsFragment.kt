@@ -2,7 +2,9 @@ package com.uz.sovchi.ui
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.view.View
 import com.uz.sovchi.R
+import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.nomzod.MyNomzodController
 import com.uz.sovchi.databinding.NomzodSettingsBinding
 import com.uz.sovchi.ui.base.BaseFragment
@@ -27,6 +29,10 @@ class SettingsFragment : BaseFragment<NomzodSettingsBinding>() {
             }
             boglanishButton.setOnClickListener {
                 mainActivity()?.showSupportSheet()
+            }
+            if (LocalUser.user.uid == "5ogvkB14aaOZn0x6hWaRtJ3VpAG2") {
+                allUsers.visibility = View.VISIBLE
+                verifyButton.visibility = View.VISIBLE
             }
             signOut.setOnClickListener {
                 val dialog = AlertDialog.Builder(requireContext())

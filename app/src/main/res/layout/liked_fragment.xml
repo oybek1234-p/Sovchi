@@ -20,18 +20,10 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/my_likes"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:icon="@drawable/ic_liked"
-                android:text="@string/yoqgan" />
-
-
-            <com.google.android.material.tabs.TabItem
                 android:id="@+id/liked_me"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:icon="@drawable/like_ic"
+                android:icon="@drawable/ic_liked"
                 android:text="@string/sizni_yoqtrigan" />
 
             <com.google.android.material.tabs.TabItem
@@ -42,8 +34,17 @@
                 android:text="@string/tanishing" />
 
             <com.google.android.material.tabs.TabItem
+                android:id="@+id/my_likes"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:icon="@drawable/ic_liked"
+                android:text="@string/yoqgan" />
+
+            <com.google.android.material.tabs.TabItem
                 android:id="@+id/disliked"
                 android:layout_width="match_parent"
+                android:visibility="gone"
                 android:layout_height="match_parent"
                 android:icon="@drawable/close_ic"
                 android:text="@string/yoqmagan" />
@@ -56,6 +57,17 @@
             android:paddingBottom="100dp"
             android:layout_marginHorizontal="@dimen/dimen_12"
             android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/see_liked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nomzodlarni ko'rish"
+            app:icon="@drawable/like_ic"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -76,6 +88,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="?colorOnSurface"
+            android:drawablePadding="@dimen/dimen_12"
+            android:visibility="gone"
             app:drawableStartCompat="@drawable/ic_liked"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

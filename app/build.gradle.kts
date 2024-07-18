@@ -13,12 +13,11 @@ android {
         applicationId = "com.uz.sovchi"
         minSdk = 24
         targetSdk = 34
-        versionCode = 200
+        versionCode = 207
         versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
 
     buildTypes {
         release {

@@ -1,11 +1,13 @@
 package com.uz.sovchi.data
 
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.messaging.messaging
 import com.uz.sovchi.appContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -29,6 +31,36 @@ object UserRepository {
         }
     }
 
+    fun removeLastSeenListener(listener: ValueEventListener) {
+        usersReference.child(user.uid).child(User::lastSeenTime.name).removeEventListener(listener)
+    }
+
+    fun setPremium(userId: String, premium: Boolean) {
+        if (userId.isEmpty()) return
+        usersReference.child(userId).updateChildren(mapOf(
+            User::premium.name to premium,
+            User::premiumDate.name to System.currentTimeMillis()
+        ))
+    }
+
+    fun observeLastSeen(userId: String, onChange: (time: Long) -> Unit): ValueEventListener? {
+        if (userId.isEmpty()) return null
+        val listener = object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val value = snapshot.getValue(Long::class.java)
+                if (value is Long) {
+                    onChange.invoke(value)
+                }
+            }
+        }
+        usersReference.child(userId).child(User::lastSeenTime.name).addValueEventListener(listener)
+        return listener
+    }
+
     fun getLastSeen(userId: String, done: (time: Long) -> Unit) {
         try {
             usersReference.child(userId).child(User::lastSeenTime.name).get()
@@ -47,11 +79,37 @@ object UserRepository {
         }
     }
 
-    fun setUnreadZero() {
+    fun setUnreadNotificationsZero() {
         if (user.valid) {
             if (user.unreadMessages == 0) return
             usersReference.child(user.uid).child(User::unreadMessages.name).setValue(0)
         }
+    }
+
+    fun setUnreadChatZero() {
+        if (user.valid) {
+            if (user.unreadChats == 0) return
+            usersReference.child(user.uid).child(User::unreadChats.name).setValue(0)
+        }
+    }
+
+    fun observeUnChatMessages(onChange: (count: Int) -> Unit) {
+        if (user.valid.not()) return
+        usersReference.child(user.uid).child(User::unreadChats.name)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val value = snapshot.getValue(Int::class.java)
+                    if (value is Int) {
+                        LocalUser.user.unreadChats = value
+                        LocalUser.saveUser()
+                        onChange.invoke(value)
+                    }
+                }
+            })
     }
 
     fun observeUnReadMessages(onChange: (count: Int) -> Unit) {
@@ -74,6 +132,7 @@ object UserRepository {
     }
 
     fun signOut() {
+        Firebase.messaging.unsubscribeFromTopic(LocalUser.user.uid + "topic")
         FirebaseAuth.getInstance().signOut()
         LocalUser.user = User()
         LocalUser.saveUser(appContext)

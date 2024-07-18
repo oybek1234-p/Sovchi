@@ -107,7 +107,6 @@ object MyFilter {
                 filtersReference.document(filter.userId).set(filter)
             }
         }
-
     }
 }
 
@@ -126,8 +125,12 @@ object FilterViewUtils {
             setText(context.getString(City.valueOf(MyFilter.filter.manzil).resId))
             setAdapter(adapter)
             onItemClickListener = AdapterView.OnItemClickListener { _, _, position, id ->
-                updateFilter {
-                    manzil = City.entries[position].name
+                if (LocalUser.user.premium) {
+                    updateFilter {
+                        manzil = City.entries[position].name
+                        update.invoke()
+                    }
+                } else {
                     update.invoke()
                 }
             }
@@ -151,8 +154,12 @@ object FilterViewUtils {
                 types,
                 context.getString(OilaviyHolati.valueOf(MyFilter.filter.oilaviyHolati).resourceId),
                 click = {
-                    updateFilter {
-                        oilaviyHolati = OilaviyHolati.entries[it].name
+                    if (LocalUser.user.premium) {
+                        updateFilter {
+                            oilaviyHolati = OilaviyHolati.entries[it].name
+                            update.invoke()
+                        }
+                    }else {
                         update.invoke()
                     }
                 })

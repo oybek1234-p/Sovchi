@@ -17,7 +17,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container"
-            android:background="?colorSurfaceContainerLow"
+            android:background="?colorSurfaceContainerLowest"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -40,62 +40,64 @@
 
                 <TextView
                     android:id="@+id/liked_you"
-                    style="@style/Text1_14"
+                    style="@style/Caption2_12"
                     android:layout_width="wrap_content"
+                    android:visibility="gone"
                     android:layout_height="30dp"
                     android:background="@drawable/round_lay"
                     android:gravity="center"
-                    android:backgroundTint="#7C000000"
+                    android:backgroundTint="?colorSurface"
                     android:drawablePadding="@dimen/dimen_8"
                     android:paddingHorizontal="@dimen/dimen_8"
                     android:paddingVertical="@dimen/dimen_4"
                     android:text="@string/liked_you"
-                    android:textColor="@color/white"
+                    android:textColor="?colorOnSurface"
                     app:drawableStartCompat="@drawable/ic_liked"
-                    app:drawableTint="@color/white"
+                    app:drawableTint="@color/likeColor"
                     android:layout_marginEnd="@dimen/dimen_12"
                     app:layout_constraintBottom_toTopOf="@+id/linearLayout3" />
 
                 <TextView
                     android:id="@+id/farzand_view"
-                    style="@style/Text1_14"
+                    style="@style/Caption1_13"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:layout_marginTop="8dp"
+                    android:gravity="center"
                     android:background="@drawable/round_lay"
-                    android:backgroundTint="?colorSurfaceContainerLow"
+                    android:backgroundTint="@color/white"
                     android:drawablePadding="@dimen/dimen_8"
                     android:paddingHorizontal="@dimen/dimen_8"
                     android:paddingVertical="@dimen/dimen_4"
-                    android:text="Farzand"
+                    android:text="@string/farzand"
                     android:textColor="?colorOnSurface"
                     app:drawableStartCompat="@drawable/child_ic"
-                    app:drawableTint="?colorOnSurface"
+                    app:drawableTint="?colorOnSurfaceVariant"
                     app:layout_constraintBottom_toTopOf="@+id/linearLayout3" />
 
             </LinearLayout>
 
-            >
+
             <LinearLayout
                 android:id="@+id/linearLayout4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/dimen_12"
                 android:orientation="vertical"
-                app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+                android:padding="@dimen/dimen_12"
+                app:layout_constraintBottom_toBottomOf="parent"
                 tools:layout_editor_absoluteX="18dp">
 
                 <TextView
                     android:id="@+id/name_age_view"
                     style="@style/Title2_20"
-                    tools:text = "Oybek 21"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/roboto_bold"
                     android:gravity="center_vertical"
                     android:textColor="?colorOnSurface"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/type_view" />
+                    app:layout_constraintTop_toBottomOf="@+id/type_view"
+                    tools:text="Oybek 21" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -116,19 +118,6 @@
                         android:text="@string/yangi"
                         android:textColor="?colorOnPrimary" />
 
-                    <TextView
-                        android:id="@+id/top_badge"
-                        style="@style/Caption2_12"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:layout_marginEnd="@dimen/dimen_12"
-                        android:background="@drawable/round_lay"
-                        android:backgroundTint="#4CAF50"
-                        android:paddingHorizontal="@dimen/dimen_8"
-                        android:paddingVertical="@dimen/dimen_2"
-                        android:text="@string/top"
-                        android:textColor="?colorOnPrimary" />
 
                     <TextView
                         android:id="@+id/audio_button"
@@ -152,16 +141,16 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    >
+                    android:orientation="horizontal">
+
                     <TextView
                         android:id="@+id/manzil_view"
                         style="@style/Text2_15"
-                        android:drawablePadding="@dimen/dimen_8"
-                        android:drawableStart="@drawable/location_ic"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dimen_8"
+                        android:drawableStart="@drawable/location_ic"
+                        android:drawablePadding="@dimen/dimen_8"
                         android:text="Toshkent"
                         android:textColor="?colorOnSurface"
                         app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
@@ -172,9 +161,9 @@
                         style="@style/Text2_15"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/dimen_12"
                         android:layout_marginTop="@dimen/dimen_8"
                         android:text="Arjarshgan"
-                        android:layout_marginStart="@dimen/dimen_12"
                         android:textColor="?colorOnSurface"
                         app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
                         tools:layout_editor_absoluteX="18dp" />
@@ -187,80 +176,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/oval_back"
-                android:backgroundTint="@color/white"
-                android:elevation="6dp"
+                android:backgroundTint="@color/black"
+                android:visibility="gone"
+                android:elevation="1dp"
                 android:layout_margin="@dimen/dimen_12"
-                android:padding="@dimen/dimen_12"
+                android:padding="@dimen/dimen_4"
                 android:src="@drawable/info_ic"
                 app:layout_constraintBottom_toBottomOf="@+id/photo_View"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:tint="?colorOnSurface" />
-            <LinearLayout
-                android:id="@+id/linearLayout3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/dimen_12"
-                android:paddingVertical="@dimen/dimen_12"
-                android:clipToPadding="false"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:orientation="horizontal"
-                android:clipChildren="false"
-                app:layout_constraintStart_toStartOf="parent" >
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:id="@+id/dislike_button"
-                    android:padding="@dimen/dimen_12"
-                    android:elevation="6dp"
-                    android:backgroundTint="@color/white"
-                    android:background="@drawable/oval_back"
-                    android:src="@drawable/close_ic"
-                    app:tint="?colorOnSurface"
-                    />
-
-                <ImageView
-                    android:layout_marginStart="@dimen/dimen_48"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:id="@+id/like_button"
-                    android:elevation="6dp"
-                    android:padding="@dimen/dimen_12"
-                    android:backgroundTint="@color/white"
-                    android:background="@drawable/oval_back"
-                    android:src="@drawable/like_ic"
-                    app:tint="?colorOnSurface" />
-            </LinearLayout>
+                app:tint="@color/white" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ImageView
-            android:layout_margin="@dimen/dimen_24"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/like_button_thumb"
-            android:elevation="6dp"
-            android:layout_gravity="left"
-            android:padding="@dimen/dimen_12"
-            android:backgroundTint="@color/likeColor"
-            android:background="@drawable/oval_back"
-            android:src="@drawable/like_ic"
-            android:visibility="gone"
-            app:tint="@color/white" />
-        <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:visibility="gone"
-            android:id="@+id/dislike_button_thumb"
-            android:padding="@dimen/dimen_12"
-            android:elevation="6dp"
-            android:backgroundTint="@color/green"
-            android:background="@drawable/oval_back"
-            android:src="@drawable/close_ic"
-            android:layout_margin="@dimen/dimen_24"
-            android:layout_gravity="end"
-            app:tint="@color/white"
-            />
     </com.google.android.material.card.MaterialCardView>
 </layout>

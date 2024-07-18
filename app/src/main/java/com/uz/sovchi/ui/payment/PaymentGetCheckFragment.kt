@@ -10,9 +10,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.uz.sovchi.R
+import com.uz.sovchi.data.LocalUser
+import com.uz.sovchi.data.nomzod.MyNomzodController
 import com.uz.sovchi.data.nomzod.NomzodState
 import com.uz.sovchi.data.nomzod.NomzodTarif
 import com.uz.sovchi.data.payment.PaymentInfo
+import com.uz.sovchi.data.premium.PremiumUtil
 import com.uz.sovchi.databinding.PaymentCheckFragmentBinding
 import com.uz.sovchi.showToast
 import com.uz.sovchi.ui.base.BaseFragment
@@ -29,28 +32,14 @@ class PaymentGetCheckFragment : BaseFragment<PaymentCheckFragmentBinding>() {
 
     private var checkPath: String? = null
 
-    private var nomzodId: String? = null
-    private var type = 0
-    private var tarif: NomzodTarif = NomzodTarif.TOP_3
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        nomzodId = arguments?.getString("value")
-        type = arguments?.getInt("type") ?: 0
-        val tarifName = arguments?.getString("tarif")
-        if (tarifName.isNullOrEmpty().not()) {
-            try {
-                tarif = NomzodTarif.valueOf(tarifName.toString())
-            } catch (e: Exception) {
-                //
-            }
-        }
-    }
-
     override fun viewCreated(bind: PaymentCheckFragmentBinding) {
         bind.apply {
             toolbar.setUpBackButton(this@PaymentGetCheckFragment)
-            textView10.text = tarif.getPrice(type).toString() + " sum"
+            PremiumUtil.loadPremiumPrice {
+                if (view != null) {
+                    textView10.text = "$it so'm"
+                }
+            }
             PaymentInfo.loadPaymentCard {
                 cardNumber.text = it
             }
@@ -84,16 +73,14 @@ class PaymentGetCheckFragment : BaseFragment<PaymentCheckFragmentBinding>() {
     private val nomzodViewModel: NomzodViewModel by activityViewModels()
 
     private fun upload() {
-        if (checkPath.isNullOrEmpty() || nomzodId.isNullOrEmpty()) return
+        if (checkPath.isNullOrEmpty() || LocalUser.user.hasNomzod.not()) return
         binding?.progressBar?.isVisible = true
         binding?.nextButton?.isEnabled = false
         lifecycleScope.launch(Dispatchers.IO) {
-            nomzodViewModel.repository.uploadPaymentData(checkPath!!, nomzodId!!) {
+            nomzodViewModel.repository.uploadPremiumData(checkPath!!) {
                 lifecycleScope.launch(Dispatchers.Main) {
                     binding?.progressBar?.isVisible = false
-                    nomzodViewModel.repository.myNomzods.find { it.id == nomzodId }?.apply {
-                        state = NomzodState.CHECKING
-                    }
+                    MyNomzodController.nomzod.state = NomzodState.CHECKING
                     if (it.not()) {
                         binding?.nextButton?.isEnabled = true
                     } else {

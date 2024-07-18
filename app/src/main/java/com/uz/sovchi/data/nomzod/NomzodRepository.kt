@@ -5,10 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.uz.sovchi.data.ImageUploader
 import com.uz.sovchi.data.LocalUser
+import com.uz.sovchi.data.UserRepository
+import com.uz.sovchi.data.like.LikeController
 import com.uz.sovchi.data.location.City
 import com.uz.sovchi.ui.photo.PickPhotoFragment
 import java.io.File
@@ -21,25 +24,17 @@ class NomzodRepository {
 
     val myNomzods = NomzodRepository.myNomzods
     suspend fun getNomzodById(id: String, loadIfNotExists: Boolean): Nomzod? {
-        val nomzod = myNomzods.find { it.id == id }
-        if (nomzod != null) {
-            return nomzod
-        } else {
-            if (loadIfNotExists) {
-                return loadNomzod(id)
-            }
-        }
-        return null
+        return loadNomzod(id)
     }
 
-    suspend fun uploadPaymentData(
-        chekPath: String, nomzodId: String, done: (success: Boolean) -> Unit
+    suspend fun uploadPremiumData(
+        chekPath: String, done: (success: Boolean) -> Unit
     ) {
-        if (nomzodId.isNotEmpty()) {
+        if (LocalUser.user.hasNomzod) {
             var url = ""
             val upload = {
                 if (url.isEmpty().not()) {
-                    nomzodlarReference.document(nomzodId).update(
+                    nomzodlarReference.document(MyNomzodController.nomzod.id).update(
                         Nomzod::state.name,
                         NomzodState.CHECKING,
                         Nomzod::paymentCheckPhotoUrl.name,
@@ -161,10 +156,17 @@ class NomzodRepository {
             try {
                 nomzodlarReference.document(id).get().addOnSuccessListener {
                     val nomzod = it.toObject(Nomzod::class.java)
-                    if (nomzod?.userId == LocalUser.user.uid) {
-                        myNomzods.add(nomzod)
+                    if (nomzod != null) {
+                        LikeController.getLikeInfo(nomzod) { iLiked, likedMe, matched ->
+                            if (nomzod.userId != LocalUser.user.uid) {
+                                nomzod.likedMe = likedMe ?: false
+                                myNomzods.add(nomzod)
+                            }
+                            sus.resume(nomzod)
+                        }
+                    } else {
+                        sus.resume(nomzod)
                     }
-                    sus.resume(nomzod)
                 }.addOnFailureListener {
                     sus.resume(null)
                 }
@@ -241,7 +243,7 @@ class NomzodRepository {
 
     }
 
-    fun verify(nomzod: Nomzod) {
+    fun verify(nomzod: Nomzod, premium: Boolean) {
         if (nomzod.id.isEmpty()) return
         val updateMap = mutableMapOf<String, Any>().apply {
             put(
@@ -255,19 +257,38 @@ class NomzodRepository {
                 Nomzod::uploadDateString.name,
                 java.sql.Timestamp(System.currentTimeMillis()).toString()
             )
-            if (nomzod.tarif != NomzodTarif.STANDART.name) {
-                put(Nomzod::top.name, true)
+            if (premium) {
+                UserRepository.setPremium(nomzod.userId, true)
             }
         }
+        sendPlatformMessage(nomzod.id, PlatformMessageType.ACCEPTED_PROFILE, "")
         nomzodlarReference.document(nomzod.id).update(
             updateMap
         )
+    }
+
+    private var firebaseFunctions =
+        FirebaseFunctions.getInstance().getHttpsCallable("sendPlatformMessage")
+
+    private fun sendPlatformMessage(nomzodId: String, type: Int, message: String) {
+        if (nomzodId.isEmpty()) return
+        firebaseFunctions.call(
+            mapOf(
+                "userId" to nomzodId, "message" to message, "type" to type
+            )
+        )
+    }
+
+    fun rejectNomzod(id: String, type: Int) {
+        sendPlatformMessage(id, type, "")
+        nomzodlarReference.document(id).update(Nomzod::state.name, NomzodState.REJECTED)
     }
 
     fun deleteNomzod(id: String): Boolean {
         try {
             nomzodlarReference.document(id).delete()
             myNomzods.removeIf { it.id == id }
+            sendPlatformMessage(id, PlatformMessageType.DELETED, "")
         } catch (e: Exception) {
             //
         }

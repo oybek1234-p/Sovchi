@@ -1,5 +1,10 @@
 package com.uz.sovchi.ui.nomzod
 
+import android.app.AlertDialog
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.media.FaceDetector
+import android.media.FaceDetector.Face
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -15,6 +20,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import coil.load
+import com.bumptech.glide.Glide
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.material.textfield.TextInputLayout
 import com.uz.sovchi.R
@@ -30,6 +36,7 @@ import com.uz.sovchi.data.nomzod.OqishMalumoti
 import com.uz.sovchi.data.nomzod.Talablar
 import com.uz.sovchi.data.nomzod.nomzodTypes
 import com.uz.sovchi.databinding.AddNomzodFragmentBinding
+import com.uz.sovchi.databinding.PhotoFaceAlertBinding
 import com.uz.sovchi.showToast
 import com.uz.sovchi.ui.base.BaseFragment
 import com.uz.sovchi.ui.photo.PhotoAdapter
@@ -40,6 +47,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
+
 
 class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
 
@@ -154,18 +162,12 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
     }
 
     private val needNotFillViews = arrayOf(
-        R.id.mobil_raqam_view,
         R.id.joylagan_odam_view,
         R.id.farzandlar_view,
         R.id.imkoniyati_malumot_view,
         R.id.buyi_view,
         R.id.vazni_view,
-        R.id.ish_view,
-        R.id.yosh_chegarasi_dan_view,
-        R.id.yosh_chegarasi_gacha_view,
-        R.id.ismi_view,
-        R.id.telegram_view,
-        R.id.talablar_view
+        R.id.telegram_view
     )
 
     private fun checkEditTextsFilled(): Boolean {
@@ -185,15 +187,23 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                 }
             }
         }
-        if (telegramLink.isEmpty() && mobilRaqam.isEmpty()) {
-            notFilled = true
-            showToast("Telegram yoki mobil raqamni kiriting!")
-        }
         if (imkoniyatiCheklangan && imkoniyatChekMalumot.isEmpty()) {
             showToast("Imkoniyati cheklanganligi haqida malumot yozing!")
         }
         if (hasChild == null) {
             showToast("Farzandlar belgilang !")
+            notFilled = true
+        }
+        if (photoAdapter.currentList.size == 0) {
+            showToast("Rasm yuklang")
+            notFilled = true
+        }
+        if (talablar.length < 80) {
+            showToast("Kamida 80 ta harf yozing!")
+            notFilled = true
+        }
+        if (name.isEmpty()){
+            showToast("Ismingizni kiriting!")
             notFilled = true
         }
         notFilledView?.top?.let {
@@ -226,7 +236,7 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
         val photos = photoAdapter.currentList
         val upDate = uploadDate ?: System.currentTimeMillis()
         val nomzod =
-            Nomzod(id = if (nomzodId.isNullOrEmpty()) LocalUser.user.uid.toString() else nomzodId!!,
+            Nomzod(id = if (nomzodId.isNullOrEmpty()) LocalUser.user.uid else nomzodId!!,
                 userId = currentNomzod?.userId?.ifEmpty { LocalUser.user.uid }
                     ?: LocalUser.user.uid,
                 name = name.trim().capitalize(Locale.ROOT),
@@ -313,6 +323,7 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                 hidePhoto.isChecked = showPhotos.not()
                 hidePhoto.setOnCheckedChangeListener { buttonView, isChecked ->
                     this@AddNomzodFragment.showPhotos = isChecked.not()
+                    hidePhotoInfo.isVisible = isChecked
                 }
                 if (isAdmin && paymentCheckPhotoUrl?.ifEmpty { "" }?.isNotEmpty() == true) {
                     checkView.isVisible = true
@@ -329,14 +340,22 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                 addPhotoButton.setOnClickListener {
                     PickPhotoFragment(true) {
                         if (it.isNotEmpty()) {
-                            photoAdapter.submitList(it)
+                            val paths = it
+                            val first = it.first().path
+                            checkIsFace(first) {
+                                if (it) {
+                                    photoAdapter.submitList(paths)
+                                } else {
+                                    showPhotoFaceAlert()
+                                }
+                            }
                         }
                     }.open(mainActivity()!!)
                 }
                 backButton.setOnClickListener {
                     closeFragment()
                 }
-                val oilaviyHolati = OilaviyHolati.entries.filter { it != OilaviyHolati.Aralash }
+                val oilaviyHolati = OilaviyHolati.entries.filter { it != OilaviyHolati.Aralash && it != OilaviyHolati.Oilali}
                 val oilaviyHolatiAdapter =
                     ArrayAdapter(requireContext(), R.layout.list_item, oilaviyHolati.map {
                         getString(it.resourceId)
@@ -414,7 +433,8 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                 if (hasChild != null) {
                     childrenLay.check(if (hasChild!!) R.id.farzand_yes else R.id.farzand_no)
                 }
-                val nomzodTypeAdapter = ArrayAdapter(requireContext(),
+                val nomzodTypeAdapter = ArrayAdapter(
+                    requireContext(),
                     R.layout.list_item,
                     nomzodTypes.map { it.second })
                 typeView.editText?.apply {
@@ -428,7 +448,6 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                             //Talablar submit
                             val list = arrayListOf<Talablar>()
                             list.addAll(Talablar.entries)
-                            binding?.paid?.isVisible = nomzodType == KUYOV
                             if (nomzodType == KUYOV) {
                                 list.apply {
                                     remove(Talablar.IkkinchiRuzgorgaTaqiq)
@@ -496,6 +515,44 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                 }
             }
         }
+    }
+
+
+    private fun checkIsFace(imageUrl: String, done: (hasFace: Boolean) -> Unit) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val uploadFile = PickPhotoFragment.getRealFile(imageUrl)
+                val bitmapRes = Glide.with(requireContext()).asFile().override(500,500).load(uploadFile).submit()
+                val bitmapFactoryOptions = BitmapFactory.Options()
+                bitmapFactoryOptions.inPreferredConfig = Bitmap.Config.RGB_565
+                val bitmap = BitmapFactory.decodeFile(bitmapRes.get().path, bitmapFactoryOptions)
+                val detector = FaceDetector(bitmap.width, bitmap.height, 10)
+                val facesList = arrayOfNulls<Face>(10)
+                val facesCount = detector.findFaces(bitmap, facesList)
+                uploadFile?.delete()
+                bitmap.recycle()
+                lifecycleScope.launch(Dispatchers.Main) {
+                    done.invoke(facesCount > 0)
+                }
+            }catch (e: Exception) {
+                lifecycleScope.launch (Dispatchers.Main){
+                    done.invoke(true)
+                }
+            }
+        }
+    }
+
+    fun showPhotoFaceAlert() {
+        val alertDialog = AlertDialog.Builder(requireContext(),R.style.RoundedCornersDialog)
+        val binding = PhotoFaceAlertBinding.inflate(layoutInflater)
+        alertDialog.setView(binding.root)
+        val dialog = alertDialog.create()
+        binding.apply {
+            okButton.setOnClickListener {
+                dialog.cancel()
+            }
+        }
+        dialog.show()
     }
 
     private var nomzodTarif: NomzodTarif = NomzodTarif.STANDART

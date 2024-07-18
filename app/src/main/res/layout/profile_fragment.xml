@@ -97,6 +97,17 @@
                 android:layout_marginTop="@dimen/dimen_18"
                 app:layout_constraintTop_toBottomOf="@+id/status_view" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/premium_button"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/premiumga_o_tish"
+                app:icon="@drawable/like_hand"
+                app:iconGravity="textStart"
+                app:layout_constraintTop_toBottomOf="@+id/edit_info_button"
+                tools:layout_editor_absoluteX="24dp" />
+
             <TextView
                 android:id="@+id/fillPercent"
                 style="@style/Caption2_12"
@@ -109,6 +120,30 @@
                 app:layout_constraintEnd_toEndOf="@+id/name_view"
                 app:layout_constraintStart_toEndOf="@+id/status_view"
                 app:layout_constraintTop_toTopOf="@+id/status_view" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/boglanish_button"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableTint="?colorPrimary"
+                android:layout_marginTop="@dimen/dimen_8"
+                android:text="@string/biz_bilan_bog_lanish"
+                app:icon="@drawable/admin_ic"
+                app:iconGravity="textStart"
+                app:layout_constraintTop_toBottomOf="@+id/premium_button"
+                tools:layout_editor_absoluteX="24dp" />
+
+            <com.google.android.gms.ads.AdView
+                android:id="@+id/adView"
+                android:layout_marginTop="@dimen/dimen_8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:adSize="BANNER"
+                app:adUnitId="ca-app-pub-8679920253502267/9580923961"
+                app:layout_constraintTop_toBottomOf="@+id/boglanish_button"
+                tools:layout_editor_absoluteX="24dp"></com.google.android.gms.ads.AdView>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.core.widget.NestedScrollView>

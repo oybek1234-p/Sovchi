@@ -12,6 +12,7 @@ import java.util.TimeZone
 object DateUtils {
 
     fun formatDate(date: Long): String {
+        if (date == 0L) return appContext.getString(R.string.yaqinda)
         return Date(date).getTimeAgo()
     }
 
@@ -70,6 +71,12 @@ object DateUtils {
         return isToday(d + android.text.format.DateUtils.DAY_IN_MILLIS)
     }
 
+    fun getHourMinuteDayMonth(date: Long): String {
+        val time = date
+        val outputFmt = SimpleDateFormat("HH:mm   dd.MM.yyyy")
+        return outputFmt.format(time)
+    }
+
     fun utcToCurrent(utc: Long): Long {
         val offset: Int = TimeZone.getDefault().rawOffset + TimeZone.getDefault().dstSavings
         return utc * 1000 - offset
@@ -106,10 +113,6 @@ object DateUtils {
             return formatDateText(date.time, TIME_DAY)
         }
         return ""
-    }
-
-    fun formatTime(time: Long): String {
-        return formatDateText(date.time, TIME_DAY)
     }
 
     private fun Date.getTimeAgo(): String {

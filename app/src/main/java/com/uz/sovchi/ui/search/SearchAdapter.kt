@@ -32,6 +32,7 @@ class SearchAdapter(
     private val onLiked: ((liked: Boolean, nomzodId: String) -> Unit)? = null,
     private val isBackGray: Boolean = false,
     private val disliked: (id: String, position: Int) -> Unit = { i, p -> },
+    private val onChatClick: (nomzod: Nomzod) -> Unit
 ) : BaseAdapter<Nomzod, NomzodItemBinding>(R.layout.nomzod_item, NOMZOD_DIFF_UTIL) {
 
     override fun onViewCreated(holder: ViewHolder<NomzodItemBinding>, viewType: Int) {
@@ -57,18 +58,22 @@ class SearchAdapter(
                     //
                 }
             }
+            chatButton.setOnClickListener {
+                val nomzod = currentList[holder.adapterPosition]
+                onChatClick.invoke(nomzod)
+            }
         }
     }
 
     companion object {
-        fun likeOrDislike(nomzod: Nomzod,like: Boolean): Boolean {
+        fun likeOrDislike(nomzod: Nomzod, like: Boolean): Boolean {
             if (LocalUser.user.valid.not()) {
                 showToast("Akkauntga kiring!")
                 return false
             }
             if (like.not()) {
                 LikeController.likeOrDislikeNomzod(
-                    LocalUser.user.uid, nomzod,LikeState.DISLIKED
+                    LocalUser.user.uid, nomzod, LikeState.DISLIKED
                 )
             } else {
                 LikeController.likeOrDislikeNomzod(

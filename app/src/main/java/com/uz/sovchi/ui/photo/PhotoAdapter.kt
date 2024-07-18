@@ -27,7 +27,7 @@ class PhotoAdapter(private val click: (delete: Boolean, pos: Int, model: PickPho
                 (this as PhotoMiniItemBinding)
                 deleteButton.isVisible = deleteShown
                 if (showPhotos.not()) {
-                    Glide.with(imageView).load(model.path).transform(BlurTransformation(50)).into(imageView)
+                    Glide.with(imageView).load(model.path).transform(BlurTransformation(80)).into(imageView)
                 } else {
                     Glide.with(imageView).load(model.path).into(imageView)
                 }

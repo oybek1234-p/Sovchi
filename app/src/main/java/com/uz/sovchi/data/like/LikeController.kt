@@ -22,24 +22,33 @@ object LikeController {
         }
     }
 
+
     fun loadLikesFull(
         lastNomzod: LikeModelFull?, state: Int, done: (list: List<LikeModelFull>) -> Unit
     ) {
         var query =
-            likesFullReference.limit(8).orderBy(LikeModelFull::id.name, Query.Direction.DESCENDING)
+            likesFullReference.limit(8)
+                .orderBy(LikeModelFull::date.name, Query.Direction.DESCENDING)
         if (lastNomzod != null) {
-            query = query.startAfter(lastNomzod.id)
+            query = query.startAfter(lastNomzod.date)
         }
-        if (state == LikeState.LIKED_ME) {
-            query = query.whereEqualTo(LikeModelFull::nomzodUserId.name, LocalUser.user.uid)
-            query = query.whereEqualTo(LikeModelFull::likeState.name, LikeState.LIKED)
-        } else {
+        if (state == LikeState.MATCH) {
             query = query.whereEqualTo(LikeModelFull::userId.name, LocalUser.user.uid)
-                .whereEqualTo(LikeModelFull::likeState.name, state)
+                .whereEqualTo(LikeModelFull::matched.name, true)
+        } else {
+            if (state == LikeState.LIKED_ME) {
+                query = query.whereEqualTo(LikeModelFull::nomzodUserId.name, LocalUser.user.uid)
+                query = query.whereEqualTo(LikeModelFull::likeState.name, LikeState.LIKED)
+            } else {
+                query = query.whereEqualTo(LikeModelFull::userId.name, LocalUser.user.uid)
+                    .whereEqualTo(LikeModelFull::likeState.name, state)
+            }
         }
-        query.get().addOnCompleteListener {
-            val list = it.result.toObjects(LikeModelFull::class.java)
+        query.get().addOnSuccessListener {
+            val list = it.toObjects(LikeModelFull::class.java)
             done.invoke(list)
+        }.addOnFailureListener {
+            done.invoke(emptyList())
         }
     }
 
@@ -78,6 +87,7 @@ object LikeController {
     }
 
     fun likeOrDislikeNomzod(userId: String, nomzod: Nomzod, likeState: Int) {
+        if (MyNomzodController.nomzod.id.isEmpty()) return
         val myId = userId + nomzod.id
         val theirId = nomzod.userId + MyNomzodController.nomzod.id
         var theyLiked = false
@@ -92,8 +102,10 @@ object LikeController {
                 nomzod.id,
                 nomzod.userId,
                 nomzod,
+                MyNomzodController.nomzod,
                 likeState,
-                matched
+                matched,
+                System.currentTimeMillis().toString()
             )
             likesFullReference.document(myId).set(likeFull)
             if (matched) {

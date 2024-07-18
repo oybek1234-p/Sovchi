@@ -21,6 +21,8 @@ object LocalUser {
                 phoneNumber = getString("phone", "") ?: ""
                 lastSeenTime = getLong("lastSeenTime", 0L)
                 hasNomzod = getBoolean("hNomzod",false)
+                premium = getBoolean("premium",false)
+                premiumDate = getLong("premiumDate",0)
             }
         }
     }
@@ -34,6 +36,8 @@ object LocalUser {
                 putString("phone", phoneNumber)
                 putLong("lastSeenTime", lastSeenTime)
                 putBoolean("hNomzod",hasNomzod)
+                putBoolean("premium",premium)
+                putLong("premiumDate",premiumDate)
                 commit()
             }
         }

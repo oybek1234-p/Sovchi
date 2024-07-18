@@ -52,7 +52,7 @@ class MessagesFragment : BaseFragment<MessagesFragmentBinding>() {
                     listAdapter.submitList(it.sortedByDescending { it.date })
                 }
                 loading.observe(viewLifecycleOwner) {
-                    progressBar.isVisible = viewModel.messagesList.size == 0 && it
+                    progressBar.isVisible = listAdapter.currentList.size == 0 && it
                 }
                 empty.observe(viewLifecycleOwner) {
                     emptyView.isVisible = it
@@ -73,11 +73,12 @@ class MessagesFragment : BaseFragment<MessagesFragmentBinding>() {
         } else {
             viewModel.loadMessages()
         }
-        userViewModel.repository.setUnreadZero()
+        userViewModel.repository.setUnreadNotificationsZero()
     }
 
     override fun viewCreated(bind: MessagesFragmentBinding) {
         bind.apply {
+            showBottomSheet = false
             toolbar.showArrowBack = true
             toolbar.setUpBackButton(this@MessagesFragment)
             observe()
