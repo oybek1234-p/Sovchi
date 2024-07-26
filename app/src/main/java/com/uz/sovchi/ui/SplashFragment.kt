@@ -13,7 +13,7 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>() {
         bind.apply {
             showBottomSheet = false
             start.setOnClickListener {
-                navigate(R.id.auth_graph)
+                navigate(R.id.authFragment)
             }
         }
     }

@@ -13,7 +13,11 @@ import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.UserRepository
 import com.uz.sovchi.data.like.LikeController
 import com.uz.sovchi.data.location.City
+import com.uz.sovchi.data.verify.VerificationData
 import com.uz.sovchi.ui.photo.PickPhotoFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.File
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -59,7 +63,9 @@ class NomzodRepository {
         }
     }
 
-    suspend fun uploadNewMyNomzod(nomzod: Nomzod, done: () -> Unit) {
+    suspend fun uploadNewMyNomzod(
+        nomzod: Nomzod, verificationData: VerificationData, done: () -> Unit
+    ) {
         if (nomzod.id.isEmpty()) return
         val uploadNext = {
             val next = {
@@ -67,7 +73,11 @@ class NomzodRepository {
                     done.invoke()
                 }
             }
-            next.invoke()
+            GlobalScope.launch(Dispatchers.IO) {
+                MyNomzodController.uploadVerificationData(nomzod.id, verificationData) {
+                    next.invoke()
+                }
+            }
         }
         if (nomzod.photos.isNotEmpty()) {
             val list = arrayListOf<String?>()
@@ -93,11 +103,6 @@ class NomzodRepository {
         } catch (e: Exception) {
             //
         }
-    }
-
-    fun clearMyNomzods() {
-        myNomzods.clear()
-        myNomzodsLoading.postValue(false)
     }
 
     suspend fun loadMyNomzods() = suspendCoroutine { suspend ->
@@ -149,6 +154,8 @@ class NomzodRepository {
 
     companion object {
 
+        var cacheNomzods: HashMap<String, Nomzod?> = hashMapOf()
+
         var myNomzods = arrayListOf<Nomzod>()
         var nomzodlarReference = FirebaseFirestore.getInstance().collection("nomzodlar")
 
@@ -157,11 +164,12 @@ class NomzodRepository {
                 nomzodlarReference.document(id).get().addOnSuccessListener {
                     val nomzod = it.toObject(Nomzod::class.java)
                     if (nomzod != null) {
-                        LikeController.getLikeInfo(nomzod) { iLiked, likedMe, matched ->
+                        LikeController.getLikeInfo(nomzod) { iLiked, likedMe, dislikedMe, matched ->
                             if (nomzod.userId != LocalUser.user.uid) {
                                 nomzod.likedMe = likedMe ?: false
                                 myNomzods.add(nomzod)
                             }
+                            cacheNomzods.put(nomzod.id, nomzod)
                             sus.resume(nomzod)
                         }
                     } else {
@@ -173,6 +181,29 @@ class NomzodRepository {
             } catch (e: Exception) {
                 //
             }
+        }
+
+        fun deleteNomzod(id: String): Boolean {
+            try {
+                nomzodlarReference.document(id).delete()
+                myNomzods.removeIf { it.id == id }
+                sendPlatformMessage(id, PlatformMessageType.DELETED, "")
+            } catch (e: Exception) {
+                //
+            }
+            return myNomzods.isEmpty()
+        }
+
+        private var firebaseFunctions =
+            FirebaseFunctions.getInstance().getHttpsCallable("sendPlatformMessage")
+
+        private fun sendPlatformMessage(nomzodId: String, type: Int, message: String) {
+            if (nomzodId.isEmpty()) return
+            firebaseFunctions.call(
+                mapOf(
+                    "userId" to nomzodId, "message" to message, "type" to type
+                )
+            )
         }
 
         fun loadNomzods(
@@ -234,6 +265,9 @@ class NomzodRepository {
             try {
                 task.get().addOnCompleteListener { it ->
                     val data = it.result.toObjects(Nomzod::class.java)
+                    data.forEach {
+                        cacheNomzods.put(it.id, it)
+                    }
                     loaded.invoke(data, 0)
                 }
             } catch (e: Exception) {
@@ -253,6 +287,7 @@ class NomzodRepository {
             put(
                 Nomzod::visibleDate.name, System.currentTimeMillis()
             )
+            put(Nomzod::verified.name, true)
             put(
                 Nomzod::uploadDateString.name,
                 java.sql.Timestamp(System.currentTimeMillis()).toString()
@@ -267,33 +302,12 @@ class NomzodRepository {
         )
     }
 
-    private var firebaseFunctions =
-        FirebaseFunctions.getInstance().getHttpsCallable("sendPlatformMessage")
-
-    private fun sendPlatformMessage(nomzodId: String, type: Int, message: String) {
-        if (nomzodId.isEmpty()) return
-        firebaseFunctions.call(
-            mapOf(
-                "userId" to nomzodId, "message" to message, "type" to type
-            )
-        )
-    }
 
     fun rejectNomzod(id: String, type: Int) {
         sendPlatformMessage(id, type, "")
         nomzodlarReference.document(id).update(Nomzod::state.name, NomzodState.REJECTED)
     }
 
-    fun deleteNomzod(id: String): Boolean {
-        try {
-            nomzodlarReference.document(id).delete()
-            myNomzods.removeIf { it.id == id }
-            sendPlatformMessage(id, PlatformMessageType.DELETED, "")
-        } catch (e: Exception) {
-            //
-        }
-        return myNomzods.isEmpty()
-    }
 
     fun deleteTop(nomzodId: String) {
         if (nomzodId.isEmpty()) return

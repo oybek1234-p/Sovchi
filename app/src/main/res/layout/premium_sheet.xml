@@ -46,24 +46,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/check_ic"
-                android:drawableTint="@color/green"
                 android:drawablePadding="8dp"
                 android:text="@string/chatda_gaplashish"
                 android:layout_marginTop="@dimen/dimen_12"
                 android:textSize="18sp"
-                android:textColor="?colorOnSurface" />
-
-
-            <TextView
-                style="@style/Text2_15"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawablePadding="8dp"
-                android:text="@string/yoqtirganlarni_ko_rish"
-                android:layout_marginTop="@dimen/dimen_12"
-                android:textSize="18sp"
                 android:textColor="?colorOnSurface"
-                app:drawableStartCompat="@drawable/check_ic"
                 app:drawableTint="@color/green" />
 
             <TextView

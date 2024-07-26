@@ -13,7 +13,7 @@ android {
         applicationId = "com.uz.sovchi"
         minSdk = 24
         targetSdk = 34
-        versionCode = 207
+        versionCode = 215
         versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -93,12 +93,11 @@ dependencies {
 
     implementation("com.google.android.gms:play-services-auth:21.1.1")
     implementation("com.google.firebase:firebase-auth")
-
-
     implementation ("com.facebook.android:facebook-android-sdk:latest.release")
 
     implementation ("com.yuyakaido.android:card-stack-view:2.3.4")
     //Blue transform glide
     implementation ("jp.wasabeef:glide-transformations:4.3.0")
 
+    implementation ("io.fotoapparat:fotoapparat:2.7.0")
 }

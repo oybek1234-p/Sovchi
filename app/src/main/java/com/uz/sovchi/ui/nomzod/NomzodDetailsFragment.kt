@@ -19,29 +19,32 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.flexbox.FlexboxLayoutManager
-import com.google.android.gms.ads.AdRequest
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.color.MaterialColors
 import com.uz.sovchi.DateUtils
 import com.uz.sovchi.R
 import com.uz.sovchi.appContext
 import com.uz.sovchi.data.LocalUser
+import com.uz.sovchi.data.UserRepository
 import com.uz.sovchi.data.like.LikeController
 import com.uz.sovchi.data.location.City
 import com.uz.sovchi.data.nomzod.KUYOV
 import com.uz.sovchi.data.nomzod.MyNomzodController
 import com.uz.sovchi.data.nomzod.Nomzod
+import com.uz.sovchi.data.nomzod.NomzodRepository
 import com.uz.sovchi.data.nomzod.OilaviyHolati
 import com.uz.sovchi.data.nomzod.OqishMalumoti
 import com.uz.sovchi.data.nomzod.Talablar
-import com.uz.sovchi.data.nomzod.getManzilText
-import com.uz.sovchi.data.nomzod.getTugilganJoyi
 import com.uz.sovchi.data.nomzod.getYoshChegarasi
+import com.uz.sovchi.data.nomzod.isVisible
 import com.uz.sovchi.data.nomzod.paramsText
 import com.uz.sovchi.data.recombee.RecombeeDatabase
 import com.uz.sovchi.data.valid
 import com.uz.sovchi.data.viewed.ViewedNomzods
+import com.uz.sovchi.databinding.CancelLikeAlertBinding
+import com.uz.sovchi.databinding.DislikeActionAlertBinding
+import com.uz.sovchi.databinding.LikedActionAlertBinding
 import com.uz.sovchi.databinding.NomzodDetailsBinding
-import com.uz.sovchi.databinding.RequestNomzodAlertBinding
 import com.uz.sovchi.gson
 import com.uz.sovchi.loadAd
 import com.uz.sovchi.openImageViewer
@@ -86,7 +89,8 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
             nomzod = gson!!.fromJson(json!!, Nomzod::class.java)
             if (nomzod != null) {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    RecombeeDatabase.setNomzodViewed(userViewModel.user.uid,
+                    RecombeeDatabase.setNomzodViewed(
+                        userViewModel.user.uid,
                         nomzod!!.id.ifEmpty { nomzodId })
 
                     ViewedNomzods.setViewed(nomzod!!.id)
@@ -129,9 +133,9 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
                 isVisible = true
                 adapter = photosAdapter.apply {
                     showPhotos = nomzod!!.needShowPhotos()
-                    photoHideView.isVisible = showPhotos.not()
                     deleteShown = false
                     matchParent = true
+                    binding?.photoHideInfo?.isVisible = showPhotos.not()
                     submitList(nomzod!!.photos.map { PickPhotoFragment.Image(it) })
                 }
             }
@@ -172,6 +176,12 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
         bind.apply {
             back.setOnClickListener { closeFragment() }
             if (nomzod?.id.isNullOrEmpty() && nomzodId.isNotEmpty()) {
+                val cached = NomzodRepository.cacheNomzods[nomzodId]
+                if (cached != null) {
+                    nomzod = cached
+                    setView(bind, nomzod)
+                    loadAd()
+                }
                 loadNomzod()
             } else {
                 setView(bind, nomzod)
@@ -189,7 +199,9 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
 
     private fun loadNomzod() {
         if (nomzodId.isNotEmpty()) {
-            setLoading(true)
+            if (nomzod == null) {
+                setLoading(true)
+            }
             lifecycleScope.launch {
                 nomzod = nomzodViewModel.repository.getNomzodById(nomzodId, true)
                 if (nomzod == null) {
@@ -244,6 +256,7 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        likeInited = false
         if (exoPlayerInit) {
             exoPlayer.release()
         }
@@ -289,7 +302,7 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
                         farzandlarView.apply {
                             visibleOrGone(hasChild != null || farzandlar.isNotEmpty())
                             if (hasChild != null || farzandlar.isNotEmpty()) {
-                                var textT = getString(R.string.farzandlar) + " "
+                                var textT = ""
                                 if (hasChild != null) {
                                     textT += (if (hasChild!!) getString(R.string.bor) else getString(
                                         R.string.yoq
@@ -303,6 +316,7 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
                         }
                     } else {
                         farzandlarView.visibleOrGone(false)
+                        farzandTitle.isVisible = false
                     }
                     oilaviyView.text = "$oilaviyHolatiText"
 
@@ -318,16 +332,17 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
                     oqishView.text = Html.fromHtml("$oqishText")
 
                     if (ishJoyi.isNotEmpty()) {
-                        ishView.text = "Ish: $ishJoyi"
+                        ishView.text = "$ishJoyi"
                     } else {
                         ishView.isVisible = false
                     }
                     val manzilText = getString(City.valueOf(manzil).resId)
-                    manzilView.text = getManzilText()
-                    if (tugilganJoyi != manzilText) {
-                        tgjView.text = getTugilganJoyi()
+                    manzilView.text = manzilText
+                    if (manzilText != tugilganJoyi) {
+                        tugilganViewC.isVisible = true
+                        tgjView.text = tugilganJoyi
                     } else {
-                        tgjView.isVisible = false
+                        tugilganViewC.isVisible = false
                     }
                     qoshimchaView.text = "$talablar"
                     qoshimchaView.isVisible = talablar.trim().isNotEmpty().also {
@@ -338,7 +353,13 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
                     imkonChekBadgeTextView.visibleOrGone(imkoniyatiCheklangan)
                     imkonChekBadgeTextView.visibleOrGone(imkoniyatiCheklangan)
                     imkonCheckInfo.text = imkoniyatiCheklanganHaqida
-
+                    if (verified) {
+                        verifiedUserBadge.isVisible = true
+                        notVerifiedUserBadge.isVisible = false
+                    } else {
+                        notVerifiedUserBadge.isVisible = true
+                        verifiedUserBadge.isVisible = false
+                    }
                     qoshimchaView.maxLines = Int.MAX_VALUE
 
                     initLikeButtons()
@@ -375,30 +396,67 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
         }
     }
 
-    private fun setLikeDisabled(liked: Boolean) {
-        binding?.apply {
-            dislikeButton.isClickable = false
-            likeButton.isClickable = false
+    private fun showCancelLikeAlert() {
+        val alertDialog = AlertDialog.Builder(requireContext(), R.style.RoundedCornersDialog)
+        val view = CancelLikeAlertBinding.inflate(layoutInflater, null, false)
+        alertDialog.setView(view.root)
+        val dialog = alertDialog.create()
+        view.apply {
+            skipButton.setOnClickListener {
+                dialog.dismiss()
+            }
+            okButton.setOnClickListener {
+                cancelLike()
+                dialog.dismiss()
+            }
+        }
+        dialog.show()
+    }
 
-            if (likedMe && liked) {
-                chatButton.isVisible = true
-                dislikeButton.isVisible = false
-                likeButton.isVisible = false
+    private fun showDislikeAlert() {
+        if (likeEnabled.not()) return
+        likeItem(nomzod!!, false)
+    }
+
+    private fun showLikeAlert() {
+        if (likeEnabled.not()) return
+        likeItem(nomzod!!, true)
+    }
+
+    private var likeEnabled = true
+
+    private fun setLikeDisabled(liked: Boolean, matched: Boolean = false) {
+        binding?.apply {
+            likeEnabled = false
+            if (likedMe && liked || matched) {
+                contactButton.isVisible = true
+                likeView.isVisible = false
+                dislikeView.isVisible = false
+                cancelLike.isVisible = false
             } else {
-                chatButton.isVisible = false
+                contactButton.isVisible = false
+                cancelLike.isVisible = true
                 if (liked) {
-                    likeButton.alpha = 0.8f
-                    likeButton.isEnabled = false
-                    likeButton.isClickable = false
-                    dislikeButton.isVisible = false
+                    likeView.isVisible = true
+                    dislikeView.isVisible = false
+                    likeView.text = getString(R.string.so_rov_yuborildi)
                 } else {
-                    dislikeButton.alpha = 0.8f
-                    dislikeButton.isEnabled = false
-                    dislikeButton.isClickable = false
-                    likeButton.isVisible = false
-                    chatButton.isVisible = false
+                    likeView.isVisible = false
+                    dislikeView.isVisible = true
                 }
             }
+        }
+    }
+
+    private fun cancelLike() {
+        if (nomzod == null) return
+        LikeController.removeLiked(nomzod!!)
+        likeEnabled = true
+        binding?.apply {
+            likeView.isVisible = true
+            dislikeView.isVisible = true
+            cancelLike.isVisible = false
+            likeView.text = getString(R.string.so_rov_yuborish)
         }
     }
 
@@ -433,20 +491,67 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
 
     private var likedMe = false
 
+    private var likeInited = false
+
     private fun initLikeButtons() {
+        if(likeInited) return
+        likeInited = true
         binding?.apply {
             likeContainer.isVisible = false
-            dislikeButton.setOnClickListener {
-                likeItem(nomzod!!, false)
+            dislikeView.setOnClickListener {
+                if (LocalUser.user.hasNomzod.not() || MyNomzodController.nomzod.id.isEmpty()) {
+                    showAddNomzodAlert { }
+                    return@setOnClickListener
+                }
+                if (MyNomzodController.nomzod.isVisible().not()) {
+                    mainActivity()?.showNotVerifiedAccountDialog()
+                    return@setOnClickListener
+                }
+                showDislikeAlert()
             }
-            likeButton.setOnClickListener {
-                likeItem(nomzod!!, true)
+            likeView.setOnClickListener {
+                if (LocalUser.user.hasNomzod.not() || MyNomzodController.nomzod.id.isEmpty()) {
+                    showAddNomzodAlert { }
+                    return@setOnClickListener
+                }
+                if (MyNomzodController.nomzod.isVisible().not()) {
+                    mainActivity()?.showNotVerifiedAccountDialog()
+                    return@setOnClickListener
+                }
+                if (UserRepository.user.requests >= 5) {
+                    mainActivity()?.showPremiumSheet()
+                    return@setOnClickListener
+                }
+                showLikeAlert()
+            }
+            cancelLike.setOnClickListener {
+                if (LocalUser.user.hasNomzod.not() || MyNomzodController.nomzod.id.isEmpty()) {
+                    showAddNomzodAlert { }
+                    return@setOnClickListener
+                }
+                if (MyNomzodController.nomzod.isVisible().not()) {
+                    mainActivity()?.showNotVerifiedAccountDialog()
+                    return@setOnClickListener
+                }
+                showCancelLikeAlert()
             }
             var matchedMe = false
             var iLikedIt = false
-            chatButton.setOnClickListener {
+            contactButton.setOnClickListener {
+                if (nomzod == null) return@setOnClickListener
+                navigate(R.id.chatMessageFragment, Bundle().apply {
+                    putString("id", nomzod!!.id)
+                    putString("name", nomzod!!.name)
+                    putString("photo", nomzod!!.photos.firstOrNull() ?: "")
+                })
+            }
+            chatView.setOnClickListener {
                 if (LocalUser.user.hasNomzod.not() || MyNomzodController.nomzod.id.isEmpty()) {
                     showAddNomzodAlert { }
+                    return@setOnClickListener
+                }
+                if (MyNomzodController.nomzod.isVisible().not()) {
+                    mainActivity()?.showNotVerifiedAccountDialog()
                     return@setOnClickListener
                 }
                 if (likedMe || matchedMe) {
@@ -460,24 +565,25 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
                     })
                 }
             }
-            LikeController.getLikeInfo(nomzod!!) { iLiked, likedMe, matched ->
+            LikeController.getLikeInfo(nomzod!!) { iLiked, likedMe, dislikedMe, matched ->
                 if (view != null && isResumed) {
+                    chatView.isClickable = true
                     likeContainer.isVisible = true
-                    chatButton.isClickable = true
                     matchedMe = matched ?: false
                     iLikedIt = iLiked ?: false
                     if (iLiked != null) {
-                        setLikeDisabled(iLiked)
+                        setLikeDisabled(iLiked, matched ?: false)
+                    } else {
+                        if (likedMe == true) {
+                            likeView.text = requireContext().getString(R.string.qabul_qilish)
+                        }
                     }
                     if (likedMe == true) {
                         this@NomzodDetailsFragment.likedMe = likedMe
                         likedYou.isVisible = true
-                        chatButton.isVisible = true
                     }
-                    if (matched == true) {
-                        likeButton.isVisible = false
-                        dislikeButton.isVisible = false
-                        chatButton.isVisible = true
+                    if (dislikedMe == true) {
+                        dislikedYou.isVisible = true
                     }
                 }
             }
@@ -487,31 +593,17 @@ class NomzodDetailsFragment : BaseFragment<NomzodDetailsBinding>() {
     private fun showAddNomzodAlert(skip: () -> Unit) {
         if (userViewModel.user.valid.not()) {
             try {
-                navigate(R.id.auth_graph)
+                navigate(R.id.authFragment)
             } catch (e: Exception) {
                 //
             }
             return
         }
-        val alertDialog = AlertDialog.Builder(requireContext(), R.style.RoundedCornersDialog)
-        val view = RequestNomzodAlertBinding.inflate(layoutInflater, null, false)
-        alertDialog.setView(view.root)
-        val dialog = alertDialog.create()
-        view.apply {
-            okButton.setOnClickListener {
-                try {
-                    navigate(R.id.addNomzodFragment)
-                } catch (e: Exception) {
-                    //
-                }
-                dialog.dismiss()
-            }
-            skipButton.setOnClickListener {
-                dialog.dismiss()
-                skip.invoke()
-            }
+        try {
+            navigate(R.id.addNomzodFragment)
+        } catch (e: Exception) {
+            //
         }
-        dialog.show()
     }
 
     private fun loadAd() {

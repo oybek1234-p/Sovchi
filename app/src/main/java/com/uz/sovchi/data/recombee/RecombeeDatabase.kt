@@ -1,6 +1,5 @@
 package com.uz.sovchi.data.recombee
 
-import android.util.Log
 import com.google.firebase.functions.FirebaseFunctions
 import com.recombee.api_client.RecombeeClient
 import com.recombee.api_client.api_requests.AddBookmark
@@ -9,15 +8,12 @@ import com.recombee.api_client.api_requests.AddPurchase
 import com.recombee.api_client.api_requests.DeleteBookmark
 import com.recombee.api_client.api_requests.DeletePurchase
 import com.recombee.api_client.api_requests.RecommendItemsToItem
-import com.recombee.api_client.api_requests.RecommendItemsToUser
-import com.recombee.api_client.bindings.Recommendation
-import com.recombee.api_client.bindings.RecommendationResponse
 import com.recombee.api_client.util.Region
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.filter.MyFilter
-import com.uz.sovchi.data.like.LikeController
 import com.uz.sovchi.data.location.City
 import com.uz.sovchi.data.nomzod.Nomzod
+import com.uz.sovchi.data.nomzod.NomzodRepository
 import com.uz.sovchi.data.nomzod.OilaviyHolati
 import com.uz.sovchi.gson
 import com.uz.sovchi.showToast
@@ -165,7 +161,11 @@ object RecombeeDatabase {
                 val response = gson!!.fromJson(
                     it.result.data.toString(), RecommendationModel::class.java
                 )
-                result.invoke(response.recommId, response.recomms.map { it.values })
+                result.invoke(response.recommId, response.recomms.map { it.values }.also {
+                    it.forEach {
+                        NomzodRepository.cacheNomzods.put(it.id, it)
+                    }
+                })
             } else {
                 showToast("Data null")
             }

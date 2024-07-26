@@ -32,8 +32,6 @@ class VerifyNomzodAdapter(
                     height = toDp(280f, root.context)
                 }
                 userId.text = model.userId
-                nomzodItem.likeButton.isVisible = false
-                nomzodItem.dislikeButton.isVisible = false
                 root.setOnClickListener {
                     click.invoke(model)
                 }

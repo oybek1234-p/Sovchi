@@ -10,7 +10,7 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:background="?colorSurface"
+        android:background="?colorSurfaceDim"
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -77,14 +77,17 @@
                 </LinearLayout>
             </FrameLayout>
 
-            <ImageView
+            <TextView
                 android:id="@+id/filter_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/dimen_12"
+                android:drawableLeft="@drawable/ic_search"
+                android:drawablePadding="@dimen/dimen_8"
                 android:elevation="@dimen/dimen_6"
+                android:gravity="center"
                 android:padding="@dimen/dimen_8"
-                android:src="@drawable/filter_ic"
+                android:text="@string/qidirish"
                 app:layout_constraintBottom_toBottomOf="@+id/filters_container"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -92,18 +95,15 @@
 
             <View
                 android:id="@+id/filter_dot_view"
-                android:layout_width="14dp"
-                android:layout_height="14dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:background="@drawable/filter_dot"
-                android:elevation="@dimen/dimen_12"
-                android:translationX="-4dp"
-                android:translationY="-4dp"
                 android:backgroundTint="@color/likeColor"
-                app:layout_constraintBottom_toBottomOf="@+id/notify_view"
-                app:layout_constraintEnd_toEndOf="@+id/notify_view"
+                android:elevation="@dimen/dimen_12"
+                app:layout_constraintStart_toStartOf="@+id/notify_view"
                 app:layout_constraintTop_toTopOf="@+id/notify_view" />
 
-            <com.yuyakaido.android.cardstackview.CardStackView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -113,25 +113,41 @@
                 android:paddingBottom="100dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-                tools:listitem="@layout/nomzod_item" />
+                tools:listitem="@layout/nomzod_item_new" />
 
-            <TextView
-                android:id="@+id/empty_view"
-                style="@style/Text1_16"
-                android:textSize="18sp"
+            <LinearLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/dimen_48"
+                android:id="@+id/empty_view"
                 android:gravity="center"
-                android:visibility="gone"
-                android:drawablePadding="@dimen/dimen_18"
-                android:textColor="?colorOnSurface"
-                app:drawableStartCompat="@drawable/person_filled"
+                android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/recycler_view" />
+                app:layout_constraintTop_toTopOf="@+id/recycler_view"
+                >
+                <TextView
+                    style="@style/Text1_16"
+                    android:textSize="18sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/dimen_48"
+                    android:gravity="center"
+                    android:text="Sizga mos nomzodlar qolmadi, hozircha eskilarni ko'rib turing"
+                    android:drawablePadding="@dimen/dimen_18"
+                    android:textColor="?colorOnSurface"
+                    />
 
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/empty_button"
+                    android:layout_marginTop="@dimen/dimen_12"
+                    android:text="Eskilarni ko'rish"
+                    app:icon="@drawable/person_filled"
+                    />
+            </LinearLayout>
             <ProgressBar
                 android:id="@+id/progress_bar"
                 android:layout_width="wrap_content"
@@ -141,14 +157,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
+            <TextView
                 android:id="@+id/notify_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:elevation="@dimen/dimen_6"
                 android:padding="@dimen/dimen_8"
-                android:layout_marginEnd="@dimen/dimen_12"
-                android:src="@drawable/notify_ic"
+                android:drawablePadding="@dimen/dimen_4"
+                android:gravity="center"
+                android:layout_marginEnd="@dimen/dimen_24"
+                android:drawableLeft="@drawable/notify_ic"
+                android:text="Xabarlar"
                 app:layout_constraintBottom_toBottomOf="@+id/filters_container"
                 app:layout_constraintEnd_toStartOf="@+id/filter_view"
                 app:layout_constraintTop_toTopOf="parent"

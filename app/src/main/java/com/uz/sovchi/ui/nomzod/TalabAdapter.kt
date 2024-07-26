@@ -3,6 +3,7 @@ package com.uz.sovchi.ui.nomzod
 import com.uz.sovchi.R
 import com.uz.sovchi.data.nomzod.Talablar
 import com.uz.sovchi.databinding.TalablarItemBinding
+import com.uz.sovchi.showToast
 import com.uz.sovchi.ui.base.BaseAdapter
 import com.uz.sovchi.ui.base.EmptyDiffUtil
 import com.uz.sovchi.visibleOrGone
@@ -18,6 +19,18 @@ class TalablarAdapter : BaseAdapter<Talablar,TalablarItemBinding>(R.layout.talab
             binding.apply {
                 checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
                     val item = currentList[holder.adapterPosition]
+                    if (isChecked) {
+                        if (item == Talablar.OilaQurmagan && selectedTalablar.contains(Talablar.BuydoqlarTaqiq)) {
+                            showToast("Faqat ajrashgan... o'chiring")
+                            checkbox.isChecked = false
+                            return@setOnCheckedChangeListener
+                        }
+                        if (item == Talablar.BuydoqlarTaqiq && selectedTalablar.contains(Talablar.OilaQurmagan)) {
+                            showToast("Oila qurmagani bo'l... o'chiring")
+                            checkbox.isChecked = false
+                            return@setOnCheckedChangeListener
+                        }
+                    }
                     if (selectedTalablar.contains(item)) {
                         selectedTalablar.remove(item)
                     } else {

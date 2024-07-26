@@ -138,6 +138,12 @@ class ChatMessagesViewModel : ViewModel() {
         checkBlocked()
         checkMeBlocked()
         observeLastOnline()
+        val cacheMessages = ChatController.cacheMessages[chatId]
+        if (cacheMessages.isNullOrEmpty().not()) {
+            messagesList.clear()
+            messagesList.addAll(cacheMessages!!)
+            messages.postValue(messagesList)
+        }
         ChatController.loadChatModelById(id) {
             loadingAll.postValue(false)
             if (it == null) {
@@ -215,6 +221,7 @@ class ChatMessagesViewModel : ViewModel() {
                 messagesList.clear()
                 messagesList.addAll(distinct)
                 messagesList.sortByDescending { it.date.toLongOrNull() }
+                ChatController.cacheMessages[chatId] = messagesList
                 messages.postValue(messagesList)
             }
         }
@@ -234,6 +241,7 @@ class ChatMessagesViewModel : ViewModel() {
                     messagesList.addAll(it)
                     messagesList.sortByDescending { it.date }
                     messagesList = messagesList.distinctBy { it.id } as ArrayList<ChatMessageModel>
+                    ChatController.cacheMessages[chatId] = messagesList
                     messages.postValue(messagesList)
                 }
             }

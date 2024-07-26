@@ -36,8 +36,6 @@ class MyNomzodAdapter(
                 }
                 statusView.text = model.getStatusText()
                 nomzodId.setNomzod(model, false, false,true)
-                nomzodId.likeButton.isVisible = false
-                nomzodId.dislikeButton.isVisible = false
                 if (model.state == NomzodState.NOT_PAID) {
                     payButton.isVisible = true
                 }

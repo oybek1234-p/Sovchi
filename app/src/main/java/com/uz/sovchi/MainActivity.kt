@@ -24,6 +24,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
@@ -41,17 +42,20 @@ import com.uz.sovchi.data.messages.MESSAGE_TYPE_CHAT_MESSAGE
 import com.uz.sovchi.data.messages.MESSAGE_TYPE_NOMZOD_FOR_YOU
 import com.uz.sovchi.data.messages.MESSAGE_TYPE_NOMZOD_LIKED
 import com.uz.sovchi.data.nomzod.MyNomzodController
+import com.uz.sovchi.data.nomzod.Nomzod
 import com.uz.sovchi.data.nomzod.NomzodRepository
+import com.uz.sovchi.data.nomzod.NomzodState
 import com.uz.sovchi.data.premium.PremiumUtil
 import com.uz.sovchi.data.valid
 import com.uz.sovchi.data.viewed.ViewedNomzods
 import com.uz.sovchi.databinding.ActivityMainBinding
 import com.uz.sovchi.databinding.ChatLimitSheetBinding
+import com.uz.sovchi.databinding.ContactSheetBinding
 import com.uz.sovchi.databinding.NoInternetDialogBinding
+import com.uz.sovchi.databinding.NotVerifiedAccountBinding
 import com.uz.sovchi.databinding.PremiumSheetBinding
 import com.uz.sovchi.databinding.SupportSheetBinding
 import com.uz.sovchi.ui.base.BaseFragment
-import com.uz.sovchi.ui.payment.PaymentGetCheckFragment
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -65,6 +69,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private val viewModel: UserViewModel by viewModels()
+
+    fun moveToTanishing() {
+        binding.bottomNavView.selectedItemId = R.id.likedFragment
+    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
@@ -88,11 +96,12 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
             navHost = (supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment)
             navcontroller = navHost.navController
-            bottomNavView.setupWithNavController(navcontroller)
+            NavigationUI.setupWithNavController(binding.bottomNavView,navcontroller)
         }
+
         val inflater = navHost.navController.navInflater
         val graph = inflater.inflate(R.navigation.main_navigation)
-        graph.setStartDestination(if (LocalUser.user.valid) R.id.search_nav else R.id.splashFragment)
+        graph.setStartDestination(if (LocalUser.user.valid) R.id.searchFragment else R.id.splashFragment)
 
         val navController = navHost.navController
         navController.setGraph(graph, intent.extras)
@@ -111,7 +120,49 @@ class MainActivity : AppCompatActivity() {
         }
         checkDeeplink(intent)
         initInternetConnectivity()
+    }
 
+    fun showContactSheet(nomzod: Nomzod) {
+        val sheet = BottomSheetDialog(this)
+        val binding = ContactSheetBinding.inflate(layoutInflater, null, false)
+        binding.apply {
+//            telegramButton.setOnClickListener {
+//                sheet.dismiss()
+//                SocialMedia.openLink(this@MainActivity, SocialMedia.parseTelegramLink(nomzod.telegramLink))
+//            }
+//            telegramButton.isVisible = nomzod.telegramLink.isNotEmpty()
+//            callButton.setOnClickListener {
+//                sheet.dismiss()
+//                openPhoneCall(this@MainActivity,nomzod.mobilRaqam)
+//            }
+//            callButton.isVisible = nomzod.mobilRaqam.isNotEmpty()
+            chatButton.setOnClickListener {
+                sheet.dismiss()
+                navcontroller.navigate(R.id.chatMessageFragment, Bundle().apply {
+                    putString("id", nomzod.id)
+                    putString("name", nomzod.name)
+                    putString("photo", nomzod.photos.firstOrNull() ?: "")
+                })
+            }
+        }
+        sheet.setContentView(binding.root)
+        sheet.show()
+    }
+
+    fun showNotVerifiedAccountDialog() {
+        val dialog = BottomSheetDialog(this, R.style.SheetStyle)
+        val binding = NotVerifiedAccountBinding.inflate(LayoutInflater.from(this), null, false)
+        dialog.setContentView(binding.root)
+        binding.okButton.setOnClickListener {
+            dialog.dismiss()
+        }
+        binding.apply {
+            if (MyNomzodController.nomzod.state != NomzodState.CHECKING && MyNomzodController.nomzod.state != NomzodState.VISIBLE) {
+                textView2.text = getString(R.string.not_verified)
+                textView3.text = getString(R.string.check_not_verified_info)
+            }
+        }
+        dialog.show()
     }
 
     fun showChatLimitSheet() {
@@ -193,7 +244,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateChatsCount() {
         viewModel.repository.observeUnChatMessages {
-            binding.bottomNavView.getOrCreateBadge(R.id.messages_nav).apply {
+            binding.bottomNavView.getOrCreateBadge(R.id.messagesFragment).apply {
                 isVisible = it > 0
                 number = it
             }
@@ -413,4 +464,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+
 }

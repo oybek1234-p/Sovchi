@@ -28,6 +28,7 @@ enum class Talablar(val textId: Int) {
     FaqatViloyat(R.string.faqat_viloyat), AlohidaUyJoy(R.string.alohidauyjoy), Hijoblik(R.string.hijobda), QonuniyAjrashgan(
         R.string.qonuniy_ajrashgan
     ),
+
 }
 
 fun getNomzodTypeText(id: Int) = nomzodTypes.find { it.first == id }?.second
@@ -85,7 +86,6 @@ data class Nomzod(
     //Talablar
     val talablarList: List<String> = listOf(),
     var telegramLink: String = "",
-
     var joylaganOdam: String = "",
     var mobilRaqam: String = "",
     var uploadDate: Long = System.currentTimeMillis(),
@@ -93,10 +93,14 @@ data class Nomzod(
     var views: Int = 0,
     var top: Boolean = false,
     var visibleDate: Long = 0,
-    @SerializedName("likedMe") @Exclude var likedMe: Boolean = false
+    @SerializedName("likedMe") @Exclude var likedMe: Boolean = false,
+    var acceptedCities: List<String> = listOf(),
+    var verified: Boolean = false
 ) {
     constructor() : this(id = "")
 }
+
+fun Nomzod.isVisible() = state == NomzodState.VISIBLE
 
 fun Nomzod.paramsText(): String {
     var parmText = ""
@@ -107,25 +111,6 @@ fun Nomzod.paramsText(): String {
         parmText += "  $vazni-kg"
     }
     return parmText
-
-}
-
-fun Nomzod.getTugilganJoyi(): Spanned {
-    val text =
-        "<span style='font-size:12sp;'>" + appContext.getString(R.string.tugilgan) + ":</span> " + "<span style='font-size:15sp;'>" + tugilganJoyi + "</span>"
-    return Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT)
-}
-
-fun Nomzod.getManzilText(): Spanned {
-    return Html.fromHtml(
-        "Manzil: ${
-            appContext.getString(
-                City.valueOf(
-                    manzil
-                ).resId
-            )
-        }"
-    )
 }
 
 fun Nomzod.getStatusText(): String {

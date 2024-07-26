@@ -21,8 +21,8 @@
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/icon_view"
             app:strokeWidth="1dp"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:scaleType="center"
             android:layout_marginStart="@dimen/dimen_12"
             android:src="@drawable/person_filled"
@@ -33,12 +33,12 @@
 
         <TextView
             android:id="@+id/title_view"
-            style="@style/Headline2_16"
+            style="@style/Headline3_15"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dimen_18"
             android:ellipsize="end"
-            android:maxLines="1"
+            android:maxLines="2"
             android:textColor="?colorOnSurface"
             android:paddingEnd="@dimen/dimen_12"
             android:text="@string/oybek"
@@ -48,7 +48,7 @@
 
         <TextView
             android:id="@+id/subtitle_view"
-            style="@style/Text2_15"
+            style="@style/Text1_14"
             android:layout_width="0dp"
             android:layout_marginEnd="@dimen/dimen_12"
             android:ellipsize="end"
@@ -73,21 +73,23 @@
         <TextView
             android:id="@+id/show_nomzod"
             style="@style/Caption1_13"
-            android:gravity="center"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_marginEnd="@dimen/dimen_12"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dimen_8"
             android:background="@drawable/round_lay"
             android:backgroundTint="?colorSurfaceContainer"
             android:clickable="false"
             android:drawablePadding="@dimen/dimen_12"
-            android:drawableTint="?colorPrimaryVariant"
             android:focusableInTouchMode="false"
-            android:paddingHorizontal="@dimen/dimen_12"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/dimen_18"
             android:paddingVertical="@dimen/dimen_4"
-            android:text="@string/nomzodni_ko_rish"
+            android:text="@string/batafsil"
             android:textColor="?colorPrimaryVariant"
             app:drawableEndCompat="@drawable/arrow_right"
+            app:drawableTint="?colorPrimaryVariant"
+            app:layout_constraintEnd_toStartOf="@+id/date_view"
             app:layout_constraintStart_toStartOf="@+id/title_view"
             app:layout_constraintTop_toBottomOf="@+id/subtitle_view" />
     </androidx.constraintlayout.widget.ConstraintLayout>

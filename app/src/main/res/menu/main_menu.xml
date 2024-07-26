@@ -2,22 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/search_nav"
+        android:id="@+id/searchFragment"
         android:icon="@drawable/home_ic"
         android:title="@string/nomzodlar" />
 
     <item
-        android:id="@+id/like_nav"
+        android:id="@+id/likedFragment"
         android:icon="@drawable/ic_liked"
-        android:title="@string/yoqtirgan" />
+        android:title="Tanishing" />
 
     <item
-        android:id="@+id/messages_nav"
+        android:id="@+id/chatFragment"
         android:icon="@drawable/chat_ic"
         android:title="@string/xabarlar" />
 
     <item
-        android:id="@+id/profile_nav"
+        android:id="@+id/profileFragment"
         android:icon="@drawable/profile_ic"
         android:title="@string/profil" />
 </menu>

@@ -27,6 +27,7 @@ object ImageUploader {
             }
             if (path.isEmpty()) {
                 done.invoke(null)
+                return@withContext
             }
             var uploadFile = PickPhotoFragment.getRealFile(path)
 

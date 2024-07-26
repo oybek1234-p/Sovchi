@@ -4,19 +4,104 @@
     android:id="@+id/main_navigation"
     app:startDestination="@id/splashFragment">
 
-    <include app:graph="@navigation/search" />
-    <include app:graph="@navigation/liked" />
-    <include app:graph="@navigation/profile" />
-    <include app:graph="@navigation/nomzod" />
-    <include app:graph="@navigation/messages_nav" />
-    <fragment
-        android:id="@+id/getUserNameFragment"
-        android:name="com.uz.sovchi.ui.auth.GetUserNameFragment"
-        android:label="GetUserNameFragment" />
-    <include app:graph="@navigation/requests" />
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.uz.sovchi.ui.SplashFragment"
         android:label="SplashFragment" />
-    <include app:graph="@navigation/auth_graph" />
+    <fragment
+        android:id="@+id/addNomzodFragment"
+        android:name="com.uz.sovchi.ui.nomzod.AddNomzodFragment"
+        android:label="AddNomzodFragment" />
+    <fragment
+        android:id="@+id/adminVerificationFragment"
+        android:name="com.uz.sovchi.ui.verification.AdminVerificationFragment"
+        android:label="AdminVerificationFragment" />
+    <fragment
+        android:id="@+id/allUsersFragment"
+        android:name="com.uz.sovchi.ui.users.AllUsersFragment"
+        android:label="AllUsersFragment" />
+    <fragment
+        android:id="@+id/authFragment"
+        android:name="com.uz.sovchi.ui.auth.AuthFragment"
+        android:label="AuthFragment" />
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.uz.sovchi.ui.chat.ChatFragment"
+        android:label="ChatFragment" />
+    <fragment
+        android:id="@+id/chatMessageFragment"
+        android:name="com.uz.sovchi.ui.chat.ChatMessageFragment"
+        android:label="ChatMessageFragment" />
+    <fragment
+        android:id="@+id/filterFragment"
+        android:name="com.uz.sovchi.ui.filter.FilterFragment"
+        android:label="FilterFragment" />
+    <fragment
+        android:id="@+id/getUserNameFragment"
+        android:name="com.uz.sovchi.ui.auth.GetUserNameFragment"
+        android:label="GetUserNameFragment" />
+    <fragment
+        android:id="@+id/likedFragment"
+        android:name="com.uz.sovchi.ui.like.LikedFragment"
+        android:label="LikedFragment" />
+    <fragment
+        android:id="@+id/messagesFragment"
+        android:name="com.uz.sovchi.ui.messages.MessagesFragment"
+        android:label="MessagesFragment" />
+    <fragment
+        android:id="@+id/nomzodDetailsFragment"
+        android:name="com.uz.sovchi.ui.nomzod.NomzodDetailsFragment"
+        android:label="NomzodDetailsFragment" />
+    <fragment
+        android:id="@+id/nomzodFragment"
+        android:name="com.uz.sovchi.ui.nomzod.NomzodFragment"
+        android:label="NomzodFragment" />
+    <fragment
+        android:id="@+id/nomzodUploadSuccessFragment"
+        android:name="com.uz.sovchi.ui.nomzod.NomzodUploadSuccessFragment"
+        android:label="NomzodUploadSuccessFragment" />
+    <fragment
+        android:id="@+id/paymentFragment"
+        android:name="com.uz.sovchi.ui.payment.PaymentFragment"
+        android:label="PaymentFragment" />
+    <fragment
+        android:id="@+id/paymentGetCheckFragment"
+        android:name="com.uz.sovchi.ui.payment.PaymentGetCheckFragment"
+        android:label="PaymentGetCheckFragment" />
+    <fragment
+        android:id="@+id/pickPhotoFragment"
+        android:name="com.uz.sovchi.ui.photo.PickPhotoFragment"
+        android:label="PickPhotoFragment" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.uz.sovchi.ProfileFragment"
+        android:label="ProfileFragment" />
+    <fragment
+        android:id="@+id/requestsFragment"
+        android:name="com.uz.sovchi.ui.requests.RequestsFragment"
+        android:label="RequestsFragment" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.uz.sovchi.SearchFragment"
+        android:label="SearchFragment" />
+    <fragment
+        android:id="@+id/selfieFragment"
+        android:name="com.uz.sovchi.ui.verification.selfie.SelfieFragment"
+        android:label="SelfieFragment" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.uz.sovchi.ui.SettingsFragment"
+        android:label="SettingsFragment" />
+    <fragment
+        android:id="@+id/verifyFragment"
+        android:name="com.uz.sovchi.ui.auth.VerifyFragment"
+        android:label="VerifyFragment" />
+    <fragment
+        android:id="@+id/voiceRecordFragment"
+        android:name="com.uz.sovchi.ui.record.VoiceRecordFragment"
+        android:label="VoiceRecordFragment" />
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.uz.sovchi.MainActivity"
+        android:label="MainActivity" />
 </navigation>

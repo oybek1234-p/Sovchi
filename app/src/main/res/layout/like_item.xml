@@ -51,15 +51,31 @@
                 tools:text="Toshkent" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/info_button"
+                style="@style/Widget.Material3.Button.ElevatedButton"
+                android:layout_width="0dp"
+                android:layout_marginTop="@dimen/dimen_8"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:text="@string/batafsil"
+                app:icon="@drawable/info_ic"
+                app:iconGravity="textStart"
+                app:layout_constraintEnd_toEndOf="@+id/subtitle_view"
+                app:layout_constraintStart_toStartOf="@+id/subtitle_view"
+                app:layout_constraintTop_toBottomOf="@+id/subtitle_view" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/chat_button"
-                android:layout_width="wrap_content"
+                style="@style/FilledButton"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_12"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:drawableEnd="@drawable/telegram_ic"
-                android:text="@string/chatga_o_tish"
+                android:text="@string/chatda_gaplashish"
                 app:icon="@drawable/chat_ic"
-                app:iconGravity="textEnd"
+                app:iconGravity="textStart"
+                app:layout_constraintEnd_toEndOf="@+id/subtitle_view"
                 app:layout_constraintStart_toStartOf="@+id/subtitle_view"
                 app:layout_constraintTop_toBottomOf="@+id/subtitle_view" />
         </androidx.constraintlayout.widget.ConstraintLayout>

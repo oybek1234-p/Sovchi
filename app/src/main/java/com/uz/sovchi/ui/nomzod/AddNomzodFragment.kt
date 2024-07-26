@@ -35,6 +35,7 @@ import com.uz.sovchi.data.nomzod.OilaviyHolati
 import com.uz.sovchi.data.nomzod.OqishMalumoti
 import com.uz.sovchi.data.nomzod.Talablar
 import com.uz.sovchi.data.nomzod.nomzodTypes
+import com.uz.sovchi.data.verify.VerificationData
 import com.uz.sovchi.databinding.AddNomzodFragmentBinding
 import com.uz.sovchi.databinding.PhotoFaceAlertBinding
 import com.uz.sovchi.showToast
@@ -89,6 +90,36 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
 
     private var isAdmin = false
 
+    private var verificationData: VerificationData? = null
+
+    private fun updateVerificationUi() {
+        if (verificationData != null) {
+            binding?.apply {
+                val passport = verificationData?.passportPhoto
+                val selfie = verificationData?.selfiePhoto
+                val divorce = verificationData?.divorcePhoto
+                passportPhoto.load(passport)
+                selfiePhoto.load(selfie)
+                divorcePhoto.load(divorce)
+                passportPhoto.isVisible = passport.isNullOrEmpty().not()
+                selfiePhoto.isVisible = selfie.isNullOrEmpty().not()
+                divorcePhoto.isVisible = divorce.isNullOrEmpty().not()
+            }
+        }
+    }
+
+    private fun loadVerificationData() {
+        if (nomzodId.isNullOrEmpty()) return
+        MyNomzodController.loadVerificationInfo(nomzodId!!) {
+            verificationData = it.also {
+                passportPhotoPath = it?.passportPhoto
+                selfiePhotoPath = it?.selfiePhoto
+                divorcePhotoPath = it?.divorcePhoto
+            }
+            updateVerificationUi()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val id = arguments?.getString("nId")
@@ -96,6 +127,7 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
         if (id != null) {
             viewModel.nomzodId = id
         }
+        loadVerificationData()
     }
 
     private var exoPlayerInit = false
@@ -190,21 +222,37 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
         if (imkoniyatiCheklangan && imkoniyatChekMalumot.isEmpty()) {
             showToast("Imkoniyati cheklanganligi haqida malumot yozing!")
         }
-        if (hasChild == null) {
-            showToast("Farzandlar belgilang !")
+        if (photoAdapter.currentList.isEmpty()) {
+            showToast("Rasmingizni yuklang!")
             notFilled = true
         }
-        if (photoAdapter.currentList.size == 0) {
-            showToast("Rasm yuklang")
+        if (hasChild == null) {
+            showToast("Farzandlar belgilang !")
             notFilled = true
         }
         if (talablar.length < 80) {
             showToast("Kamida 80 ta harf yozing!")
             notFilled = true
         }
-        if (name.isEmpty()){
+        if (name.isEmpty()) {
             showToast("Ismingizni kiriting!")
             notFilled = true
+        }
+        if (telegramLink.isNotEmpty() && telegramLink.startsWith("@").not()) {
+            showToast("Telegram linki @ bilan boshlanishi kerak!")
+            notFilled = true
+        }
+        if (photoAdapter.currentList.isNotEmpty() && selfiePhotoPath.isNullOrEmpty()) {
+            notFilled = true
+            showToast("Rasmingizni tasdqilang!")
+        }
+        if (oilaviyHolati == OilaviyHolati.AJRASHGAN.name && divorcePhotoPath.isNullOrEmpty()) {
+            notFilled = true
+            showToast("Ajrashganligizni tasdiqlang!")
+        }
+        if (passportPhotoPath.isNullOrEmpty()) {
+            notFilled = true
+            showToast("Passport rasmini yuklang!")
         }
         notFilledView?.top?.let {
             showToast(getString(R.string.to_ldiring, error))
@@ -235,47 +283,46 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
         val state = NomzodState.CHECKING
         val photos = photoAdapter.currentList
         val upDate = uploadDate ?: System.currentTimeMillis()
-        val nomzod =
-            Nomzod(id = if (nomzodId.isNullOrEmpty()) LocalUser.user.uid else nomzodId!!,
-                userId = currentNomzod?.userId?.ifEmpty { LocalUser.user.uid }
-                    ?: LocalUser.user.uid,
-                name = name.trim().capitalize(Locale.ROOT),
-                type = nomzodType,
-                state = state,
-                tarif = currentNomzod?.tarif?.ifEmpty { nomzodTarif.name } ?: nomzodTarif.name,
-                currentNomzod?.paymentCheckPhotoUrl ?: "",
-                photos.map { it.path },
-                tugilganYili,
-                tugilganJoyi.trim().capitalize(),
-                manzilSelected,
-                buyi,
-                vazni,
-                farzandlarSoni,
-                hasChild ?: false,
-                millati,
-                oilaviyHolatiSelected,
-                oqishMalumotiSelected,
-                ishJoyi.trim().capitalize(),
-                yoshChegarasiDan,
-                yoshChegarasiGacha,
-                talablar.trim().capitalize(),
-                showPhotos = showPhotos,
-                imkoniyatiCheklangan,
-                imkoniyatChekMalumot,
-                talablarList = talablarAdapter.selectedTalablar.map { it.name },
-                telegramLink = telegramLink,
-                joylaganOdam,
-                mobilRaqam,
-                uploadDateString = timestamp(upDate),
-                uploadDate = upDate
-            )
+        val nomzod = Nomzod(id = if (nomzodId.isNullOrEmpty()) LocalUser.user.uid else nomzodId!!,
+            userId = currentNomzod?.userId?.ifEmpty { LocalUser.user.uid } ?: LocalUser.user.uid,
+            name = name.trim().capitalize(Locale.ROOT),
+            type = nomzodType,
+            state = state,
+            tarif = currentNomzod?.tarif?.ifEmpty { nomzodTarif.name } ?: nomzodTarif.name,
+            currentNomzod?.paymentCheckPhotoUrl ?: "",
+            photos.map { it.path },
+            tugilganYili,
+            tugilganSelected,
+            manzilSelected,
+            buyi,
+            vazni,
+            farzandlarSoni,
+            hasChild ?: false,
+            millati,
+            oilaviyHolatiSelected,
+            oqishMalumotiSelected,
+            ishJoyi.trim().capitalize(),
+            yoshChegarasiDan,
+            yoshChegarasiGacha,
+            talablar.trim().capitalize(),
+            showPhotos = showPhotos,
+            imkoniyatiCheklangan,
+            imkoniyatChekMalumot,
+            talablarList = talablarAdapter.selectedTalablar.map { it.name },
+            telegramLink = telegramLink,
+            joylaganOdam,
+            mobilRaqam,
+            uploadDateString = timestamp(upDate),
+            uploadDate = upDate
+        )
         if (cache) {
             currentNomzod = nomzod
             return
         }
         uploading = true
+        verificationData = VerificationData(passportPhotoPath, selfiePhotoPath, divorcePhotoPath)
         MainScope().launch(Dispatchers.Main) {
-            nomzodViewModel.repository.uploadNewMyNomzod(nomzod) {
+            nomzodViewModel.repository.uploadNewMyNomzod(nomzod, verificationData!!) {
                 uploading = false
                 try {
                     try {
@@ -295,7 +342,8 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
 
     private fun timestamp(date: Long): String = java.sql.Timestamp(date).toString()
 
-    private var manzilSelected = City.Hammasi.name
+    private var manzilSelected = ""
+    private var tugilganSelected = ""
     private var oilaviyHolatiSelected = OilaviyHolati.Aralash.name
     private var oqishMalumotiSelected = OqishMalumoti.OrtaMaxsus.name
 
@@ -333,7 +381,13 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                 }
                 //Photo
                 this@AddNomzodFragment.uploadDate = uploadDate
-
+                initSelfie()
+                if (isAdmin) {
+                    addPhotoButton.isVisible = false
+                    passportButton.isVisible = false
+                    selfieButton.isVisible = false
+                    divorceButton.isVisible = false
+                }
                 photoRecyclerView.adapter = photoAdapter.apply {
                     submitList(photos.map { PickPhotoFragment.Image(it) })
                 }
@@ -355,7 +409,8 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                 backButton.setOnClickListener {
                     closeFragment()
                 }
-                val oilaviyHolati = OilaviyHolati.entries.filter { it != OilaviyHolati.Aralash && it != OilaviyHolati.Oilali}
+                val oilaviyHolati =
+                    OilaviyHolati.entries.filter { it != OilaviyHolati.Aralash && it != OilaviyHolati.Oilali }
                 val oilaviyHolatiAdapter =
                     ArrayAdapter(requireContext(), R.layout.list_item, oilaviyHolati.map {
                         getString(it.resourceId)
@@ -369,16 +424,62 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                             setText(getString(selectType.resourceId), false)
                             oilaviyHolatiSelected = selectType.name
                             farzandlarView.visibleOrGone(selectType != OilaviyHolati.Buydoq)
+
+                            val divorced = oilaviyHolatiSelected == OilaviyHolati.AJRASHGAN.name
+                            divorceButton.isVisible = divorced
+                            divorcePhoto.isVisible =
+                                divorced && divorcePhotoPath.isNullOrEmpty().not()
+                            divorceTitle.isVisible = divorced
                         }
                         onItemClickListener =
                             AdapterView.OnItemClickListener { parent, view, position, id ->
                                 val sType = oilaviyHolati[position]
                                 oilaviyHolatiSelected = sType.name
-                                val buydoq = sType == OilaviyHolati.Buydoq
+                                val divorced = sType == OilaviyHolati.AJRASHGAN
+                                divorceButton.isVisible = divorced
+                                divorcePhoto.isVisible =
+                                    divorced && divorcePhotoPath.isNullOrEmpty().not()
+                                divorceTitle.isVisible = divorced
                             }
                     }
                 }
+                divorceButton.setOnClickListener {
+                    PickPhotoFragment(false) {
+                        val path = it.firstOrNull() ?: return@PickPhotoFragment
+                        if (path.path.isEmpty()) return@PickPhotoFragment
+                        divorcePhotoPath = path.path
+                        divorcePhoto.load(divorcePhotoPath)
+                        divorcePhoto.isVisible = true
+                    }.open(mainActivity()!!)
+                }
+                passportButton.setOnClickListener {
+                    PickPhotoFragment(false) {
+                        val path = it.firstOrNull() ?: return@PickPhotoFragment
+                        if (path.path.isEmpty()) return@PickPhotoFragment
+                        passportPhotoPath = path.path
+                        passportPhoto.load(passportPhotoPath)
+                        passportPhoto.isVisible = true
+                    }.open(mainActivity()!!)
+                }
+                val tugilganAdapter =
+                    ArrayAdapter(requireContext(), R.layout.list_item, City.asListNames(false))
+                tgjView.editText?.apply {
+                    (this as AutoCompleteTextView).apply {
+                        val selectedType =
+                            City.entries.find { it.name == currentNomzod?.tugilganJoyi }
+                        selectedType?.let {
+                            tugilganSelected = it.name
+                            setText(getString(it.resId), false)
+                        }
+                        setAdapter(tugilganAdapter)
+                    }
 
+                    onItemClickListener = AdapterView.OnItemClickListener { _, _, position, id ->
+                        val cityCurrent =
+                            City.entries.filter { it.name != City.Hammasi.name }[position]
+                        tugilganSelected = cityCurrent.name
+                    }
+                }
                 val manzilAdapter =
                     ArrayAdapter(requireContext(), R.layout.list_item, City.asListNames(false))
                 manzilView.editText?.apply {
@@ -395,9 +496,6 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                         val cityCurrent =
                             City.entries.filter { it.name != City.Hammasi.name }[position]
                         manzilSelected = cityCurrent.name
-                        if (tgjView.editText?.text.isNullOrEmpty()) {
-                            tgjView.editText?.setText(getString(cityCurrent.resId))
-                        }
                     }
                 }
                 val oqishMalumotiAdapter = ArrayAdapter(requireContext(),
@@ -442,16 +540,20 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                         val selectedType = nomzodTypes.find { it.first == type }
                         setText(selectedType?.second)
                         setAdapter(nomzodTypeAdapter)
-                        onItemClickListener = AdapterView.OnItemClickListener { _, _, po, od ->
-                            nomzodType = nomzodTypes[po].first
 
-                            //Talablar submit
+                        val updateTalablar = {
                             val list = arrayListOf<Talablar>()
                             list.addAll(Talablar.entries)
+                            list.apply {
+                                remove(Talablar.IkkinchiRuzgorgaTaqiq)
+                                remove(Talablar.AlohidaUyJoy)
+                                remove(Talablar.QonuniyAjrashgan)
+                                remove(Talablar.Hijoblik)
+                                remove(Talablar.OliyMalumotli)
+                            }
                             if (nomzodType == KUYOV) {
                                 list.apply {
                                     remove(Talablar.IkkinchiRuzgorgaTaqiq)
-                                    remove(Talablar.BuydoqlarTaqiq)
                                     remove(Talablar.AlohidaUyJoy)
                                 }
                             } else {
@@ -464,11 +566,12 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                                 remove(Talablar.FaqatViloyat)
                             }
                             talablarAdapter.submitList(list)
-                            talablarView.isVisible = true
-                            talabTitle.isVisible = true
+                        }
+                        onItemClickListener = AdapterView.OnItemClickListener { _, _, po, od ->
+                            nomzodType = nomzodTypes[po].first
+                            updateTalablar.invoke()
                         }
                         nomzodType = type
-
                         //Talablar
                         try {
                             talablarListView.adapter = talablarAdapter.apply {
@@ -480,9 +583,10 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                             //
                         }
                         talablarListView.layoutManager = FlexboxLayoutManager(requireContext())
+                        updateTalablar.invoke()
+
                         ismiView.editText?.setText(name)
                         tgyView.editText?.setText(tugilganYili.toStringOrEmpty())
-                        tgjView.editText?.setText(tugilganJoyi)
                         buyiView.editText?.setText(buyi.toStringOrEmpty())
                         vazniView.editText?.setText(vazni.toStringOrEmpty())
                         farzandlarView.editText?.setText(farzandlar)
@@ -517,12 +621,35 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
         }
     }
 
+    private var selfiePhotoPath: String? = null
+    private var passportPhotoPath: String? = null
+    private var divorcePhotoPath: String? = null
+
+    private fun initSelfie() {
+        binding?.apply {
+            selfieButton.setOnClickListener {
+                setFragmentResultListener("selfie") { _, result ->
+                    val path = result.getString("path") ?: return@setFragmentResultListener
+                    if (path.isEmpty().not()) {
+                        selfiePhotoPath = path
+                        binding?.selfiePhoto?.apply {
+                            isVisible = true
+                            load(path)
+                        }
+                    }
+                }
+                navigate(R.id.selfieFragment)
+            }
+        }
+    }
 
     private fun checkIsFace(imageUrl: String, done: (hasFace: Boolean) -> Unit) {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val uploadFile = PickPhotoFragment.getRealFile(imageUrl)
-                val bitmapRes = Glide.with(requireContext()).asFile().override(500,500).load(uploadFile).submit()
+                val bitmapRes =
+                    Glide.with(requireContext()).asFile().override(500, 500).load(uploadFile)
+                        .submit()
                 val bitmapFactoryOptions = BitmapFactory.Options()
                 bitmapFactoryOptions.inPreferredConfig = Bitmap.Config.RGB_565
                 val bitmap = BitmapFactory.decodeFile(bitmapRes.get().path, bitmapFactoryOptions)
@@ -534,8 +661,8 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
                 lifecycleScope.launch(Dispatchers.Main) {
                     done.invoke(facesCount > 0)
                 }
-            }catch (e: Exception) {
-                lifecycleScope.launch (Dispatchers.Main){
+            } catch (e: Exception) {
+                lifecycleScope.launch(Dispatchers.Main) {
                     done.invoke(true)
                 }
             }
@@ -543,7 +670,7 @@ class AddNomzodFragment : BaseFragment<AddNomzodFragmentBinding>() {
     }
 
     fun showPhotoFaceAlert() {
-        val alertDialog = AlertDialog.Builder(requireContext(),R.style.RoundedCornersDialog)
+        val alertDialog = AlertDialog.Builder(requireContext(), R.style.RoundedCornersDialog)
         val binding = PhotoFaceAlertBinding.inflate(layoutInflater)
         alertDialog.setView(binding.root)
         val dialog = alertDialog.create()

@@ -113,10 +113,13 @@ class ProfileFragment : BaseFragment<ProfileFragmentBinding>() {
     override fun viewCreated(bind: ProfileFragmentBinding) {
         showBottomSheet = true
         bind.apply {
+            rateButton.setOnClickListener {
+                mainActivity()?.requestReview()
+            }
             authView.root.visibleOrGone(userViewModel.user.valid.not())
             authView.apply {
                 authButton.setOnClickListener {
-                    findNavController().navigate(R.id.auth_graph)
+                    findNavController().navigate(R.id.authFragment)
                 }
                 authView.boglanishButton.setOnClickListener {
                     mainActivity()?.showSupportSheet()

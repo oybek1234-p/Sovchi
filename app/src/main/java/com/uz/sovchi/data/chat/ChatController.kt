@@ -10,6 +10,7 @@ import com.uz.sovchi.data.ImageUploader
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.nomzod.MyNomzodController
 import com.uz.sovchi.data.valid
+import com.uz.sovchi.showToast
 import com.uz.sovchi.ui.photo.PickPhotoFragment
 
 object ChatController {
@@ -19,6 +20,8 @@ object ChatController {
     private val blockedUsersReference = FirebaseFirestore.getInstance().collection("blockUsers")
 
     var chats = arrayListOf<ChatModel>()
+    val cacheMessages = hashMapOf<String, ArrayList<ChatMessageModel>>()
+    val cacheChats = hashMapOf<String,ChatModel>()
 
     fun deleteMessage(messageId: String) {
 
@@ -122,16 +125,21 @@ object ChatController {
 
     fun loadChatModelById(chatId: String, done: (model: ChatModel?) -> Unit) {
         chatsReference
-            .whereEqualTo(ChatModel::chatId.name, chatId).get().addOnSuccessListener {
+            .whereEqualTo(ChatModel::chatId.name, chatId)
+            .whereEqualTo(ChatModel::myId.name,LocalUser.user.uid)
+            .get().addOnSuccessListener {
                 val model = it.toObjects(ChatModel::class.java).firstOrNull()
+                if (model != null) {
+                    cacheChats[model.id] = model
+                }
                 done.invoke(model)
             }.addOnFailureListener {
                 done.invoke(null)
-            }
-    }
+            } }
+
     fun observeChats(eventListener: EventListener<QuerySnapshot>): ListenerRegistration {
         val register = chatsReference.orderBy(ChatModel::lastDate.name, Query.Direction.DESCENDING)
-        //    .whereEqualTo(ChatModel::myId.name, LocalUser.user.uid)
+            .whereEqualTo(ChatModel::myId.name, LocalUser.user.uid)
             .addSnapshotListener(eventListener)
         return register
     }

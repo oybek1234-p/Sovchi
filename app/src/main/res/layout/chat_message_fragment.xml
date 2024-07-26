@@ -45,16 +45,21 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:tint="#2196F3" />
 
-            <ImageView
+            <TextView
                 android:id="@+id/block_view"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:scaleType="center"
-                android:src="@drawable/block_24px"
+                style="@style/Subtitle2_14"
+                android:layout_width="wrap_content"
+                android:layout_marginEnd="@dimen/dimen_12"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_lay"
+                android:backgroundTint="#2F9D0C01"
+                android:paddingHorizontal="@dimen/dimen_12"
+                android:paddingVertical="@dimen/dimen_8"
+                android:text="Bloklash"
+                android:textColor="@color/rejected"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/info_view"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/rejected" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/imageView"
@@ -94,14 +99,23 @@
                 app:layout_constraintTop_toBottomOf="@+id/title_view" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:adSize="BANNER"
+            app:adUnitId="ca-app-pub-8679920253502267/8382888757"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            tools:layout_editor_absoluteX="24dp"></com.google.android.gms.ads.AdView>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:padding="@dimen/dimen_12"
             android:clipToPadding="false"
+            android:padding="@dimen/dimen_12"
             app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            app:layout_constraintTop_toBottomOf="@+id/adView"
             tools:listitem="@layout/chat_message" />
 
         <androidx.constraintlayout.widget.ConstraintLayout

@@ -6,9 +6,12 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.uz.sovchi.R
+import com.uz.sovchi.data.nomzod.MyNomzodController
 import com.uz.sovchi.databinding.BlockAlertBinding
 import com.uz.sovchi.databinding.ChatMessageFragmentBinding
+import com.uz.sovchi.loadAd
 import com.uz.sovchi.ui.base.BaseFragment
 import com.uz.sovchi.ui.photo.PickPhotoFragment
 import com.uz.sovchi.visibleOrGone
@@ -74,8 +77,8 @@ class ChatMessageFragment : BaseFragment<ChatMessageFragmentBinding>() {
 
     private fun showBlockAlert() {
         val binding = BlockAlertBinding.inflate(layoutInflater, null, false)
-        val dialog = android.app.AlertDialog.Builder(requireContext(), R.style.RoundedCornersDialog)
-            .setView(binding.root).create()
+        val dialog = BottomSheetDialog(requireContext(), R.style.SheetStyle)
+        dialog.setContentView(binding.root)
         binding.apply {
             cancelButton.setOnClickListener {
                 dialog.dismiss()
@@ -99,7 +102,15 @@ class ChatMessageFragment : BaseFragment<ChatMessageFragmentBinding>() {
         })
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding?.adView?.loadAd()
+    }
+
     private fun send() {
+        if (MyNomzodController.nomzod.id.isEmpty()) {
+            navigate(R.id.addNomzodFragment)
+        }
         val text = binding?.editText?.text?.toString() ?: return
         binding?.editText?.text = null
         if (text.trim().isEmpty()) return
@@ -130,7 +141,6 @@ class ChatMessageFragment : BaseFragment<ChatMessageFragmentBinding>() {
         viewModel.loadingAll.observe(viewLifecycleOwner) {
             binding?.apply {
                 progressBar.isVisible = it
-                recyclerView.isVisible = it.not()
             }
         }
         viewModel.messages.observe(viewLifecycleOwner) {

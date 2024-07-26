@@ -7,6 +7,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.uz.sovchi.R
+import com.uz.sovchi.data.nomzod.NomzodRepository
 import com.uz.sovchi.data.nomzod.PlatformMessageType
 import com.uz.sovchi.databinding.AdminVerifyFragmentBinding
 import com.uz.sovchi.databinding.VerifyAlertBinding
@@ -62,7 +63,7 @@ class AdminVerificationFragment : BaseFragment<AdminVerifyFragmentBinding>() {
             searchViewModel.nomzodlar.removeIf { it.id == model.id }
             searchViewModel.nomzodlarLive.postValue(searchViewModel.nomzodlar)
             if (type == VerifyTypes.DELETE) {
-                nomzodViewModel.repository.deleteNomzod(model.id)
+                NomzodRepository.deleteNomzod(model.id)
             }
             if (type == VerifyTypes.ACCEPTED) {
                 nomzodViewModel.repository.verify(model, false)

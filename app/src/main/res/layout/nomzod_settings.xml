@@ -41,6 +41,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/boglanish_button"
+                    android:visibility="gone"
                     style="@style/Widget.Material3.Button.ElevatedButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -51,13 +52,14 @@
                     app:iconGravity="textStart" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/rate_button"
+                    android:id="@+id/delete_profile"
                     style="@style/Widget.Material3.Button.ElevatedButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_8"
-                    android:text="@string/programmani_baholash"
-                    app:icon="@drawable/rate_ic"
+                    android:layout_marginTop="@dimen/dimen_18"
+                    android:drawableTint="?colorPrimary"
+                    android:text="@string/profilni_o_chirish"
+                    app:icon="@drawable/delete_ic"
                     app:iconGravity="textStart" />
 
 

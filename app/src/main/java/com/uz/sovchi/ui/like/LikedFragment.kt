@@ -2,6 +2,7 @@ package com.uz.sovchi.ui.like
 
 import android.os.Bundle
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
@@ -9,6 +10,7 @@ import com.uz.sovchi.R
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.like.LikeState
 import com.uz.sovchi.databinding.LikedFragmentBinding
+import com.uz.sovchi.showToast
 import com.uz.sovchi.ui.base.BaseFragment
 
 class LikedFragment : BaseFragment<LikedFragmentBinding>() {
@@ -17,30 +19,16 @@ class LikedFragment : BaseFragment<LikedFragmentBinding>() {
         get() = R.layout.liked_fragment
 
     private var likeAdapter: LikeAdapter? = null
-
-    private var type = -1
-    private val viewModel: LikeViewModel by viewModels()
-
-    private var selectedTabPos = 0
+    private val viewModel: LikeViewModel by activityViewModels()
 
     override fun onDestroyView() {
-        selectedTabPos = binding?.tabLayout?.selectedTabPosition ?: 0
+        viewModel.selectedTabPos = binding?.tabLayout?.selectedTabPosition ?: 0
         super.onDestroyView()
     }
 
     fun setType(newType: Int) {
-        if (type != newType) {
-            type = newType
             likeAdapter?.type = newType
-            viewModel.setType(type)
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (selectedTabPos != binding?.tabLayout?.selectedTabPosition) {
-            binding?.tabLayout?.getTabAt(selectedTabPos)?.select()
-        }
+            viewModel.setType(newType)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,10 +44,11 @@ class LikedFragment : BaseFragment<LikedFragmentBinding>() {
                     viewModel.loadNext()
                 }.apply {
                     onChatClick = { nom ->
+                        val nomzod = nom!!
                         navigate(R.id.chatMessageFragment, Bundle().apply {
-                            putString("id", nom!!.id)
-                            putString("name", nom.name)
-                            putString("photo", nom.photos.firstOrNull() ?: "")
+                            putString("id", nomzod.id)
+                            putString("name", nomzod.name)
+                            putString("photo", nomzod.photos.firstOrNull() ?: "")
                         })
                     }
                     onClick = { nom ->
@@ -79,11 +68,12 @@ class LikedFragment : BaseFragment<LikedFragmentBinding>() {
                     bind.emptyView.isVisible = empty
                     bind.seeLiked.isVisible = false
                     if (empty) {
-                        if ((type == LikeState.LIKED_ME || type == LikeState.DISLIKED || type == LikeState.LIKED) && LocalUser.user.premium.not()) {
-                            bind.seeLiked.isVisible = true
-                            bind.emptyView.isVisible = false
-                        } else {
-                            bind.emptyView.text = getString(R.string.not_found_users)
+                        bind.emptyView.text = when(viewModel.typeTab()) {
+                            LikeState.LIKED_ME-> "Sizga hali hech kim so'rov yubormagan"
+                            LikeState.MATCH -> "Ro'yxat bo'sh"
+                            LikeState.LIKED ->  "Ro'yxat bo'sh"
+                            LikeState.DISLIKED-> "Ro'yxat bo'sh"
+                            else -> ""
                         }
                     }
                 }
@@ -96,7 +86,6 @@ class LikedFragment : BaseFragment<LikedFragmentBinding>() {
                 layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             }
-            tabLayout.isSaveEnabled = true
             tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabReselected(p0: TabLayout.Tab?) {
 
@@ -104,6 +93,7 @@ class LikedFragment : BaseFragment<LikedFragmentBinding>() {
 
                 override fun onTabSelected(p0: TabLayout.Tab?) {
                     val position = p0?.position ?: return
+
                     val type = when (position) {
                         0 -> LikeState.LIKED_ME
                         1 -> LikeState.MATCH
@@ -118,6 +108,9 @@ class LikedFragment : BaseFragment<LikedFragmentBinding>() {
 
                 }
             })
+            if (viewModel.selectedTabPos != binding?.tabLayout?.selectedTabPosition) {
+                binding?.tabLayout?.getTabAt(viewModel.selectedTabPos)?.select()
+            }
         }
     }
 }

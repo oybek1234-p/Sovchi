@@ -9,9 +9,11 @@ data class User(
     var unreadMessages: Int,
     var premium: Boolean,
     var premiumDate: Long,
-    var unreadChats: Int
+    var unreadChats: Int,
+    var blocked: Boolean,
+    var requests: Int
 ) {
-    constructor() : this("", "", "", 0L, false, 0, false, 0L,0)
+    constructor() : this("", "", "", 0L, false, 0, false, 0L, 0, false, 0)
 }
 
 val User?.valid: Boolean get() = this?.uid?.isEmpty()?.not() ?: false

@@ -61,7 +61,7 @@
             style="@style/Headline2_16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/suhbatlar_bo_sh"
+            android:text="@string/hech_narsa_topilmadi"
             android:textColor="?colorOnSurface"
             android:visibility="gone"
             android:drawablePadding="@dimen/dimen_12"
@@ -69,7 +69,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:drawableStartCompat="@drawable/chat_ic"
-            app:drawableTint="?colorPrimary" />
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

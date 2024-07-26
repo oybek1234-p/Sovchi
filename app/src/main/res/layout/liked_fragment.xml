@@ -90,6 +90,8 @@
             android:textColor="?colorOnSurface"
             android:drawablePadding="@dimen/dimen_12"
             android:visibility="gone"
+            android:layout_marginHorizontal="@dimen/dimen_24"
+            android:gravity="center"
             app:drawableStartCompat="@drawable/ic_liked"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

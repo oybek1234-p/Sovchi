@@ -1,23 +1,18 @@
 package com.uz.sovchi
 
-import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
-import android.view.animation.AccelerateInterpolator
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.core.content.edit
 import androidx.core.view.isVisible
-import androidx.core.view.postDelayed
-import androidx.fragment.app.clearFragmentResultListener
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.slider.LabelFormatter
 import com.google.android.material.slider.RangeSlider
@@ -26,28 +21,15 @@ import com.uz.sovchi.data.filter.FilterViewUtils
 import com.uz.sovchi.data.filter.MyFilter
 import com.uz.sovchi.data.nomzod.KELIN
 import com.uz.sovchi.data.nomzod.KUYOV
-import com.uz.sovchi.data.nomzod.MyNomzodController
 import com.uz.sovchi.data.nomzod.Nomzod
-import com.uz.sovchi.data.valid
 import com.uz.sovchi.databinding.AgeWhatSheetBinding
-import com.uz.sovchi.databinding.NomzodItemBinding
-import com.uz.sovchi.databinding.RequestNomzodAlertBinding
 import com.uz.sovchi.databinding.SearchFragmentBinding
 import com.uz.sovchi.databinding.WeWillNotifySheetBinding
 import com.uz.sovchi.databinding.WhoYouNeedBinding
-import com.uz.sovchi.ui.base.BaseAdapter
 import com.uz.sovchi.ui.base.BaseFragment
-import com.uz.sovchi.ui.nomzod.NomzodDetailsFragment
 import com.uz.sovchi.ui.search.SearchAdapter
 import com.uz.sovchi.ui.search.SearchViewModel
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager
-import com.yuyakaido.android.cardstackview.CardStackListener
-import com.yuyakaido.android.cardstackview.Direction
-import com.yuyakaido.android.cardstackview.Duration
-import com.yuyakaido.android.cardstackview.SwipeAnimationSetting
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class SearchFragment : BaseFragment<SearchFragmentBinding>() {
     override val layId: Int
@@ -193,7 +175,20 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
 
     private fun checkFilterChangedFromDefault() {
         val changed = MyFilter.changedFromDefault()
-        binding?.filterDotView?.visibleOrGone(changed)
+        binding?.filterDotView?.apply {
+            visibleOrGone(changed)
+            if (changed) {
+                bounceDot()
+            }
+        }
+    }
+
+    private fun View.bounceDot(scaleIn: Boolean = true) {
+        animate().cancel()
+        val scale = if (scaleIn) 0.2f else 1f
+        animate().scaleY(scale).scaleX(scale).setDuration(300).withEndAction {
+            bounceDot(!scaleIn)
+        }.start()
     }
 
     private fun updateUnReadLabel(unread: Int) {
@@ -261,47 +256,19 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
 
     private fun initAdapter() {
         binding?.apply {
-            setFragmentResultListener("liked") { requestKey, bundle ->
-                clearFragmentResultListener("liked")
-                val liked = bundle.getBoolean("liked")
-                if (currentNomzod != null) {
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        delay(400)
-                        val pos = viewModel.nomzodlar.indexOfFirst { it.id == currentNomzod!!.id }
-                        onItemLiked(liked, currentNomzod!!.id, pos, true)
-                    }
-                }
-            }
-            listAdapter = SearchAdapter(userViewModel, onClick = {
-                NomzodDetailsFragment.navigateToHere(this@SearchFragment, it, true)
-            }, next = {}, onLiked = { _, nomzodId ->
-                skipSwipeCallback = true
-                onItemLiked(true, nomzodId, 0)
-            }, disliked = { id, pos ->
-                skipSwipeCallback = true
-                onItemLiked(false, id, pos)
-            }, onChatClick = { nomzod ->
-                if (LocalUser.user.hasNomzod.not() || MyNomzodController.nomzod.id.isEmpty()) {
-                    showAddNomzodAlert {}
-                    return@SearchAdapter
-                }
-                if (LocalUser.user.premium || nomzod.likedMe) {
-                    navigate(R.id.chatMessageFragment, Bundle().apply {
-                        putString("id", nomzod.id)
-                        putString("name", nomzod.name)
-                        putString("photo", nomzod.photos.firstOrNull() ?: "")
-                    })
-                } else {
-                    mainActivity()?.showChatLimitSheet()
-                }
-            })
             recyclerView.apply {
+                if (listAdapter == null) {
+                    listAdapter = SearchAdapter(userViewModel, {
+                        viewModel.loadNextNomzodlar()
+                    }, {
+                        navigate(R.id.nomzodDetailsFragment, Bundle().apply {
+                            putString("nomzodId", it.id)
+                        })
+                    }, { l, id -> }, false, { id, pos -> }, {})
+                }
                 adapter = listAdapter
                 itemAnimator = null
-                layoutManager = CardStackLayoutManager(requireContext(), cardStackListener).apply {
-                    stackLayManager = this
-                }
-                setSwipeSettings(true)
+                layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             }
         }
     }
@@ -320,75 +287,12 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
             val loading = viewModel.nomzodlarLoading.value
             if (viewModel.nomzodlar.isEmpty() && loading != true) {
                 binding?.emptyView?.isVisible = true
-                val message = "Sizga mos nomzodlar qolmadi, har kuni yangilari qo'shiladi"
-                binding?.emptyView?.text = message
+                binding?.emptyButton?.setOnClickListener {
+                    mainActivity()?.moveToTanishing()
+                }
             }
         } catch (e: Exception) {
             //
-        }
-    }
-
-    private fun showAddNomzodAlert(skip: () -> Unit) {
-        if (userViewModel.user.valid.not()) {
-            try {
-                navigate(R.id.auth_graph)
-            } catch (e: Exception) {
-                //
-            }
-            return
-        }
-        val alertDialog = AlertDialog.Builder(requireContext(), R.style.RoundedCornersDialog)
-        val view = RequestNomzodAlertBinding.inflate(layoutInflater, null, false)
-        alertDialog.setView(view.root)
-        val dialog = alertDialog.create()
-        view.apply {
-            okButton.setOnClickListener {
-                try {
-                    navigate(R.id.addNomzodFragment)
-                } catch (e: Exception) {
-                    //
-                }
-                dialog.dismiss()
-            }
-            skipButton.setOnClickListener {
-                dialog.dismiss()
-                skip.invoke()
-            }
-        }
-        dialog.show()
-    }
-
-    private fun onItemLiked(liked: Boolean, nomzodId: String, pos: Int, skipLike: Boolean = false) {
-        val nomzod = viewModel.nomzodlar.firstOrNull { it.id == nomzodId } ?: return
-        if (LocalUser.user.hasNomzod.not() || MyNomzodController.nomzod.id.isEmpty()) {
-            showAddNomzodAlert {}
-            return
-        }
-        if (skipLike.not()) {
-            val done = SearchAdapter.likeOrDislike(nomzod, liked)
-            if (done.not()) return
-        }
-        viewModel.nomzodlar.removeIf { it.id == nomzodId }
-        setSwipeSettings(liked)
-        binding?.recyclerView?.swipe()
-        draging = true
-        view?.postDelayed(500) {
-            draging = false
-        }
-    }
-
-    private fun setSwipeSettings(right: Boolean) {
-        stackLayManager?.apply {
-            val setting = SwipeAnimationSetting.Builder()
-                .setDirection(if (right) Direction.Right else Direction.Left)
-                .setDuration(Duration.Slow.duration).setInterpolator(AccelerateInterpolator())
-                .build()
-            setCanScrollVertical(false)
-            setScaleInterval(0.8f)
-            setSwipeThreshold(0.5f)
-            setVisibleCount(2)
-            setMaxDegree(30f)
-            setSwipeAnimationSetting(setting)
         }
     }
 

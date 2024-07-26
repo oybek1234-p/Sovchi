@@ -66,6 +66,11 @@ class MessagesRepository {
                                     false
                                 },
                                 try {
+                                    hashMap[NomzodLikedModel::liked.name] as Boolean
+                                } catch (e: Exception) {
+                                    false
+                                },
+                                try {
                                     hashMap[NomzodLikedModel::photo.name].toString()
                                 } catch (e: Exception) {
                                     ""

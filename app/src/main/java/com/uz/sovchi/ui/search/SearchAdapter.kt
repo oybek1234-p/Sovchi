@@ -1,6 +1,5 @@
 package com.uz.sovchi.ui.search
 
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import com.google.android.material.color.MaterialColors
 import com.uz.sovchi.R
@@ -11,6 +10,7 @@ import com.uz.sovchi.data.like.LikeState
 import com.uz.sovchi.data.nomzod.Nomzod
 import com.uz.sovchi.data.valid
 import com.uz.sovchi.databinding.NomzodItemBinding
+import com.uz.sovchi.databinding.NomzodItemNewBinding
 import com.uz.sovchi.showToast
 import com.uz.sovchi.ui.base.BaseAdapter
 import com.uz.sovchi.ui.nomzod.setNomzod
@@ -33,9 +33,9 @@ class SearchAdapter(
     private val isBackGray: Boolean = false,
     private val disliked: (id: String, position: Int) -> Unit = { i, p -> },
     private val onChatClick: (nomzod: Nomzod) -> Unit
-) : BaseAdapter<Nomzod, NomzodItemBinding>(R.layout.nomzod_item, NOMZOD_DIFF_UTIL) {
+) : BaseAdapter<Nomzod, NomzodItemNewBinding>(R.layout.nomzod_item_new, NOMZOD_DIFF_UTIL) {
 
-    override fun onViewCreated(holder: ViewHolder<NomzodItemBinding>, viewType: Int) {
+    override fun onViewCreated(holder: ViewHolder<NomzodItemNewBinding>, viewType: Int) {
         super.onViewCreated(holder, viewType)
         holder.binding.apply {
 
@@ -45,22 +45,6 @@ class SearchAdapter(
                 } catch (e: Exception) {
                     //
                 }
-            }
-            likeButton.setOnClickListener {
-                val nomzod = currentList[holder.adapterPosition]
-                onLiked?.invoke(true, nomzod.id)
-            }
-            dislikeButton.setOnClickListener {
-                try {
-                    val nomzod = currentList[holder.adapterPosition]
-                    disliked.invoke(nomzod.id, holder.adapterPosition)
-                } catch (e: Exception) {
-                    //
-                }
-            }
-            chatButton.setOnClickListener {
-                val nomzod = currentList[holder.adapterPosition]
-                onChatClick.invoke(nomzod)
             }
         }
     }
@@ -87,17 +71,8 @@ class SearchAdapter(
     override fun bind(holder: ViewHolder<*>, model: Nomzod, pos: Int) {
         super.bind(holder, model, pos)
         holder.binding.apply {
-            if (this is NomzodItemBinding) {
+            if (this is NomzodItemNewBinding) {
                 setNomzod(model, userViewModel.user.hasNomzod)
-                likeButtonThumb.isVisible = false
-                dislikeButtonThumb.isVisible = false
-                if (isBackGray) {
-                    container.setBackgroundColor(
-                        MaterialColors.getColor(
-                            root, com.google.android.material.R.attr.backgroundColor
-                        )
-                    )
-                }
                 if (pos == currentList.lastIndex) {
                     next()
                 }

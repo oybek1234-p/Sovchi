@@ -50,7 +50,7 @@ class NomzodFragment : BaseFragment<NomzodFragmentBinding>() {
             val authed = userViewModel.user.valid
             authView.apply {
                 authButton.setOnClickListener {
-                    findNavController().navigate(R.id.auth_graph)
+                    findNavController().navigate(R.id.authFragment)
                 }
                 boglanishButton.setOnClickListener {
                     mainActivity()?.showSupportSheet()

@@ -33,6 +33,7 @@ class ChatsAdapter : BaseAdapter<ChatModel, ChatItemBinding>(R.layout.chat_item,
                 Glide.with(root).load(model.userImage).into(iconView)
                 titleView.text = model.userName
                 subtitleView.text = model.lastMessage
+
                 countView.apply {
                     if (model.unreadCount > 0) {
                         visibility = View.VISIBLE

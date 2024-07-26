@@ -10,9 +10,7 @@ import com.uz.sovchi.data.like.LikeModelFull
 import com.uz.sovchi.data.like.LikeState
 import com.uz.sovchi.data.nomzod.KUYOV
 import com.uz.sovchi.data.nomzod.Nomzod
-import com.uz.sovchi.data.nomzod.OilaviyHolati
 import com.uz.sovchi.databinding.LikeItemBinding
-import com.uz.sovchi.showToast
 import com.uz.sovchi.ui.base.BaseAdapter
 import jp.wasabeef.glide.transformations.BlurTransformation
 
@@ -65,8 +63,10 @@ class LikeAdapter(val next: () -> Unit) : BaseAdapter<LikeModelFull, LikeItemBin
                     chatButton.setOnClickListener {
                         onChatClick.invoke(model)
                     }
+                    infoButton.isVisible = false
                 } else {
                     chatButton.isVisible = false
+                    infoButton.isVisible = true
                 }
                 model.apply {
                     var nameAgeText = "${
@@ -79,9 +79,18 @@ class LikeAdapter(val next: () -> Unit) : BaseAdapter<LikeModelFull, LikeItemBin
                     nameAgeText += "  $tugilganYili"
                     titleView.text = nameAgeText
                     try {
-                        subtitleView.text =
-                            appContext.getString(OilaviyHolati.valueOf(model.oilaviyHolati).resourceId)
-                    }catch (e: Exception) {
+                        if (models.matched) {
+                            subtitleView.text = "Suxbatlashing"
+                            subtitleView.isVisible = true
+                        } else {
+                            if (likedMe) {
+                                subtitleView.isVisible = true
+                                subtitleView.text = "Siz bilan tanishmoqchi"
+                            } else {
+                                subtitleView.text = "Ko'proq malumot uchun bosing"
+                            }
+                        }
+                    } catch (e: Exception) {
                         //
                     }
 

@@ -37,10 +37,11 @@ object UserRepository {
 
     fun setPremium(userId: String, premium: Boolean) {
         if (userId.isEmpty()) return
-        usersReference.child(userId).updateChildren(mapOf(
-            User::premium.name to premium,
-            User::premiumDate.name to System.currentTimeMillis()
-        ))
+        usersReference.child(userId).updateChildren(
+            mapOf(
+                User::premium.name to premium, User::premiumDate.name to System.currentTimeMillis()
+            )
+        )
     }
 
     fun observeLastSeen(userId: String, onChange: (time: Long) -> Unit): ValueEventListener? {
@@ -190,6 +191,8 @@ object UserRepository {
                 0,
                 false,
                 0,
+                0,
+                false,
                 0
             )
             createNewUserAndSet(newUser)
@@ -206,6 +209,15 @@ object UserRepository {
         reference.get().addOnCompleteListener {
             val loadedUser = it.result.getValue(User::class.java)
             sus.resume(loadedUser)
+        }
+    }
+
+    fun increaseRequest() {
+        if (user.valid) {
+            if (user.requests < 5) {
+                user.requests += 1
+                updateUser(user)
+            }
         }
     }
 

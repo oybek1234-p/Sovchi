@@ -173,7 +173,7 @@ class AuthFragment : BaseFragment<FragmentAuthBinding>() {
                                 putString(VERIFY_CODE, code)
                             }
                             navigate(
-                                R.id.action_authFragment_to_verifyFragment, bundle
+                                R.id.verifyFragment, bundle
                             )
                             sendState.postValue(SendState.Input(phoneText))
                         }

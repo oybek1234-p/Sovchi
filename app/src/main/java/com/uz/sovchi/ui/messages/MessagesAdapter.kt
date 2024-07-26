@@ -119,11 +119,17 @@ class MessagesAdapter(
                                         ColorStateList.valueOf(context.getColor(R.color.likeColor))
                                 }
                             }
-                            titleView.text = likeModel.likedUserName.trim().ifEmpty {
-                                "Foydalanuvchi"
-                            } + " sizni yoqtirdi"
-                            subtitleView.isVisible = false
-
+                            if (likeModel.liked) {
+                                titleView.text = likeModel.likedUserName.trim().ifEmpty {
+                                    "Foydalanuvchi"
+                                } + " siz bilan tanishmoqchi"
+                                subtitleView.text = "So'rovni qabul qiling va tanishing"
+                            } else {
+                                titleView.text = likeModel.likedUserName.trim().ifEmpty {
+                                    "Foydalanuvchi"
+                                } + " so'rovingizni rad etdi"
+                                subtitleView.text = "Afsuski nomzodga yoqmadingiz"
+                            }
                             dateView.text = DateUtils.formatDate(model.date)
                             showNomzod.isVisible = likeModel.hasNomzod
                             root.setOnClickListener {
