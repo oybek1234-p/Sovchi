@@ -76,6 +76,7 @@
                     android:layout_height="wrap_content"
                     android:text="Premium"
                     android:layout_marginBottom="@dimen/dimen_4"
+                    android:visibility="gone"
                     android:textColor="?colorPrimary"
                     style="@style/Caption2_12"
                     />
@@ -117,6 +118,7 @@
                     android:layout_height="wrap_content"
                     android:text="Premium"
                     android:textColor="?colorPrimary"
+                    android:visibility="gone"
                     android:layout_marginBottom="@dimen/dimen_4"
                     style="@style/Caption2_12"
                     />

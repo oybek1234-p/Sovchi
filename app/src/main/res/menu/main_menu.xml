@@ -9,12 +9,12 @@
     <item
         android:id="@+id/likedFragment"
         android:icon="@drawable/ic_liked"
-        android:title="Tanishing" />
+        android:title="So'rovlar" />
 
     <item
         android:id="@+id/chatFragment"
         android:icon="@drawable/chat_ic"
-        android:title="@string/xabarlar" />
+        android:title="Suxbat" />
 
     <item
         android:id="@+id/profileFragment"

@@ -3,15 +3,11 @@ package com.uz.sovchi.ui.search
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.filter.MyFilter
-import com.uz.sovchi.data.location.City
 import com.uz.sovchi.data.nomzod.Nomzod
 import com.uz.sovchi.data.nomzod.NomzodRepository
 import com.uz.sovchi.data.nomzod.NomzodState
-import com.uz.sovchi.data.nomzod.OilaviyHolati
-import com.uz.sovchi.data.recombee.RecombeeDatabase
-import com.uz.sovchi.data.viewed.ViewedNomzods
+import com.uz.sovchi.postVal
 import com.uz.sovchi.showToast
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -21,7 +17,6 @@ class SearchViewModel : ViewModel() {
     companion object {
         const val FILTER_FOR_ME = 0
         const val FILTER_NEW = 1
-        const val FILTER_PHOTO = 2
     }
 
     var nomzodlar = arrayListOf<Nomzod>()
@@ -57,7 +52,14 @@ class SearchViewModel : ViewModel() {
 
     }
 
-    var mainFilter = FILTER_PHOTO
+    var filterType = FILTER_FOR_ME
+
+    fun applyFilterType(type: Int) {
+        if (filterType != type) {
+            filterType = type
+            refresh()
+        }
+    }
 
     fun refresh() {
         loadJob?.cancel()
@@ -65,7 +67,7 @@ class SearchViewModel : ViewModel() {
         lastNomzod = null
         nomzodlar.clear()
         nomzodlarLoading.value = false
-        nomzodlarLive.postValue(null)
+        nomzodlarLive.postVal(null)
 
         loadNextNomzodlar()
     }
@@ -73,50 +75,58 @@ class SearchViewModel : ViewModel() {
     private var recomId = ""
     var forVerify = false
 
-    fun loadNextNomzodlar() {
-        if (nomzodlarLoading.value == true) return
+    private var currentLoadingId = 0L
+
+    fun loadNextNomzodlar(state: Int = NomzodState.VISIBLE): Boolean {
+        if (nomzodlarLoading.value == true) return false
+        currentLoadingId = System.currentTimeMillis()
+        val currLoadingId = currentLoadingId
         loadJob?.cancel()
-        nomzodlarLoading.postValue(true)
+        loadJob = null
+        nomzodlarLoading.postVal(true)
         nomzodlarLoading.value = true
+
         loadJob = viewModelScope.launch {
             if (!forVerify) {
-                RecombeeDatabase.getRecommendForUser(
-                    recomId,
+                lastNomzod = nomzodlar.lastOrNull()
+                NomzodRepository.loadNomzods(
+                    viewModelScope,
+                    lastNomzod = lastNomzod,
                     type = nomzodTuri,
-                    manzil = if (searchLocation == City.Hammasi.name) "" else searchLocation,
-                    LocalUser.user.uid,
-                    if (oilaviyHolati == OilaviyHolati.Aralash.name) "" else oilaviyHolati,
-                    yoshChegarasiGacha,
-                    yoshChegarasiDan,
-                    3
-                ) { recom, list ->
-                    if (loadJob?.isCancelled == true) return@getRecommendForUser
-                    recomId = recom
-                    nomzodlarLoading.value = false
-                    nomzodlarLoading.postValue(false)
-                    nomzodlar.addAll(list)
-                    nomzodlarLive.postValue(nomzodlar)
+                    manzil = searchLocation,
+                    oilaviyHolati = oilaviyHolati,
+                    yoshChegarasiDan = yoshChegarasiDan,
+                    yoshChegarasiGacha = yoshChegarasiGacha,
+                    userId = "",
+                    state = NomzodState.VISIBLE,
+                    onlyNew = false
+                ) { it, _ ->
+                    if (currLoadingId != currentLoadingId) return@loadNomzods
+                    nomzodlar.addAll(it)
+                    nomzodlarLive.postVal(nomzodlar)
+                    nomzodlarLoading.postVal(false)
                 }
             } else {
                 lastNomzod = nomzodlar.lastOrNull()
                 NomzodRepository.loadNomzods(
+                    viewModelScope,
                     lastNomzod = lastNomzod,
                     type = if (forVerify) -1 else nomzodTuri,
                     manzil = if (forVerify) "" else searchLocation,
                     oilaviyHolati = if (forVerify) "" else oilaviyHolati,
-                    yoshChegarasi = if (forVerify) 0 else yoshChegarasiGacha,
+                    yoshChegarasiGacha = 0,
+                    yoshChegarasiDan = 0,
                     userId = "",
                     verify = forVerify,
-                    hasPhotoOnly = false,
-                    imkonChek = imkonChek,
-                    state = NomzodState.VISIBLE
+                    state = state
                 ) { it, _ ->
-                    if (loadJob?.isCancelled == true) return@loadNomzods
+                    if (currLoadingId != currentLoadingId) return@loadNomzods
                     nomzodlar.addAll(it)
-                    nomzodlarLive.postValue(nomzodlar)
-                    nomzodlarLoading.postValue(false)
+                    nomzodlarLive.postVal(nomzodlar)
+                    nomzodlarLoading.postVal(false)
                 }
             }
         }
+        return true
     }
 }

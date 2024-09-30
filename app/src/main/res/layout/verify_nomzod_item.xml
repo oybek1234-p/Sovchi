@@ -23,7 +23,7 @@
             android:layout_margin="@dimen/dimen_4"
             android:text="@string/tekshirilmoqda"
             android:textColor="?colorOnSurface"
-            android:visibility="gone" />
+          />
 
         <TextView
             android:id="@+id/tarifView"
@@ -67,10 +67,23 @@
             android:text="Tasdiqlash" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/verify_info_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ishonchli tasdiqlash" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/verify_premium_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Premiumga tasdiqlash" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/disable_premium_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/delete_ic"
+            android:text="Premiumni o'chirish" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/photo_wrong"
@@ -83,6 +96,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Malumot notogri" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/block_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bloklash" />
 
     </LinearLayout>
 </layout>

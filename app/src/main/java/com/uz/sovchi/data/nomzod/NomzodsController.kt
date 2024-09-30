@@ -9,4 +9,5 @@ object NomzodsController {
         FirebaseFirestore.getInstance().collection("nomzodlar")
     }
 
+
 }

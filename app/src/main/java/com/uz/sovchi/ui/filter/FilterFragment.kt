@@ -7,6 +7,7 @@ import com.uz.sovchi.R
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.filter.FilterViewUtils
 import com.uz.sovchi.data.filter.MyFilter
+import com.uz.sovchi.data.valid
 import com.uz.sovchi.databinding.FragmentFilterBinding
 import com.uz.sovchi.ui.base.BaseFragment
 
@@ -20,20 +21,16 @@ class FilterFragment : BaseFragment<FragmentFilterBinding>() {
             myToolbar.setUpBackButton(this@FilterFragment)
 
             FilterViewUtils.setLocationView(locationFilter.editText as AutoCompleteTextView) {
-                if (LocalUser.user.premium.not()) {
-                    mainActivity()?.showPremiumSheet()
-                }
+
             }
             FilterViewUtils.setNomzodTypeView(typeFilter.editText as AutoCompleteTextView) {}
             FilterViewUtils.setOilaviyHolati(oilaviyView.editText as AutoCompleteTextView) {
-                if (LocalUser.user.premium.not()) {
-                    mainActivity()?.showPremiumSheet()
-                }
+
             }
             ageSlider.labelBehavior = LabelFormatter.LABEL_VISIBLE
             ageSlider.values = listOf(
-                MyFilter.filter.yoshChegarasiDan.toFloat(),
-                MyFilter.filter.yoshChegarasiGacha.toFloat()
+                MyFilter.filter.yoshChegarasiDan.toFloat().coerceIn(18f, 70f),
+                MyFilter.filter.yoshChegarasiGacha.toFloat().coerceIn(18f, 70f)
             )
             ageSlider.setLabelFormatter {
                 it.toInt().toString()

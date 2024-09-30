@@ -40,30 +40,6 @@
                     android:textColor="?colorOnSurfaceVariant" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/boglanish_button"
-                    android:visibility="gone"
-                    style="@style/Widget.Material3.Button.ElevatedButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:drawableTint="?colorPrimary"
-                    android:text="@string/biz_bilan_bog_lanish"
-                    app:icon="@drawable/admin_ic"
-                    app:iconGravity="textStart" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/delete_profile"
-                    style="@style/Widget.Material3.Button.ElevatedButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:drawableTint="?colorPrimary"
-                    android:text="@string/profilni_o_chirish"
-                    app:icon="@drawable/delete_ic"
-                    app:iconGravity="textStart" />
-
-
-                <com.google.android.material.button.MaterialButton
                     android:id="@+id/allUsers"
                     style="@style/Widget.Material3.Button.ElevatedButton"
                     android:layout_width="match_parent"
@@ -81,23 +57,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dimen_12"
-                    android:text="Verifikatsiya"
-                    android:visibility="gone" />
+                    android:text="Verifikatsiya" />
 
-                <TextView
-                    android:id="@+id/sign_out"
-                    style="@style/Headline2_16"
-                    android:layout_marginTop="@dimen/dimen_48"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/acive_button"
+                    style="@style/Widget.Material3.Button.ElevatedButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawablePadding="@dimen/dimen_12"
-                    android:fontFamily="@font/roboto_bold"
-                    android:gravity="center_vertical"
-                    android:paddingVertical="@dimen/dimen_8"
-                    android:text="@string/logout_"
-                    android:textColor="#E91E63"
-                    app:drawableStartCompat="@drawable/arrow_back"
-                    app:drawableTint="#E91E63" />
+                    android:layout_marginTop="@dimen/dimen_12"
+                    android:text="Aktivlar" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/rejected_button"
+                    style="@style/Widget.Material3.Button.ElevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_12"
+                    android:text="Rad etilgan" />
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

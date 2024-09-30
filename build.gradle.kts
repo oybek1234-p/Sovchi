@@ -1,6 +1,6 @@
 buildscript {
     dependencies {
-        classpath("com.google.gms:google-services:4.4.0")
+        classpath("com.google.gms:google-services:4.4.2")
     }
     repositories {
         mavenCentral()
@@ -17,6 +17,7 @@ plugins {
     id ("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version "2.0.1" apply false
     kotlin("jvm") version "1.9.20" // or kotlin("multiplatform") or any other kotlin plugin
     kotlin("plugin.serialization") version "1.9.20" apply true
+    id("com.google.firebase.crashlytics") version "3.0.2" apply false
 }
 
 allprojects {

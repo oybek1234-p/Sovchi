@@ -104,4 +104,20 @@
         android:id="@+id/mainActivity"
         android:name="com.uz.sovchi.MainActivity"
         android:label="MainActivity" />
+    <fragment
+        android:id="@+id/matchedFragment"
+        android:name="com.uz.sovchi.ui.matched.MatchedFragment"
+        android:label="MatchedFragment" />
+    <fragment
+        android:id="@+id/addVerificationInfoFragment"
+        android:name="com.uz.sovchi.ui.verification.AddVerificationInfoFragment"
+        android:label="AddVerificationInfoFragment" />
+    <fragment
+        android:id="@+id/goodBadPhotoFragment"
+        android:name="com.uz.sovchi.ui.photo.GoodBadPhotoFragment"
+        android:label="GoodBadPhotoFragment" />
+    <fragment
+        android:id="@+id/loginGmailFragment"
+        android:name="com.uz.sovchi.ui.auth.LoginGmailFragment"
+        android:label="LoginGmailFragment" />
 </navigation>

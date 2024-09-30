@@ -10,14 +10,13 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:background="?colorSurfaceDim"
+        android:background="?colorSurfaceContainer"
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
            >
-
             <LinearLayout
                 android:id="@+id/linearLayout2"
                 android:layout_width="match_parent"
@@ -27,7 +26,6 @@
                 android:background="?colorSurface"
                 android:elevation="4dp"
                 app:layout_constraintTop_toBottomOf="@+id/filters_container">
-
 
                 <com.google.android.material.checkbox.MaterialCheckBox
                     android:id="@+id/photo_button"
@@ -43,7 +41,7 @@
                 android:id="@+id/filters_container"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:background="?colorSurfaceContainer"
+                android:background="?colorSurfaceContainerLowest"
                 android:elevation="@dimen/dimen_6"
                 android:fadingEdge="none"
                 android:fadingEdgeLength="@dimen/dimen_24"
@@ -87,7 +85,6 @@
                 android:elevation="@dimen/dimen_6"
                 android:gravity="center"
                 android:padding="@dimen/dimen_8"
-                android:text="@string/qidirish"
                 app:layout_constraintBottom_toBottomOf="@+id/filters_container"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -95,6 +92,7 @@
 
             <View
                 android:id="@+id/filter_dot_view"
+                android:visibility="gone"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:background="@drawable/filter_dot"
@@ -103,17 +101,71 @@
                 app:layout_constraintStart_toStartOf="@+id/notify_view"
                 app:layout_constraintTop_toTopOf="@+id/notify_view" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:clipToPadding="false"
-                android:orientation="vertical"
-                android:paddingHorizontal="@dimen/dimen_12"
-                android:paddingBottom="100dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-                tools:listitem="@layout/nomzod_item_new" />
+                app:layout_constraintTop_toBottomOf="@+id/filters_container">
+
+                <com.google.android.material.appbar.AppBarLayout
+                    android:layout_width="match_parent"
+                    android:background="@null"
+                    android:backgroundTint="@color/white"
+                    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$Behavior"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.tabs.TabLayout
+                        android:id="@+id/tab_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        app:layout_scrollFlags="enterAlways|scroll"
+                        android:backgroundTint="?colorSurfaceContainer"
+                        android:elevation="2dp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/filters_container">
+
+                        <com.google.android.material.tabs.TabItem
+                            android:id="@+id/for_you"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/siz_uchun" />
+
+                        <com.google.android.material.tabs.TabItem
+                            android:id="@+id/newest"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Yangilar" />
+
+                    </com.google.android.material.tabs.TabLayout>
+
+                    <com.google.android.gms.ads.AdView
+                        android:id="@+id/adView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:adSize="BANNER"
+                        android:visibility="gone"
+                        app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                        app:adUnitId="ca-app-pub-8679920253502267/8718832037"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/filters_container"></com.google.android.gms.ads.AdView>
+                </com.google.android.material.appbar.AppBarLayout>
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+                    android:clipToPadding="false"
+                    android:orientation="vertical"
+                    android:paddingBottom="140dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tab_layout"
+                    tools:listitem="@layout/nomzod_item_new" />
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
             <LinearLayout
                 android:visibility="gone"
@@ -125,8 +177,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/recycler_view"
                 >
+
                 <TextView
                     style="@style/Text1_16"
                     android:textSize="18sp"
@@ -134,19 +186,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/dimen_48"
                     android:gravity="center"
-                    android:text="Sizga mos nomzodlar qolmadi, hozircha eskilarni ko'rib turing"
+                    android:text="Sizga mos nomzodlar topilmadi"
                     android:drawablePadding="@dimen/dimen_18"
                     android:textColor="?colorOnSurface"
                     />
 
-                <com.google.android.material.button.MaterialButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/empty_button"
-                    android:layout_marginTop="@dimen/dimen_12"
-                    android:text="Eskilarni ko'rish"
-                    app:icon="@drawable/person_filled"
-                    />
             </LinearLayout>
             <ProgressBar
                 android:id="@+id/progress_bar"

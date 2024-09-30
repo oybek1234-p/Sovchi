@@ -11,17 +11,14 @@
         android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/dimen_12"
-        android:layout_marginTop="@dimen/dimen_12"
-        android:background="@drawable/round_lay"
-        android:backgroundTint="?colorSurfaceContainerLowest"
-        android:orientation="vertical">
+        android:layout_marginTop="@dimen/dimen_18"
+        android:background="?colorSurfaceContainerLowest"
+        android:paddingBottom="@dimen/dimen_12">
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/photo_View"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:shapeAppearanceOverlay="@style/RadiusImageView12"
             android:background="@drawable/rounded_layout"
             android:scaleType="centerCrop"
             app:layout_constraintDimensionRatio="1:1"
@@ -29,134 +26,194 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator
+            android:id="@+id/spring_dots_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="@dimen/dimen_12"
+            android:elevation="@dimen/dimen_2"
+            app:dampingRatio="0.5"
+            app:dotsColor="@color/white"
+            app:dotsCornerRadius="12dp"
+            app:dotsSize="14dp"
+            app:dotsSpacing="6dp"
+            app:dotsStrokeColor="@color/white"
+            app:dotsStrokeWidth="2dp"
+            app:layout_constraintBottom_toBottomOf="@+id/photo_View"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:stiffness="300" />
+
+        <TextView
+            android:id="@+id/photo_count_view"
+            style="@style/Caption1_13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/dimen_18"
+            android:background="@drawable/round_lay"
+            android:backgroundTint="#AE1D1B20"
+            android:drawableStart="@drawable/photo_ic"
+            android:drawablePadding="@dimen/dimen_4"
+            android:drawableTint="@color/white"
+            android:paddingHorizontal="@dimen/dimen_8"
+            android:paddingVertical="@dimen/dimen_2"
+            android:text=""
+            android:textColor="?colorSurface"
+            app:layout_constraintBottom_toBottomOf="@+id/photo_View"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:tint="?colorSurface" />
+
         <TextView
             android:id="@+id/name_age_view"
             style="@style/Title3_17"
-            android:layout_marginHorizontal="@dimen/dimen_12"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dimen_12"
+            android:layout_marginTop="@dimen/dimen_12"
             android:fontFamily="@font/roboto_bold"
             android:gravity="center_vertical"
-            android:layout_marginTop="@dimen/dimen_12"
             android:textColor="?colorOnSurface"
+            app:layout_constraintEnd_toStartOf="@+id/hide_view"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/photo_View"
             tools:text="Oybek 21" />
 
-        <TextView
-            android:id="@+id/city"
-            style="@style/Text2_15"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/dimen_12"
-            android:drawablePadding="@dimen/dimen_4"
-            android:ellipsize="end"
-            android:gravity="center_vertical"
-            android:layout_marginTop="@dimen/dimen_12"
-            android:maxLines="2"
-            android:text="Yashaydi: Toshkent, asli Samarqand"
-            android:textColor="?colorOnSurface"
-            app:drawableStartCompat="@drawable/location_ic"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/oilaviy_view" />
+        <!--        <TextView-->
+        <!--            android:id="@+id/city"-->
+        <!--            style="@style/Text2_15"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginHorizontal="@dimen/dimen_12"-->
+        <!--            android:drawablePadding="@dimen/dimen_4"-->
+        <!--            android:ellipsize="end"-->
+        <!--            android:gravity="center_vertical"-->
+        <!--            android:layout_marginTop="@dimen/dimen_4"-->
+        <!--            android:maxLines="2"-->
+        <!--            android:text="Yashaydi: Toshkent, asli Samarqand"-->
+        <!--            android:textColor="?colorOnSurface"-->
+        <!--            app:drawableStartCompat="@drawable/location_ic"-->
+        <!--            app:drawableTint="?colorOnSurfaceVariant"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/oilaviy_view" />-->
 
         <TextView
             android:id="@+id/new_badge"
-            style="@style/Caption2_12"
+            style="@style/Subtitle3_13"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
+            android:layout_margin="@dimen/dimen_18"
             android:background="@drawable/round_lay"
             android:backgroundTint="#FF5722"
-            android:layout_marginTop="@dimen/dimen_8"
-            android:paddingHorizontal="@dimen/dimen_8"
-            android:paddingVertical="@dimen/dimen_2"
-            android:text="@string/yangi"
-            android:textColor="?colorOnPrimary"
-            app:layout_constraintStart_toStartOf="@+id/name_age_view"
-            app:layout_constraintTop_toBottomOf="@+id/name_age_view" />
-
-        <TextView
-            android:id="@+id/oilaviy_view"
-            style="@style/Headline3_15"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableTint="?colorPrimary"
-            android:drawablePadding="@dimen/dimen_4"
-            android:text="@string/ajrashgan"
-            android:layout_marginTop="@dimen/dimen_8"
-            android:textColor="?colorPrimary"
-            app:layout_constraintStart_toStartOf="@+id/city"
-            app:layout_constraintTop_toBottomOf="@+id/new_badge" />
-
-        <TextView
-            android:id="@+id/farzand_view"
-            style="@style/Text2_15"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dimen_18"
-            android:gravity="center_vertical"
-            android:drawablePadding="@dimen/dimen_4"
-            android:text="@string/farzand"
-            android:textColor="?colorOnSurface"
-            app:drawableStartCompat="@drawable/child_ic"
-            app:layout_constraintBottom_toBottomOf="@+id/oilaviy_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/oilaviy_view"
-            app:layout_constraintTop_toTopOf="@+id/oilaviy_view" />
-
-        <TextView
-            android:id="@+id/about"
-            style="@style/Text2_15"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/dimen_12"
-            android:ellipsize="end"
-            android:layout_marginBottom="@dimen/dimen_12"
-            android:layout_marginTop="@dimen/dimen_12"
-            android:gravity="center_vertical"
-            android:maxLines="3"
-            android:textColor="?colorOnSurfaceVariant"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/city"
-            tools:text="Hijobda bulsa yaxshi" />
-
-        <TextView
-            style="@style/Subtitle3_13"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/round_lay"
-            android:drawablePadding="@dimen/dimen_4"
-            android:elevation="1dp"
-            android:gravity="center"
-            android:backgroundTint="?colorSurfaceContainerLowest"
-            android:layout_margin="@dimen/dimen_12"
-            android:paddingHorizontal="@dimen/dimen_8"
-            android:paddingVertical="4dp"
-            android:text="@string/batafsil"
-            app:drawableStartCompat="@drawable/info_ic"
-            app:layout_constraintBottom_toBottomOf="@+id/photo_View"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/photo_hide_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/round_lay"
-            android:drawablePadding="@dimen/dimen_8"
-            android:elevation="2dp"
-            android:gravity="center"
-            android:layout_margin="@dimen/dimen_12"
-            style="@style/Subtitle3_13"
-            android:backgroundTint="?colorSurfaceContainerLowest"
+            android:elevation="@dimen/dimen_2"
             android:paddingHorizontal="@dimen/dimen_12"
             android:paddingVertical="@dimen/dimen_4"
-            android:text="@string/rasm_berkitilgan"
-            app:drawableStartCompat="@drawable/image_placeholder"
-            app:layout_constraintBottom_toBottomOf="@+id/photo_View"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:text="@string/yangi"
+            android:textColor="?colorOnPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <!--        <TextView-->
+        <!--            android:id="@+id/farzand_view"-->
+        <!--            style="@style/Text2_15"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginStart="@dimen/dimen_18"-->
+        <!--            android:gravity="center_vertical"-->
+        <!--            android:drawablePadding="@dimen/dimen_4"-->
+        <!--            android:text="@string/farzand"-->
+        <!--            android:textColor="?colorOnSurface"-->
+        <!--            app:layout_constraintBottom_toBottomOf="@+id/oilaviy_view"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toEndOf="@+id/oilaviy_view"-->
+        <!--            app:layout_constraintTop_toTopOf="@+id/oilaviy_view" />-->
+
+        <LinearLayout
+            android:id="@+id/linearLayout6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dimen_12"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/name_age_view"
+            tools:layout_editor_absoluteX="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_12"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/oilaviy_view"
+                    style="@style/Subtitle1_14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/dimen_8"
+                    android:text="@string/ajrashgan"
+                    android:textColor="?colorOnSurface"
+                    app:drawableTint="?colorOnSurface"
+                    app:layout_constraintStart_toStartOf="@+id/name_age_view"
+                    app:layout_constraintTop_toBottomOf="@+id/name_age_view" />
+
+                <TextView
+                    android:id="@+id/city_view"
+                    style="@style/Subtitle1_14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dimen_24"
+                    android:drawablePadding="@dimen/dimen_8"
+                    android:text="@string/yashash_manzili"
+                    android:textColor="?colorOnSurface"
+                    app:drawableStartCompat="@drawable/location_ic"
+                    app:drawableTint="?colorOnSurface" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/about_view"
+                style="@style/Text2_15"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_12"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:paddingEnd="@dimen/dimen_18"
+                android:text="Start to feel it right"
+                android:textColor="?colorOnSurface"
+                tools:ignore="RtlSymmetry" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/verified_badge"
+            style="@style/Subtitle3_13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen_12"
+            android:background="@drawable/round_lay"
+            android:backgroundTint="#F5FDFC"
+            android:drawablePadding="@dimen/dimen_4"
+            android:textColor="?colorPrimary"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/dimen_12"
+            android:paddingVertical="@dimen/dimen_2"
+            android:text="@string/rasm_haqiqiy"
+            app:drawableStartCompat="@drawable/check_ic"
+            app:drawableTint="?colorPrimary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/hide_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/dimen_18"
+            android:padding="@dimen/dimen_12"
+            android:visibility="gone"
+            android:src="@drawable/visib_off"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/photo_View"
+            app:tint="?colorOnSurfaceVariant" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

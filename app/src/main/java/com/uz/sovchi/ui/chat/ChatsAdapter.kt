@@ -1,13 +1,20 @@
 package com.uz.sovchi.ui.chat
 
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
-import com.bumptech.glide.Glide
-import com.uz.sovchi.DateUtils
+import androidx.recyclerview.widget.RecyclerView
 import com.uz.sovchi.R
+import com.uz.sovchi.appContext
 import com.uz.sovchi.data.chat.ChatModel
+import com.uz.sovchi.data.nomzod.KELIN
+import com.uz.sovchi.data.nomzod.MyNomzodController
+import com.uz.sovchi.data.nomzod.Nomzod
+import com.uz.sovchi.data.utils.DateUtils
 import com.uz.sovchi.databinding.ChatItemBinding
+import com.uz.sovchi.loadPhoto
 import com.uz.sovchi.ui.base.BaseAdapter
+import com.uz.sovchi.ui.search.SearchAdapter
 
 class ChatsAdapter : BaseAdapter<ChatModel, ChatItemBinding>(R.layout.chat_item, diff) {
 
@@ -25,15 +32,23 @@ class ChatsAdapter : BaseAdapter<ChatModel, ChatItemBinding>(R.layout.chat_item,
         }
     }
 
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        recyclerView.setRecycledViewPool(SearchAdapter.recyclerViewPool)
+    }
+
     override fun bind(holder: ViewHolder<*>, model: ChatModel, pos: Int) {
         super.bind(holder, model, pos)
         holder.apply {
             binding.apply {
                 (this as ChatItemBinding)
-                Glide.with(root).load(model.userImage).into(iconView)
-                titleView.text = model.userName
+                iconView.loadPhoto(model.userImage.ifEmpty {
+                    if (MyNomzodController.nomzod.type == KELIN) Nomzod.KUYOV_TEXT else Nomzod.KELIN_TEXT
+                })
+                titleView.text = model.userName.ifEmpty { appContext.getString(R.string.o_chirilgan) }
                 subtitleView.text = model.lastMessage
-
+                onlineIc.isVisible =
+                    (ChatsViewModel.lastSeenTimesObserves[model.userId] ?: -1) == 0L
                 countView.apply {
                     if (model.unreadCount > 0) {
                         visibility = View.VISIBLE
@@ -42,7 +57,7 @@ class ChatsAdapter : BaseAdapter<ChatModel, ChatItemBinding>(R.layout.chat_item,
                         visibility = View.GONE
                     }
                 }
-                dateView.text = DateUtils.getHourMinuteDayMonth(model.lastDate)
+                dateView.text = DateUtils.formatDate(model.lastDate)
                 root.setOnClickListener {
                     click.invoke(model)
                 }

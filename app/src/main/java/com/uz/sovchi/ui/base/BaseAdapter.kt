@@ -41,6 +41,7 @@ open class BaseAdapter<Model, Binding : ViewDataBinding>(
         recycler = recyclerView
     }
 
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding = DataBindingUtil.inflate<Binding>(
             LayoutInflater.from(parent.context), viewType, parent, false

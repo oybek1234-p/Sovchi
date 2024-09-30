@@ -15,8 +15,8 @@ class SmsRetrieverController(val context: Context) {
 
     private fun start(done: (success: Boolean) -> Unit) {
         val task = smsRetriever.startSmsRetriever()
-        task.addOnCompleteListener {
-            done.invoke(it.isSuccessful)
+        task.addOnSuccessListener {
+            done.invoke(true)
         }
     }
 

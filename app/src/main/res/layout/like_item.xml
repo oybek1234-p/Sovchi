@@ -7,25 +7,38 @@
 
     </data>
 
-    <com.google.android.material.card.MaterialCardView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/dimen_12"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:cardElevation="0dp"
+        app:cardCornerRadius="0dp"
+        android:layout_marginTop="@dimen/dimen_12">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
+            android:background="?colorSurfaceContainerLowest"
             android:layout_height="match_parent">
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/photo_view"
-                android:layout_width="120dp"
-                android:layout_height="140dp"
-                android:scaleType="centerCrop"
+                android:layout_width="140dp"
+                android:layout_height="160dp"
+                android:layout_marginStart="@dimen/dimen_12"
                 android:background="?colorSurfaceVariant"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:minHeight="140dp"
+                android:scaleType="centerCrop"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/RadiusImageView12" />
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/info_ic"
+                android:layout_margin="@dimen/dimen_12"
+                app:layout_constraintBottom_toBottomOf="@+id/photo_view"
+                app:layout_constraintEnd_toEndOf="@+id/photo_view"
+                app:tint="@color/white" />
             <TextView
                 android:id="@+id/title_view"
                 style="@style/Headline2_16"
@@ -40,44 +53,63 @@
 
             <TextView
                 android:id="@+id/subtitle_view"
-                style="@style/Text1_14"
+                style="@style/Subtitle1_14"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:paddingEnd="@dimen/dimen_12"
                 android:layout_marginTop="@dimen/dimen_4"
+                android:ellipsize="end"
+                android:maxLines="4"
+                android:text="Batafsil ko'rish uchun bosing"
                 android:textColor="?colorOnSurfaceVariant"
+                app:layout_constraintBottom_toTopOf="@+id/like_container"
                 app:layout_constraintEnd_toEndOf="@+id/title_view"
                 app:layout_constraintStart_toStartOf="@+id/title_view"
-                app:layout_constraintTop_toBottomOf="@+id/title_view"
-                tools:text="Toshkent" />
+                app:layout_constraintTop_toBottomOf="@+id/title_view" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/info_button"
-                style="@style/Widget.Material3.Button.ElevatedButton"
-                android:layout_width="0dp"
-                android:layout_marginTop="@dimen/dimen_8"
+            <LinearLayout
+                android:id="@+id/like_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clickable="false"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:text="@string/batafsil"
-                app:icon="@drawable/info_ic"
-                app:iconGravity="textStart"
-                app:layout_constraintEnd_toEndOf="@+id/subtitle_view"
-                app:layout_constraintStart_toStartOf="@+id/subtitle_view"
-                app:layout_constraintTop_toBottomOf="@+id/subtitle_view" />
+                android:layout_gravity="bottom"
+                android:layout_marginHorizontal="@dimen/dimen_12"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/dimen_12"
+                android:paddingEnd="@dimen/dimen_12"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/title_view"
+                app:layout_constraintTop_toBottomOf="@+id/photo_view">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/chat_button"
-                style="@style/FilledButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_12"
-                android:text="@string/chatda_gaplashish"
-                app:icon="@drawable/chat_ic"
-                app:iconGravity="textStart"
-                app:layout_constraintEnd_toEndOf="@+id/subtitle_view"
-                app:layout_constraintStart_toStartOf="@+id/subtitle_view"
-                app:layout_constraintTop_toBottomOf="@+id/subtitle_view" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/like_view"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:maxLines="1"
+                    android:text="@string/qabul_qilish"
+                    app:icon="@drawable/like_hand"
+                    app:iconGravity="textStart"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/dislike_view"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/dislike_view"
+                    style="@style/Widget.Material3.Button.ElevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_marginTop="@dimen/dimen_4"
+                    android:text="@string/rad_etish"
+                    android:textSize="12sp"
+                    app:icon="@drawable/hand_dilike"
+                    app:iconGravity="textStart"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/like_view"
+                    app:layout_constraintStart_toEndOf="@id/contact_button"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </LinearLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
+    </FrameLayout>
 </layout>

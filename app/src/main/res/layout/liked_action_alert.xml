@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -9,32 +9,29 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/round_lay"
-        android:backgroundTint="?colorSurfaceContainerLowest"
-        android:padding="@dimen/dimen_12">
+        android:padding="@dimen/dimen_12"
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/textView2"
             style="@style/Title2_20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="So'rov yubormoqchimisiz?"
+            android:text="Ilova qanday ishlaydi?"
             android:textColor="?colorOnSurface"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
 
         <TextView
             android:id="@+id/textView3"
             style="@style/Text2_15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dimen_8"
+            android:layout_margin="@dimen/dimen_18"
             android:gravity="center"
-            android:text="Nomzod so'rovingizni qabul qilsa,keyin (telegram, telefon yoki chat) beriladi"
-            android:textColor="?colorOnSurface"
+            android:text="Agar sizga nomzod yoqsa, yoqdi tugmasini bosing, nomzodga sorov yuboriladi, u qabul qilsa keyin suxbatlashasiz"
+            android:textColor="?colorPrimary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView2" />
@@ -43,36 +40,12 @@
             android:id="@+id/ok_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dimen_12"
-            android:text="@string/yuborish"
-            app:iconGravity="textStart"
+            android:text="@string/tushundim"
+            app:iconGravity="textEnd"
+            android:layout_marginTop="@dimen/dimen_18"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView18" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/skip_button"
-            style="@style/Widget.Material3.Button.TonalButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/yo_q"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ok_button" />
-
-        <TextView
-            android:id="@+id/textView18"
-            style="@style/Headline3_15"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dimen_12"
-            android:drawablePadding="@dimen/dimen_12"
-            android:text="Telefon, telegram, va rasmingiz bu odamga korinadi!"
-            android:textColor="?colorOnSurface"
-            app:drawableStartCompat="@drawable/info_ic"
-            app:drawableTint="@color/rejected"
-            app:layout_constraintEnd_toEndOf="@+id/textView3"
-            app:layout_constraintStart_toStartOf="@+id/textView3"
             app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

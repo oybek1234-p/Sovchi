@@ -12,26 +12,16 @@
         android:layout_height="match_parent"
         android:background="?colorSurface">
 
-        <com.uz.sovchi.ui.base.MyToolBar
-            android:id="@+id/myToolBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?colorSurfaceContainer"
-            android:elevation="@dimen/dimen_8"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:title="Chat" />
-
         <ProgressBar
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:elevation="@dimen/dimen_2"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/myToolBar" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.gms.ads.AdView
             android:id="@+id/adView"
@@ -39,12 +29,17 @@
             android:layout_height="wrap_content"
             app:adSize="BANNER"
             app:adUnitId="ca-app-pub-8679920253502267/4520168972"
-            app:layout_constraintTop_toBottomOf="@+id/myToolBar"></com.google.android.gms.ads.AdView>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"></com.google.android.gms.ads.AdView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:background="?colorOutlineVariant"
+            android:clipToPadding="false"
+            android:paddingBottom="100dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/adView"
             tools:listitem="@layout/chat_item" />
@@ -53,28 +48,36 @@
             android:id="@+id/empty_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:gravity="center"
+            android:orientation="vertical"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/myToolBar">
+            app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@drawable/chat_ic"
-                app:tint="?colorOnSurfaceVariant" />
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/empty_lottie"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="false"
+                app:lottie_rawRes="@raw/lottie_comment" />
 
             <TextView
                 android:id="@+id/empty_text"
                 style="@style/Text1_16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_8"
-                android:text="@string/chatlar_bo_sh"
-                android:textColor="?colorOnSurfaceVariant" />
+                android:layout_marginHorizontal="@dimen/dimen_24"
+                android:drawablePadding="@dimen/dimen_12"
+                android:gravity="center"
+                android:text="Suxbatlaringiz shu yerda ko'rinadi"
+                android:textColor="?colorOnSurface"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

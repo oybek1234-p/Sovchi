@@ -2,13 +2,15 @@ package com.uz.sovchi.data.nomzod
 
 import android.text.Html
 import android.text.Spanned
+import androidx.annotation.Keep
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.Exclude
 import com.google.gson.annotations.SerializedName
 import com.uz.sovchi.R
 import com.uz.sovchi.appContext
-import com.uz.sovchi.data.location.City
+import com.uz.sovchi.data.LocalUser
+import com.uz.sovchi.data.valid
 
 const val KELIN = 0
 const val KUYOV = 1
@@ -18,6 +20,7 @@ val nomzodTypes = listOf(
     Pair(KUYOV, appContext.getString(R.string.kuyovlikga))
 )
 
+@Keep
 enum class Talablar(val textId: Int) {
     IkkinchiRuzgorgaTaqiq(R.string.ruzgor_taqiq), OilaQurmagan(R.string.oila_qurmaganlar), OliyMalumotli(
         R.string.oliy_mal
@@ -27,12 +30,12 @@ enum class Talablar(val textId: Int) {
     ),
     FaqatViloyat(R.string.faqat_viloyat), AlohidaUyJoy(R.string.alohidauyjoy), Hijoblik(R.string.hijobda), QonuniyAjrashgan(
         R.string.qonuniy_ajrashgan
-    ),
-
+    )
 }
 
 fun getNomzodTypeText(id: Int) = nomzodTypes.find { it.first == id }?.second
 
+@Keep
 object NomzodState {
     const val VISIBLE = 1
     const val NOT_PAID = 2
@@ -41,6 +44,7 @@ object NomzodState {
     const val REJECTED = 5
 }
 
+@Keep
 enum class NomzodTarif(val nameRes: Int, val priceSum: Int, val infoRes: Int) {
     STANDART(R.string.standartname, 0, R.string.oddiy_joylash), TOP_3(
         R.string.top3name, 14500, R.string._3_kun_listni_tepasida_turadi
@@ -55,6 +59,7 @@ enum class NomzodTarif(val nameRes: Int, val priceSum: Int, val infoRes: Int) {
     }
 }
 
+@Keep
 @Entity
 data class Nomzod(
     @SerializedName("id", alternate = ["nid"]) @PrimaryKey var id: String = "",
@@ -67,6 +72,7 @@ data class Nomzod(
     var photos: List<String> = listOf(),
     var tugilganYili: Int = 0,
     var tugilganJoyi: String = "",
+    //Yashash
     var manzil: String = "",
     var buyi: Int = 0,
     var vazni: Int = 0,
@@ -81,23 +87,56 @@ data class Nomzod(
     //Qo'shimcha
     var talablar: String = "",
     var showPhotos: Boolean = true,
-    var imkoniyatiCheklangan: Boolean = false,
-    var imkoniyatiCheklanganHaqida: String = "",
     //Talablar
     val talablarList: List<String> = listOf(),
-    var telegramLink: String = "",
     var joylaganOdam: String = "",
-    var mobilRaqam: String = "",
-    var uploadDate: Long = System.currentTimeMillis(),
-    var uploadDateString: String = "",
-    var views: Int = 0,
+    var uploadDate: Any = System.currentTimeMillis(),
     var top: Boolean = false,
-    var visibleDate: Long = 0,
+    var visibleDate: Any?,
     @SerializedName("likedMe") @Exclude var likedMe: Boolean = false,
     var acceptedCities: List<String> = listOf(),
-    var verified: Boolean = false
+    var verified: Boolean = false,
+    var rejectType: Int = -1
 ) {
-    constructor() : this(id = "")
+    constructor() : this(id = "", visibleDate = System.currentTimeMillis())
+
+    companion object {
+        const val KELIN_TEXT = "kelin"
+        const val KUYOV_TEXT = "kuyov"
+    }
+
+    fun photos(): List<String> {
+        if (photos.isEmpty()) {
+            return if (type == KELIN) {
+                listOf(KELIN_TEXT)
+            } else {
+                listOf(KUYOV_TEXT)
+            }
+        }
+        return photos
+    }
+
+    fun isMatchToMe(): Boolean {
+        val nomzod = MyNomzodController.nomzod
+        var ageMatch = false
+        val genderMatch = nomzod.type != type
+        if (nomzod.tugilganYili in yoshChegarasiDan - 10..yoshChegarasiGacha + 10) {
+            ageMatch = true
+        }
+        val locationMatch: Boolean = if (acceptedCities.isEmpty()) {
+            true
+        } else {
+            acceptedCities.contains(nomzod.manzil)
+        }
+        if (LocalUser.user.hasNomzod.not() || LocalUser.user.valid.not() || MyNomzodController.nomzod.id.isEmpty()) {
+            return true
+        }
+        return ageMatch && locationMatch && genderMatch
+    }
+}
+
+fun Nomzod.showNeedVerifyInfo(): Boolean {
+    return verified.not() && LocalUser.user.hasNomzod && MyNomzodController.nomzod.state != NomzodState.CHECKING
 }
 
 fun Nomzod.isVisible() = state == NomzodState.VISIBLE
@@ -125,17 +164,17 @@ fun Nomzod.getStatusText(): String {
 }
 
 fun Nomzod.getYoshChegarasi(): Spanned {
-    var text = "${appContext.getString(R.string.yosh_chegarasi)}:"
+    var text = "${appContext.getString(R.string.yosh_chegarasi)}  "
     if (yoshChegarasiGacha > 0 || yoshChegarasiDan > 0) {
-        text += "<b>"
+        text += "<b>  "
         if (yoshChegarasiDan > 0) {
-            text += " $yoshChegarasiDan dan"
+            text += "   $yoshChegarasiDan dan"
         }
         if (yoshChegarasiGacha > 0) {
             if (yoshChegarasiDan > 0) {
-                text += " -"
+                text += "   -"
             }
-            text += " $yoshChegarasiGacha gacha"
+            text += "   $yoshChegarasiGacha gacha"
         }
     } else {
         text += ""
@@ -145,9 +184,7 @@ fun Nomzod.getYoshChegarasi(): Spanned {
 }
 
 enum class OilaviyHolati(val resourceId: Int) {
-    Aralash(R.string.aralash), AJRASHGAN(R.string.ajrashgan), Buydoq(R.string.bo_ydoq), Beva(R.string.beva), Oilali(
-        R.string.oilali
-    )
+    Aralash(R.string.aralash), AJRASHGAN(R.string.ajrashgan), Buydoq(R.string.bo_ydoq), Beva(R.string.beva)
 }
 
 enum class OqishMalumoti(val resId: Int) {

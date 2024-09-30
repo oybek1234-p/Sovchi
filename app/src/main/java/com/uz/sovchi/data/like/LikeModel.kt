@@ -1,7 +1,9 @@
 package com.uz.sovchi.data.like
 
+import androidx.annotation.Keep
 import com.uz.sovchi.data.nomzod.Nomzod
 
+@Keep
 data class LikeModelFull(
     var id: String,
     val userId: String,
@@ -13,9 +15,8 @@ data class LikeModelFull(
     val nomzod: Nomzod?,
     val likedUserNomzod: Nomzod?,
     val likeState: Int,
-    val matched: Boolean,
+    val matched: Boolean?,
     val date: String
 ) {
-    constructor() : this("", "", "", false, "", "", "", null, null, 0, false, "")
-
+    constructor() : this("", "", "", false, "", "", "", null, null, 0, null, "")
 }

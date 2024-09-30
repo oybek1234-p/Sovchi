@@ -8,21 +8,22 @@
     </data>
 
     <FrameLayout
-        android:background="?colorSurface"
+        android:background="?colorSurfaceContainerLowest"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.core.widget.NestedScrollView
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             >
-            
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/main_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:background="?colorSurface"
+            android:paddingBottom="80dp"
             android:gravity="start|center_vertical"
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/dimen_24">
@@ -44,6 +45,7 @@
                 android:layout_width="140dp"
                 android:scaleType="centerCrop"
                 android:layout_height="140dp"
+                android:elevation="2dp"
                 android:src="@drawable/user_photo_placeholder"
                 android:background="?colorSurfaceVariant"
                 android:layout_marginTop="@dimen/dimen_24"
@@ -67,7 +69,7 @@
             <TextView
                 android:layout_marginTop="8dp"
                 android:id="@+id/status_view"
-                style="@style/Headline3_15"
+                style="@style/Subtitle2_14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="?colorPrimaryVariant"
@@ -75,43 +77,322 @@
                 app:layout_constraintStart_toStartOf="@+id/name_view"
                 app:layout_constraintTop_toBottomOf="@+id/name_view" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/signOut"
-                android:visibility="gone"
-                style="@style/Widget.Material3.Button.ElevatedButton"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/akauntdan_chiqish"
-                app:icon="@drawable/arrow_back"
-                app:iconGravity="textStart"
-                android:layout_marginTop="@dimen/dimen_12"
-                app:layout_constraintTop_toBottomOf="@+id/edit_info_button" />
+                android:clipChildren="false"
+                android:clipToOutline="false"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@+id/status_view"
+                tools:layout_editor_absoluteX="24dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/edit_info_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/fill_profile"
-                app:icon="@drawable/edit"
-                app:iconGravity="textStart"
-                android:layout_marginTop="@dimen/dimen_18"
-                app:layout_constraintTop_toBottomOf="@+id/status_view" />
+                <TextView
+                    android:id="@+id/rejected_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/dimen_8"
+                    android:layout_marginTop="@dimen/dimen_18"
+                    android:backgroundTint="@color/rejected"
+                    android:background="@drawable/round_lay"
+                    android:textColor="@color/white"
+                    android:visibility="gone"
+                    style="@style/Text2_15"
+                    />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/premium_button"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/premiumga_o_tish"
-                app:icon="@drawable/like_hand"
-                app:iconGravity="textStart"
-                app:layout_constraintTop_toBottomOf="@+id/edit_info_button"
-                tools:layout_editor_absoluteX="24dp" />
+                <TextView
+                    android:id="@+id/verified_badge"
+                    style="@style/Caption1_13"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/round_lay"
+                    android:backgroundTint="#1A016A60"
+                    android:drawableStart="@drawable/check_ic"
+                    android:drawablePadding="8dp"
+                    android:drawableTint="@color/green"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/dimen_8"
+                    android:paddingVertical="@dimen/dimen_2"
+                    android:text="Ishonchli"
+                    android:textColor="@color/green"
+                    app:layout_constraintEnd_toStartOf="@+id/fillPercent"
+                    app:layout_constraintStart_toStartOf="@+id/name_view"
+                    app:layout_constraintTop_toBottomOf="@+id/name_view" />
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/edit_info_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_18"
+                    android:text="@string/fill_profile"
+                    app:icon="@drawable/edit"
+                    app:iconGravity="textStart" />
+
+                <LinearLayout
+                    android:id="@+id/verify_info_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="2dp"
+                    android:layout_marginTop="@dimen/dimen_12"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/round_lay"
+                    android:backgroundTint="?colorSurfaceContainerLowest"
+                    android:elevation="4dp"
+                    android:orientation="vertical"
+                    android:padding="@dimen/dimen_18">
+
+                    <TextView
+                        style="@style/Headline2_16"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/info_ic"
+                        android:drawablePadding="@dimen/dimen_8"
+                        android:text="Ma'lumotlarni tasdiqlang"
+                        android:textColor="?colorOnSurface"
+                        app:drawableTint="@color/black" />
+
+                    <TextView
+                        style="@style/Subtitle1_14"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_4"
+                        android:text="Ilovada ishonchli bo'ling"
+                        android:textColor="?colorOnSurfaceVariant" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/verify_button"
+                        style="@style/Widget.Material3.Button.ElevatedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_8"
+                        android:text="@string/tasdiqlash"
+                        app:icon="@drawable/arrow_right"
+                        app:iconGravity="textEnd" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/premium_active_c"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="2dp"
+                    android:layout_marginTop="@dimen/dimen_12"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/round_lay"
+                    android:backgroundTint="?colorSurfaceContainerLowest"
+                    android:elevation="4dp"
+                    android:orientation="vertical"
+                    android:padding="@dimen/dimen_12">
+
+                    <TextView
+                        style="@style/Headline3_15"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="@dimen/dimen_8"
+                        android:drawableTint="?colorPrimary"
+                        android:text="@string/premium"
+                        android:textColor="?colorPrimary"
+                        app:drawableEndCompat="@drawable/star_ic" />
+
+                    <TextView
+                        android:id="@+id/premiumExpireDate"
+                        style="@style/Subtitle1_14"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_8"
+                        android:textColor="?colorOnSurfaceVariant" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/premium_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/dimen_2"
+
+                    android:layout_marginTop="@dimen/dimen_12"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/round_lay"
+                    android:backgroundTint="?colorSurfaceContainerLowest"
+                    android:elevation="2dp"
+                    android:orientation="vertical"
+                    android:padding="@dimen/dimen_12">
+
+                    <TextView
+                        style="@style/Title3_17"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Premiumda ko'proq"
+                        android:textColor="?colorOnSurface" />
+
+
+                    <TextView
+                        style="@style/Headline3_15"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_12"
+                        android:drawableStart="@drawable/check_ic"
+                        android:drawablePadding="8dp"
+                        android:text="@string/chat_preium"
+                        android:textColor="?colorPrimary"
+                        app:drawableTint="@color/green" />
+
+
+                    <TextView
+                        style="@style/Subtitle3_13"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="8dp"
+                        android:text="So'rovingizni qabul qilgan nomzodlar bilan cheksiz suxbatlashing"
+                        android:layout_marginTop="@dimen/dimen_4"
+                        android:textColor="?colorOnSurfaceVariant"
+                        app:drawableTint="@color/green" />
+                    <TextView
+                        style="@style/Headline3_15"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_12"
+                        android:drawablePadding="8dp"
+                        android:text="@string/reklama_yo_q"
+                        android:textColor="?colorPrimary"
+                        app:drawableStartCompat="@drawable/check_ic"
+                        app:drawableTint="@color/green" />
+                    <TextView
+                        style="@style/Subtitle3_13"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="8dp"
+                        android:text="Halaqit berayotgan reklamalar ketadi"
+                        android:layout_marginTop="@dimen/dimen_4"
+                        android:textColor="?colorOnSurfaceVariant"
+                        app:drawableTint="@color/green" />
+
+                    <TextView
+                        style="@style/Headline3_15"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="8dp"
+                        android:text="1 oy davomida premium"
+                        android:layout_marginTop="@dimen/dimen_12"
+                        android:textColor="?colorPrimary"
+                        app:drawableStartCompat="@drawable/check_ic"
+                        app:drawableTint="@color/green" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/premium_button"
+                        style="@style/Widget.Material3.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_12"
+                        android:text="@string/premiumga_o_tish"
+                        app:icon="@drawable/star_ic"
+                        app:iconGravity="textStart"
+                        app:layout_constraintTop_toBottomOf="@+id/edit_info_button" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/disliked"
+                    style="@style/Text1_16"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_24"
+                    android:drawablePadding="@dimen/dimen_24"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="@dimen/dimen_14"
+                    android:text="Yoqmagan nomzodlar"
+                    android:textColor="?colorOnSurface"
+                    app:drawableStartCompat="@drawable/hand_dilike"
+                    app:drawableTint="?colorPrimary" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?colorOutlineVariant" />
+
+                <TextView
+                    android:id="@+id/boglanish_button"
+                    style="@style/Text1_16"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/dimen_24"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="@dimen/dimen_14"
+                    android:text="@string/biz_bilan_bog_lanish"
+                    android:textColor="?colorOnSurface"
+                    app:drawableStartCompat="@drawable/admin_ic"
+                    app:drawableTint="?colorPrimary" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?colorOutlineVariant" />
+
+                <TextView
+                    android:id="@+id/rate_button"
+                    style="@style/Text1_16"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/dimen_24"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="@dimen/dimen_14"
+                    android:text="@string/programmani_baholash"
+                    android:textColor="?colorOnSurface"
+                    app:drawableStartCompat="@drawable/like_hand"
+                    app:drawableTint="?colorPrimary" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?colorOutlineVariant" />
+
+                <TextView
+                    android:id="@+id/sign_out"
+                    style="@style/Text1_16"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/dimen_24"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="@dimen/dimen_14"
+                    android:text="@string/logout_"
+                    android:textColor="?colorOnSurface"
+                    app:drawableStartCompat="@drawable/arrow_back"
+                    app:drawableTint="?colorPrimary" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?colorOutlineVariant" />
+
+                <TextView
+                    android:id="@+id/delete_profile"
+                    style="@style/Text1_16"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/dimen_24"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="@dimen/dimen_14"
+                    android:text="@string/profilni_o_chirish"
+                    android:textColor="?colorOnSurface"
+                    app:drawableStartCompat="@drawable/delete_ic"
+                    app:drawableTint="?colorPrimary" />
+
+                <com.google.android.gms.ads.AdView
+                    android:id="@+id/adView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_8"
+                    app:adSize="BANNER"
+                    app:adUnitId="ca-app-pub-8679920253502267/9580923961"
+                    app:layout_constraintTop_toBottomOf="@+id/rate_button"
+                    tools:layout_editor_absoluteX="24dp"></com.google.android.gms.ads.AdView>
+
+            </LinearLayout>
             <TextView
                 android:id="@+id/fillPercent"
                 style="@style/Caption2_12"
                 android:layout_width="wrap_content"
+                android:visibility="gone"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dimen_8"
                 android:text="Toldriligan 50%"
@@ -121,46 +402,9 @@
                 app:layout_constraintStart_toEndOf="@+id/status_view"
                 app:layout_constraintTop_toTopOf="@+id/status_view" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/boglanish_button"
-                style="@style/Widget.Material3.Button.ElevatedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableTint="?colorPrimary"
-                android:layout_marginTop="@dimen/dimen_8"
-                android:text="@string/yordam_bizga_aloqaga_chiqing"
-                app:icon="@drawable/admin_ic"
-                app:iconGravity="textStart"
-                app:layout_constraintTop_toBottomOf="@+id/premium_button"
-                tools:layout_editor_absoluteX="24dp" />
-
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/rate_button"
-                style="@style/Widget.Material3.Button.ElevatedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_8"
-                android:text="@string/programmani_baholash"
-                app:icon="@drawable/rate_ic"
-                app:iconGravity="textStart"
-                app:layout_constraintEnd_toEndOf="@+id/boglanish_button"
-                app:layout_constraintStart_toStartOf="@+id/boglanish_button"
-                app:layout_constraintTop_toBottomOf="@+id/boglanish_button" />
-
-            <com.google.android.gms.ads.AdView
-                android:id="@+id/adView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:adSize="BANNER"
-                android:layout_marginTop="@dimen/dimen_8"
-                app:adUnitId="ca-app-pub-8679920253502267/9580923961"
-                app:layout_constraintTop_toBottomOf="@+id/rate_button"
-                tools:layout_editor_absoluteX="24dp"></com.google.android.gms.ads.AdView>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.core.widget.NestedScrollView>
+        </ScrollView>
 
         <include
             android:id="@+id/auth_view"

@@ -5,13 +5,11 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.ImageView
 import androidx.core.view.isVisible
-import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.gson.Gson
 import com.stfalcon.imageviewer.StfalconImageViewer
 import com.uz.sovchi.data.LocalUser
-import jp.wasabeef.glide.transformations.BlurTransformation
 
 inline fun String?.ifNotNullOrEmpty(method: (string: String) -> Unit) {
     if (isNullOrEmpty().not()) {
@@ -21,11 +19,7 @@ inline fun String?.ifNotNullOrEmpty(method: (string: String) -> Unit) {
 
 fun ImageView.openImageViewer(urls: List<String>, startPos: Int = 0, show: Boolean = true) {
     StfalconImageViewer.Builder(context, urls) { view, image ->
-        if (show) {
-            Glide.with(view).load(image).into(view)
-        } else {
-            Glide.with(view).load(image).transform(BlurTransformation(80)).into(view)
-        }
+        view.loadPhoto(image, show.not())
     }.allowSwipeToDismiss(true).withTransitionFrom(this).withStartPosition(startPos)
         .withHiddenStatusBar(false).show()
 }

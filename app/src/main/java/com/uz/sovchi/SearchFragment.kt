@@ -3,33 +3,40 @@ package com.uz.sovchi
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
-import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.core.content.edit
 import androidx.core.view.isVisible
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.slider.LabelFormatter
 import com.google.android.material.slider.RangeSlider
+import com.google.android.material.tabs.TabLayout
+import com.google.firebase.database.ValueEventListener
 import com.uz.sovchi.data.LocalUser
+import com.uz.sovchi.data.UserRepository
 import com.uz.sovchi.data.filter.FilterViewUtils
 import com.uz.sovchi.data.filter.MyFilter
 import com.uz.sovchi.data.nomzod.KELIN
 import com.uz.sovchi.data.nomzod.KUYOV
-import com.uz.sovchi.data.nomzod.Nomzod
+import com.uz.sovchi.data.valid
 import com.uz.sovchi.databinding.AgeWhatSheetBinding
+import com.uz.sovchi.databinding.DislikeActionAlertBinding
 import com.uz.sovchi.databinding.SearchFragmentBinding
 import com.uz.sovchi.databinding.WeWillNotifySheetBinding
 import com.uz.sovchi.databinding.WhoYouNeedBinding
 import com.uz.sovchi.ui.base.BaseFragment
 import com.uz.sovchi.ui.search.SearchAdapter
 import com.uz.sovchi.ui.search.SearchViewModel
-import com.yuyakaido.android.cardstackview.CardStackLayoutManager
+import com.uz.sovchi.ui.utils.EndlessScrollListener
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SearchFragment : BaseFragment<SearchFragmentBinding>() {
     override val layId: Int
@@ -40,14 +47,23 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
 
     private var new: Boolean = false
 
-    private var draging = false
-    private var needUpdate = false
+    private var showDialogDelayed = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         new = arguments?.getBoolean("new") ?: false
-        showBottomSheet = !new
+
         viewModel.loadNextNomzodlar()
+
+        if (LocalUser.user.hasNomzod.not() && LocalUser.user.valid) {
+            lifecycleScope.launch {
+                delay(200)
+                navigate(R.id.addNomzodFragment, Bundle().apply {
+                    putBoolean("new", new)
+                    showDialogDelayed = true
+                })
+            }
+        }
     }
 
     private fun initFilters() {
@@ -58,59 +74,66 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        try {
-            currentNomzod = viewModel.nomzodlar[savedPosition]
-        } catch (e: Exception) {
-            //
-        }
+    init {
+        showBottomSheet = true
     }
 
     private val whoNeedCache: SharedPreferences =
         appContext.getSharedPreferences("whoNeedShowed", Context.MODE_PRIVATE)
 
     private fun showWhoNeedSheet() {
-        val showed = whoNeedCache.getBoolean("showedFilter", false)
-        if (showed) return
-        val setShowed = {
-            whoNeedCache.edit {
-                putBoolean("showedFilter", true)
+        if (context == null) return
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(500)
+            if (isVisible.not()) return@launch
+            if (context == null) return@launch
+            val showed = whoNeedCache.getBoolean("showedFilter", false)
+            if (showed) {
+                mainActivity()?.requestNotificationPermission()
+                return@launch
             }
-        }
-        val bottomSheet = BottomSheetDialog(requireContext())
-        val binding = WhoYouNeedBinding.inflate(LayoutInflater.from(requireContext()), null, false)
-        bottomSheet.setContentView(binding.root)
-        bottomSheet.setCancelable(false)
-        bottomSheet.setOnDismissListener {
-            viewModel.refresh()
-        }
-        bottomSheet.show()
-        binding.apply {
-            kelin.setOnClickListener {
-                FilterViewUtils.updateFilter {
-                    nomzodType = KELIN
-                    viewModel.nomzodTuri = nomzodType
-                    viewModel.refresh()
+            val setShowed = {
+                whoNeedCache.edit {
+                    putBoolean("showedFilter", true)
                 }
-                bottomSheet.dismiss()
-                setShowed.invoke()
-                showAgeSheet(true)
             }
-            kuyov.setOnClickListener {
-                FilterViewUtils.updateFilter {
-                    nomzodType = KUYOV
-                    viewModel.nomzodTuri = nomzodType
-                    viewModel.refresh()
+            val bottomSheet = BottomSheetDialog(requireContext())
+            val binding =
+                WhoYouNeedBinding.inflate(LayoutInflater.from(requireContext()), null, false)
+            bottomSheet.setContentView(binding.root)
+            bottomSheet.setCancelable(false)
+            bottomSheet.setOnDismissListener {
+                viewModel.refresh()
+            }
+            bottomSheet.show()
+            binding.apply {
+                kelin.setOnClickListener {
+                    FilterViewUtils.updateFilter {
+                        nomzodType = KUYOV
+                        viewModel.nomzodTuri = nomzodType
+                        viewModel.refresh()
+                    }
+                    bottomSheet.dismiss()
+                    setShowed.invoke()
+                    showAgeSheet(true)
                 }
-                bottomSheet.dismiss()
-                setShowed.invoke()
-                showAgeSheet(false)
+                kuyov.setOnClickListener {
+                    FilterViewUtils.updateFilter {
+                        nomzodType = KELIN
+                        viewModel.nomzodTuri = nomzodType
+                        viewModel.refresh()
+                    }
+                    bottomSheet.dismiss()
+                    setShowed.invoke()
+                    showAgeSheet(false)
+                }
             }
         }
     }
 
     private fun showAlertSheet() {
+        val showed = whoNeedCache.getBoolean("showedFilter", false)
+        if (showed) return
         val bottomSheet = BottomSheetDialog(requireContext())
         val binding =
             WeWillNotifySheetBinding.inflate(LayoutInflater.from(requireContext()), null, false)
@@ -128,6 +151,7 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
     }
 
     private fun showAgeSheet(kelin: Boolean) {
+        if (context == null) return
         val bottomSheet = BottomSheetDialog(requireContext())
         val binding =
             AgeWhatSheetBinding.inflate(LayoutInflater.from(requireContext()), null, false)
@@ -138,11 +162,11 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
             showAlertSheet()
         }
         binding.apply {
-            title.text = "${if (kelin) "Kelin" else "Kuyov"} yosh chegarasini belgilang?"
+            title.text = "${if (kelin.not()) "Kelin" else "Kuyov"} yosh chegarasini belgilang"
             ageSlider.labelBehavior = LabelFormatter.LABEL_VISIBLE
             ageSlider.values = listOf(
-                MyFilter.filter.yoshChegarasiDan.toFloat(),
-                MyFilter.filter.yoshChegarasiGacha.toFloat()
+                MyFilter.filter.yoshChegarasiDan.toFloat().coerceIn(18f, 70f),
+                MyFilter.filter.yoshChegarasiGacha.toFloat().coerceIn(18f, 70f)
             )
             ageSlider.setLabelFormatter { it.toInt().toString() }
             ageSlider.addOnSliderTouchListener(object : RangeSlider.OnSliderTouchListener {
@@ -158,7 +182,9 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
                         yoshChegarasiDan = dan.toInt()
                         yoshChegarasiGacha = gacha.toInt()
                     }
-                    MyFilter.update()
+                    lifecycleScope.launch {
+                        MyFilter.update()
+                    }
                 }
             })
             save.setOnClickListener {
@@ -174,21 +200,10 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
     }
 
     private fun checkFilterChangedFromDefault() {
-        val changed = MyFilter.changedFromDefault()
-        binding?.filterDotView?.apply {
-            visibleOrGone(changed)
-            if (changed) {
-                bounceDot()
-            }
-        }
-    }
-
-    private fun View.bounceDot(scaleIn: Boolean = true) {
-        animate().cancel()
-        val scale = if (scaleIn) 0.2f else 1f
-        animate().scaleY(scale).scaleX(scale).setDuration(300).withEndAction {
-            bounceDot(!scaleIn)
-        }.start()
+//        val changed = MyFilter.changedFromDefault()
+//        binding?.filterDotView?.apply {
+//            visibleOrGone(changed)
+//        }
     }
 
     private fun updateUnReadLabel(unread: Int) {
@@ -196,18 +211,23 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
         badge.isVisible = unread > 0
     }
 
+    private var unreadValueEventListener: ValueEventListener? = null
+
     private fun observeUnMessages() {
         updateUnReadLabel(LocalUser.user.unreadMessages)
-        userViewModel.repository.observeUnReadMessages {
+        unreadValueEventListener = UserRepository.observeUnReadMessages {
             updateUnReadLabel(it)
         }
     }
 
-    private var stackLayManager: CardStackLayoutManager? = null
-
     override fun viewCreated(bind: SearchFragmentBinding) {
-        showBottomSheet = true
-        showWhoNeedSheet()
+        if (LocalUser.user.hasNomzod.not()) {
+            showWhoNeedSheet()
+        } else {
+            mainActivity()?.requestNotificationPermission()
+        }
+        postponeEnterTransition()
+
         bind.apply {
             notifyView.setOnClickListener {
                 navigate(R.id.messagesFragment)
@@ -215,29 +235,66 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
             initAdapter()
             //Observe
             observe()
-
+            MyFilter.filterChangeObserver.observe(viewLifecycleOwner) {
+                viewModel.checkNeedRefresh()
+            }
             initFilters()
             initSwipe()
             checkFilterChangedFromDefault()
-            observeUnMessages()
+            tabLayout.getTabAt(
+                when (viewModel.filterType) {
+                    SearchViewModel.FILTER_FOR_ME -> 0
+                    SearchViewModel.FILTER_NEW -> 1
+                    else -> 0
+                }
+            )?.select()
+            tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                override fun onTabReselected(p0: TabLayout.Tab?) {
+
+                }
+
+                override fun onTabSelected(p0: TabLayout.Tab?) {
+                    val pos = p0?.position ?: return
+                    viewModel.applyFilterType(
+                        when (pos) {
+                            0 -> SearchViewModel.FILTER_FOR_ME
+                            1 -> SearchViewModel.FILTER_NEW
+                            else -> -1
+                        }
+                    )
+                }
+
+                override fun onTabUnselected(p0: TabLayout.Tab?) {
+
+                }
+            })
         }
     }
 
     override fun onResume() {
         super.onResume()
         viewModel.checkNeedRefresh()
-        stackLayManager?.onRestoreInstanceState(layManagerState)
-        mainActivity()?.requestNotificationPermission()
+        observeUnMessages()
+        //binding?.adView?.loadAd()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unreadValueEventListener?.let {
+            UserRepository.removeUnreadMessageListener(it)
+        }
     }
 
     private fun observe() {
         binding?.apply {
-            //List
+            var first = true
             viewModel.nomzodlarLive.observe(viewLifecycleOwner) {
-                updateList()
+                updateList(first)
                 checkEmpty()
+                if (first) {
+                    first = false
+                }
             }
-            //Progress
             viewModel.nomzodlarLoading.observe(viewLifecycleOwner) {
                 val listEmpty = viewModel.nomzodlar.size == 0
                 progressBar.visibleOrGone(it && listEmpty)
@@ -252,55 +309,88 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
         binding?.swipeRefresh?.isEnabled = false
     }
 
-    private var currentNomzod: Nomzod? = null
-
     private fun initAdapter() {
         binding?.apply {
             recyclerView.apply {
                 if (listAdapter == null) {
-                    listAdapter = SearchAdapter(userViewModel, {
+                    listAdapter = SearchAdapter({
                         viewModel.loadNextNomzodlar()
                     }, {
+                        val nomzodId = it.id
+                        setFragmentResultListener("deleted") { key, bundle ->
+                            viewModel.nomzodlar.removeIf { it.id == nomzodId }
+                            viewModel.nomzodlarLive.postVal(viewModel.nomzodlar)
+                        }
                         navigate(R.id.nomzodDetailsFragment, Bundle().apply {
                             putString("nomzodId", it.id)
                         })
-                    }, { l, id -> }, false, { id, pos -> }, {})
+                    }, onLiked = { liked, id ->
+                        val alertDialog = BottomSheetDialog(requireContext(), R.style.SheetStyle)
+                        val view = DislikeActionAlertBinding.inflate(layoutInflater, null, false)
+                        alertDialog.setContentView(view.root)
+                        view.apply {
+                            skipButton.setOnClickListener {
+                                alertDialog.dismiss()
+                            }
+                            okButton.setOnClickListener {
+                                val nomzod = viewModel.nomzodlar.find { it.id == id }
+                                    ?: return@setOnClickListener
+                                SearchAdapter.likeOrDislike(nomzod, false)
+                                if (!liked) {
+                                    viewModel.nomzodlar.removeIf { it.id == id }
+                                    viewModel.nomzodlarLive.postVal(viewModel.nomzodlar)
+                                }
+                                alertDialog.dismiss()
+                            }
+                        }
+                        alertDialog.show()
+
+                    })
                 }
                 adapter = listAdapter
+                setHasFixedSize(true)
                 itemAnimator = null
-                layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                layoutManager =
+                    LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false).also {
+                        addOnScrollListener(object : EndlessScrollListener() {
+                            override fun onLoadMore(page: Int) : Boolean {
+                                return viewModel.loadNextNomzodlar()
+                            }
+                        })
+                    }
             }
         }
     }
 
-    private var savedPosition = 0
-    private fun updateList() {
-        if (draging) {
-            needUpdate = true
-            return
+    private fun updateList(first: Boolean) {
+        binding?.recyclerView?.apply {
+            if (first) {
+                viewTreeObserver.addOnGlobalLayoutListener(object :
+                    ViewTreeObserver.OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        try {
+                            viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        } catch (e: Exception) {
+                            handleException(e)
+                        }
+                        listAdapter?.submitList(viewModel.nomzodlar)
+                        startPostponedEnterTransition()
+                    }
+                })
+            } else {
+                listAdapter?.submitList(viewModel.nomzodlar)
+                startPostponedEnterTransition()
+            }
         }
-        listAdapter?.submitList(viewModel.nomzodlar)
     }
 
     private fun checkEmpty() {
-        try {
+        lifecycleScope.launch {
             val loading = viewModel.nomzodlarLoading.value
             if (viewModel.nomzodlar.isEmpty() && loading != true) {
                 binding?.emptyView?.isVisible = true
-                binding?.emptyButton?.setOnClickListener {
-                    mainActivity()?.moveToTanishing()
-                }
             }
-        } catch (e: Exception) {
-            //
         }
-    }
-
-    private var layManagerState: Parcelable? = null
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        layManagerState = stackLayManager?.onSaveInstanceState()
     }
 }
 

@@ -1,6 +1,7 @@
 package com.uz.sovchi.ui.auth
 
 import androidx.lifecycle.MutableLiveData
+import com.uz.sovchi.postVal
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -17,7 +18,7 @@ class TimeOutCounter {
     fun cancel() {
         countJob?.cancel()
         timeout = 0L
-        timeOutLive.postValue(0)
+        timeOutLive.postVal(0)
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -27,7 +28,7 @@ class TimeOutCounter {
             for (i in TIME_OUT_SEC downTo 1) {
                 if (isActive.not()) return@launch
                 timeout--
-                timeOutLive.postValue(timeout)
+                timeOutLive.postVal(timeout)
                 delay(1000)
             }
         }

@@ -1,6 +1,7 @@
 package com.uz.sovchi
 
 import android.util.Log
+import com.google.firebase.BuildConfig
 
 object ExceptionHandler {
 
@@ -18,9 +19,10 @@ object ExceptionHandler {
 }
 
 fun handleException(
-    exception: java.lang.Exception?,
-    name: String? = null,
-    needThrow: Boolean = false
+    exception: java.lang.Exception?, name: String? = null, needThrow: Boolean = false
 ) {
     ExceptionHandler.handle(exception, name, needThrow)
+    if (BuildConfig.DEBUG) {
+        throw exception!!
+    }
 }

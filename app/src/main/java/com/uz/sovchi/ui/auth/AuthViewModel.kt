@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.uz.sovchi.R
 import com.uz.sovchi.data.AuthController
+import com.uz.sovchi.postVal
 
 sealed class SendState {
     data class Input(val input: String? = null) : SendState()
@@ -38,7 +39,7 @@ class AuthViewModel : ViewModel() {
 
     fun sendCode(activity: Activity, phone: String) {
         if (sendState.value is SendState.Sending) return
-        sendState.postValue(SendState.Sending)
+        sendState.postVal(SendState.Sending)
 
         AuthController.sendSms(activity, phone) { success, verificationCode, exception ->
             if (exception != null) {
@@ -47,15 +48,15 @@ class AuthViewModel : ViewModel() {
                     is FirebaseTooManyRequestsException -> activity.getString(R.string.keyinroq_urinib_koring)
                     else -> exception.message
                 }
-                sendState.postValue(SendState.Error(java.lang.Exception(message)))
+                sendState.postVal(SendState.Error(java.lang.Exception(message)))
             } else {
-                sendState.postValue(SendState.Success(verificationCode))
+                sendState.postVal(SendState.Success(verificationCode))
             }
         }
     }
 
     fun signInGoogle(context: Context, credential: AuthCredential, verified: (done: Boolean) -> Unit) {
-        verifyState.postValue(VerifyState.Verifying)
+        verifyState.postVal(VerifyState.Verifying)
         FirebaseAuth.getInstance().signInWithCredential(credential).addOnSuccessListener {
             verified.invoke(true)
         }.addOnFailureListener {
@@ -64,11 +65,11 @@ class AuthViewModel : ViewModel() {
     }
 
     fun verifyCode(context: Context, code: String, verificationCode: String) {
-        verifyState.postValue(VerifyState.Verifying)
+        verifyState.postVal(VerifyState.Verifying)
         try {
             AuthController.verifyCode(code, verificationCode) { success, exception ->
                 if (success) {
-                    verifyState.postValue(VerifyState.Success)
+                    verifyState.postVal(VerifyState.Success)
                 } else {
                     if (exception != null) {
                         val message = when (exception) {
@@ -76,7 +77,7 @@ class AuthViewModel : ViewModel() {
                             is FirebaseTooManyRequestsException -> context.getString(R.string.keyinroq_urinib_koring)
                             else -> context.getString(R.string.xatolik_yuz_berdi)
                         }
-                        verifyState.postValue(VerifyState.Error(java.lang.Exception(message)))
+                        verifyState.postVal(VerifyState.Error(java.lang.Exception(message)))
                     }
                 }
             }
@@ -95,7 +96,7 @@ class AuthViewModel : ViewModel() {
     fun startAutoCodeReceiver(context: Context) {
         smsRetriever = SmsRetriever(context) { code, errorMessage ->
             if (errorMessage == null && code.isNotEmpty()) {
-                autoCodeReceiverObserver.postValue(code)
+                autoCodeReceiverObserver.postVal(code)
             }
         }.apply {
             start()

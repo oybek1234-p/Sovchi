@@ -2,12 +2,14 @@ package com.uz.sovchi.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.lifecycle.MutableLiveData
 import com.uz.sovchi.appContext
-import com.uz.sovchi.showToast
+import com.uz.sovchi.postVal
 
 object LocalUser {
 
     var user = User()
+    val userLive = MutableLiveData(user)
 
     private fun preference(context: Context): SharedPreferences =
         (context.getSharedPreferences("localUser", Context.MODE_PRIVATE))
@@ -20,14 +22,16 @@ object LocalUser {
                 name = getString("name", "") ?: ""
                 phoneNumber = getString("phone", "") ?: ""
                 lastSeenTime = getLong("lastSeenTime", 0L)
-                hasNomzod = getBoolean("hNomzod",false)
-                premium = getBoolean("premium",false)
-                premiumDate = getLong("premiumDate",0)
+                hasNomzod = getBoolean("hNomzod", false)
+                premium = getBoolean("premium", false)
+                premiumDate = getLong("premiumDate", 0)
+                blocked = getBoolean("blocked", false)
+                pushToken = getString("pushToken", "") ?: ""
             }
         }
     }
 
-    fun saveUser(context: Context = appContext) {
+    fun saveUser() {
         val pref = preference(appContext).edit()
         with(pref) {
             user.apply {
@@ -35,11 +39,14 @@ object LocalUser {
                 putString("name", name)
                 putString("phone", phoneNumber)
                 putLong("lastSeenTime", lastSeenTime)
-                putBoolean("hNomzod",hasNomzod)
-                putBoolean("premium",premium)
-                putLong("premiumDate",premiumDate)
+                putBoolean("hNomzod", hasNomzod)
+                putBoolean("premium", premium)
+                putLong("premiumDate", premiumDate)
+                putBoolean("blocked", blocked)
+                putString("pushToken", pushToken)
                 commit()
             }
         }
+        userLive.postVal(user)
     }
 }

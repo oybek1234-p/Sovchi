@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:background="?colorSurfaceContainerLowest"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.uz.sovchi.ui.base.MyToolBar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="Ma'lumotlarni tasdiqlang" />
+
+        <ScrollView
+            android:id="@+id/nestedScrollView2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/frameLayout"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/dimen_48">
+
+                <ImageView
+                    android:id="@+id/selfie_ic"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/face_verify_photo" />
+
+                <TextView
+                    android:id="@+id/selfie_title"
+                    style="@style/Title3_17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawablePadding="@dimen/dimen_8"
+                    android:text="Rasmingizni tasdqilgang" />
+
+
+                <TextView
+                    style="@style/Subtitle1_14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="8dp"
+                    android:text="Majburiy"
+                    android:layout_marginTop="@dimen/dimen_4"
+                    android:background="@drawable/round_lay"
+                    android:paddingHorizontal="@dimen/dimen_8"
+                    android:paddingVertical="@dimen/dimen_4"
+                    android:backgroundTint="@color/rejected"
+                    android:textColor="@color/white"
+                    app:drawableTint="@color/rejected" />
+
+                <TextView
+                    style="@style/Text2_15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/dimen_8"
+                    android:drawablePadding="8dp"
+                    android:text="Haqiqiy insonligizni tasdiqlang"
+                    android:textColor="?colorOnSurfaceVariant"
+                    app:drawableTint="@color/green" />
+                <TextView
+                    style="@style/Text2_15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/dimen_8"
+                    android:drawablePadding="8dp"
+                    android:text="Qo'rqmang rasmingizni hech kim ko'rmaydi"
+                    android:textColor="?colorOnSurfaceVariant"
+                    app:drawableTint="@color/green" />
+                <TextView
+                    style="@style/Text2_15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/dimen_8"
+                    android:drawablePadding="8dp"
+                    android:text="Ilovada ishonchli bo'ling"
+                    android:textColor="@color/green"
+                    app:drawableTint="@color/green" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/selfie_photo"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center"
+                    android:layout_marginVertical="@dimen/dimen_8"
+                    android:layout_marginTop="@dimen/dimen_12"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"
+                    app:shapeAppearanceOverlay="@style/RadiusImageView12" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/selfie_button"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_12"
+                    android:text="Selfie olish"
+                    app:icon="@drawable/person_ic"
+                    app:iconGravity="textStart" />
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/divorce_icon"-->
+<!--                    android:layout_width="80dp"-->
+<!--                    android:layout_height="80dp"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_marginTop="@dimen/dimen_28"-->
+<!--                    android:src="@drawable/divorce_photo" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/divorce_title"-->
+<!--                    style="@style/Title3_17"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="@dimen/dimen_8"-->
+<!--                    android:drawablePadding="@dimen/dimen_8"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="Ajrim qogozi yoki aliment qogozi rasmi agar bo'lsa"-->
+<!--                    app:drawableTint="@color/green" />-->
+
+<!--                <com.google.android.material.imageview.ShapeableImageView-->
+<!--                    android:id="@+id/divorce_photo"-->
+<!--                    android:layout_width="200dp"-->
+<!--                    android:layout_height="200dp"-->
+<!--                    android:layout_marginVertical="@dimen/dimen_8"-->
+<!--                    android:layout_marginTop="@dimen/dimen_12"-->
+<!--                    android:scaleType="centerCrop"-->
+<!--                    android:visibility="gone"-->
+<!--                    app:shapeAppearanceOverlay="@style/RadiusImageView12" />-->
+
+<!--                <com.google.android.material.button.MaterialButton-->
+<!--                    android:id="@+id/divorce_button"-->
+<!--                    style="@style/Widget.Material3.Button.TonalButton"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="@dimen/dimen_12"-->
+<!--                    android:text="@string/rasm_yuklash"-->
+<!--                    app:icon="@drawable/photo_ic"-->
+<!--                    app:iconGravity="textStart" />-->
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:background="?colorSurfaceContainer"
+                    android:layout_marginTop="@dimen/dimen_24"
+                    />
+                <ImageView
+                    android:id="@+id/pass_ic"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginTop="@dimen/dimen_28"
+                    android:src="@drawable/passport_photo" />
+
+
+                <TextView
+                    android:id="@+id/passport_title"
+                    style="@style/Title3_17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_8"
+                    android:drawablePadding="@dimen/dimen_8"
+                    android:text="Passport rasmi" />
+
+                <TextView
+                    style="@style/Subtitle1_14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="8dp"
+                    android:text="Majburiy emas"
+                    android:layout_marginTop="@dimen/dimen_4"
+                    android:background="@drawable/round_lay"
+                    android:paddingHorizontal="@dimen/dimen_8"
+                    android:paddingVertical="@dimen/dimen_4"
+                    android:backgroundTint="@color/yellow"
+                    android:textColor="@color/white"
+                    app:drawableTint="@color/green" />
+
+                <TextView
+                    style="@style/Subtitle1_14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="8dp"
+                    android:layout_marginTop="@dimen/dimen_4"
+                    android:text="Havfsiz saqlanadi, ma'lumotlaringizni tekshiramiz"
+                    android:textColor="?colorOnSurfaceVariant"
+                    app:drawableTint="@color/green" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/passport_photo"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_marginVertical="@dimen/dimen_8"
+                    android:layout_marginTop="@dimen/dimen_8"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"
+                    app:shapeAppearanceOverlay="@style/RadiusImageView12" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/passport_button"
+                    style="@style/Widget.Material3.Button.ElevatedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_12"
+                    android:text="Passportni yuklash"
+                    app:icon="@drawable/photo_ic"
+                    app:iconGravity="textStart" />
+            </LinearLayout>
+        </ScrollView>
+
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?colorSurfaceContainerLowest"
+            android:backgroundTint="?colorSurfaceContainer"
+            android:elevation="@dimen/dimen_4"
+            android:paddingVertical="@dimen/dimen_12"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:title="@string/profil">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/skip_button"
+                    style="@style/Widget.Material3.Button.ElevatedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginStart="@dimen/dimen_18"
+                    android:layout_marginEnd="@dimen/dimen_12"
+                    android:text="Keyinroq" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/save_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginStart="@dimen/dimen_18"
+                    android:layout_marginEnd="@dimen/dimen_12"
+                    android:text="Saqlash"
+                    app:icon="@drawable/check_ic" />
+
+            </LinearLayout>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/round_lay"
+            android:backgroundTint="?colorPrimary"
+            android:elevation="@dimen/dimen_2"
+            android:padding="@dimen/dimen_24"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ProgressBar
+                android:layout_width="24dp"
+                android:layout_height="@dimen/dimen_24"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/white"
+                android:progressTint="@color/white" />
+
+        </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

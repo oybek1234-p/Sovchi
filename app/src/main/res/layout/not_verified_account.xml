@@ -10,7 +10,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:padding="@dimen/dimen_12"
-        android:background="?colorSurfaceContainerLowest"
+        android:background="@drawable/round_lay"
+        android:backgroundTint="?colorSurfaceContainerLowest"
         android:layout_height="wrap_content">
 
         <TextView
@@ -18,7 +19,7 @@
             style="@style/Title2_20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Profilingiz tekshirlyapti kuting"
+            android:text="Ma'lumotlaringiz tekshirlyapti"
             android:textColor="?colorOnSurface"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -26,12 +27,12 @@
 
         <TextView
             android:id="@+id/textView3"
-            style="@style/Text1_14"
+            style="@style/Text2_15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dimen_18"
             android:gravity="center"
-            android:text="Tekshiruv 2 kun gacha olishi mumkin"
+            android:text="Sizga habar beramiz, 1 soat ichida"
             android:textColor="?colorOnSurface"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

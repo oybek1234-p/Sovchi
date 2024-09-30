@@ -7,7 +7,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import com.bumptech.glide.Glide
 import com.google.android.material.color.MaterialColors
-import com.uz.sovchi.DateUtils
 import com.uz.sovchi.R
 import com.uz.sovchi.data.messages.MESSAGE_TYPE_NOMZOD_FOR_YOU
 import com.uz.sovchi.data.messages.MESSAGE_TYPE_NOMZOD_LIKED
@@ -18,12 +17,14 @@ import com.uz.sovchi.data.messages.NomzodForYouModel
 import com.uz.sovchi.data.messages.NomzodLikedModel
 import com.uz.sovchi.data.messages.PlatformMessage
 import com.uz.sovchi.data.nomzod.NomzodRepository
+import com.uz.sovchi.data.utils.DateUtils
 import com.uz.sovchi.databinding.MessageItemBinding
+import com.uz.sovchi.loadPhoto
 import com.uz.sovchi.ui.base.BaseAdapter
-import jp.wasabeef.glide.transformations.BlurTransformation
+import kotlinx.coroutines.CoroutineScope
 
 class MessagesAdapter(
-    val fragment: MessagesFragment, val next: () -> Unit, val nomzodRepository: NomzodRepository
+    val scope: CoroutineScope, val fragment: MessagesFragment, val next: () -> Unit
 ) : BaseAdapter<Message, MessageItemBinding>(R.layout.message_item,
     object : DiffUtil.ItemCallback<Message>() {
         override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
@@ -68,10 +69,9 @@ class MessagesAdapter(
                                             .not() && forYouModel.photo != "null"
                                     ) {
                                         if (forYouModel.showPhoto == false) {
-                                            Glide.with(root).load(forYouModel.photo)
-                                                .transform(BlurTransformation(80)).into(this)
+                                            loadPhoto(forYouModel.photo, true)
                                         } else {
-                                            Glide.with(root).load(forYouModel.photo).into(this)
+                                            loadPhoto(forYouModel.photo)
                                         }
                                         scaleType = ImageView.ScaleType.CENTER_CROP
                                         imageTintList = null
@@ -134,7 +134,13 @@ class MessagesAdapter(
                             showNomzod.isVisible = likeModel.hasNomzod
                             root.setOnClickListener {
                                 NomzodRepository.loadNomzods(
-                                    -1, null, likeModel.likedUserId, "", "", limit = 1
+                                    scope = scope,
+                                    -1,
+                                    null,
+                                    likeModel.likedUserId,
+                                    "",
+                                    "",
+                                    limit = 1
                                 ) { list, count ->
                                     if (list.isEmpty().not()) {
                                         val item = list.first()

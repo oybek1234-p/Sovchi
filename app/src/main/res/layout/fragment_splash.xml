@@ -9,17 +9,14 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:background="?colorSurfaceBright"
         android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/photo"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:scaleType="center"
-            android:padding="@dimen/dimen_48"
-            android:src="@drawable/splash_photo"
-            android:layout_marginBottom="@dimen/dimen_24"
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="@dimen/dimen_12"
             app:layout_constraintBottom_toTopOf="@+id/title_view"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -28,17 +25,17 @@
             style="@style/Title4_24"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/splash_title"
-            android:layout_marginBottom="@dimen/dimen_12"
+            android:text="Juftingizni toping"
             android:layout_marginTop="@dimen/dimen_24"
             android:textColor="?colorOnSurface"
+            android:layout_marginBottom="@dimen/dimen_12"
             app:layout_constraintBottom_toTopOf="@+id/subtitle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/subtitle"
-            style="@style/Text1_16"
+            style="@style/Subtitle1_14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/dimen_24"

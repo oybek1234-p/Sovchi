@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.uz.sovchi.data.LocalUser
 import com.uz.sovchi.data.messages.Message
 import com.uz.sovchi.data.messages.MessagesRepository
+import com.uz.sovchi.postVal
 import com.uz.sovchi.showToast
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -24,7 +26,7 @@ class MessagesViewModel : ViewModel() {
         loadingJob = null
         loading.value = false
         messagesList.clear()
-        messages.postValue(messagesList)
+        messages.postVal(messagesList)
         loadMessages()
     }
 
@@ -34,23 +36,22 @@ class MessagesViewModel : ViewModel() {
         if (loading.value == true) return
         loadingJob?.cancel()
         loadingJob = null
-        loading.postValue(true)
+
+        loading.postVal(true)
         loading.value = true
-        empty.postValue(false)
-        loadingJob = viewModelScope.launch {
-            val job = this
+
+        empty.postVal(false)
+        loadingJob = viewModelScope.launch(Dispatchers.Default){
             val lastMessage = messagesList.lastOrNull()
             repository.loadMessages(lastMessage?.date, LocalUser.user.uid, 8) {
-                if (job != loadingJob) return@loadMessages
-                loading.postValue(false)
-                loading.value = false
+                loading.postVal(false)
                 messagesList.addAll(it)
                 if (messagesList.isEmpty() && it.isEmpty()) {
-                    empty.postValue(true)
+                    empty.postVal(true)
                 } else {
-                    empty.postValue(false)
+                    empty.postVal(false)
                 }
-                messages.postValue(messagesList)
+                messages.postVal(messagesList)
             }
         }
     }

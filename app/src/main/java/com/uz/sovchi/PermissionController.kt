@@ -84,11 +84,20 @@ class PermissionController {
 
     fun onActivityResult(requestCode: Int,any: Any?,ok: Boolean) {
         activityResultCallbacks.forEach {
-            if (it.key == requestCode || it.key == ANY_REQUEST_CODE) {
-                it.value.invoke(any,ok)
-                activityResultCallbacks.remove(requestCode)
+            try {
+                if (it.key == requestCode || it.key == ANY_REQUEST_CODE) {
+                    it.value.invoke(any,ok)
+                    activityResultCallbacks.remove(requestCode)
+                }
+            }catch (e: Exception) {
+                handleException(e)
             }
         }
+    }
+
+    fun removeCallback(requestId: Int) {
+        callbacks.remove(requestId)
+        activityResultCallbacks.remove(requestId)
     }
 
     fun onPermissionResult(requestId: Int, grantResults: IntArray) {

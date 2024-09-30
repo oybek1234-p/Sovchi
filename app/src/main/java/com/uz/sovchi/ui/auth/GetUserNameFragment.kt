@@ -5,6 +5,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import com.uz.sovchi.R
 import com.uz.sovchi.data.LocalUser
+import com.uz.sovchi.data.UserRepository
 import com.uz.sovchi.databinding.FragmentUserNameBinding
 import com.uz.sovchi.showKeyboard
 import com.uz.sovchi.ui.base.BaseFragment
@@ -54,11 +55,10 @@ class GetUserNameFragment : BaseFragment<FragmentUserNameBinding>() {
                     viewLifecycleOwner.lifecycleScope.launch {
                         progressBar.visibleOrGone(false)
                     }
-                    userViewModel.updateUser(LocalUser.user.apply {
+                    UserRepository.updateUser(LocalUser.user.apply {
                         name = nameInput()!!
                     })
                     mainActivity()?.recreateUi(true)
-
                 }
             }
         }

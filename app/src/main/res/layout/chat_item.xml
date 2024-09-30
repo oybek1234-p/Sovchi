@@ -9,7 +9,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:paddingVertical="@dimen/dimen_12"
+        android:paddingVertical="@dimen/dimen_8"
         android:elevation="1dp"
         android:foreground="?selectableItemBackground"
         android:paddingEnd="@dimen/dimen_12"
@@ -23,13 +23,29 @@
             app:strokeWidth="1dp"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:scaleType="center"
+            android:scaleType="centerCrop"
+            android:elevation="1dp"
             android:layout_marginStart="@dimen/dimen_12"
-            android:src="@drawable/person_filled"
             android:background="?colorSurfaceContainer"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/CircleImageView" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/online_ic"
+            android:layout_width="@dimen/dimen_18"
+            android:layout_height="@dimen/dimen_18"
+            android:background="@drawable/round_lay"
+            android:translationX="-18dp"
+            app:strokeColor="@color/white"
+            app:shapeAppearanceOverlay="@style/CircleImageView"
+            app:strokeWidth="3dp"
+            android:padding="@dimen/dimen_2"
+            android:visibility="gone"
+            android:elevation="2dp"
+            android:backgroundTint="@color/green"
+            app:layout_constraintBottom_toBottomOf="@+id/icon_view"
+            app:layout_constraintStart_toEndOf="@+id/icon_view" />
 
         <TextView
             android:id="@+id/title_view"
@@ -48,13 +64,13 @@
 
         <TextView
             android:id="@+id/subtitle_view"
-            style="@style/Text2_15"
+            style="@style/Subtitle1_14"
             android:layout_width="0dp"
             android:layout_marginEnd="@dimen/dimen_12"
             android:ellipsize="end"
-            android:maxLines="3"
+            android:maxLines="1"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dimen_4"
+            android:layout_marginTop="@dimen/dimen_8"
             android:text="@string/qo_shimcha"
             android:textColor="?colorOnSurfaceVariant"
             app:layout_constraintEnd_toStartOf="@+id/date_view"

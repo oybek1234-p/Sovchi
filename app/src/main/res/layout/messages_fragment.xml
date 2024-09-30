@@ -14,7 +14,7 @@
 
         <com.uz.sovchi.ui.base.MyToolBar
             android:id="@+id/toolbar"
-            android:background="?colorSurfaceContainerLow"
+            android:background="#F4F4F4"
             app:elevation="@dimen/dimen_18"
             android:elevation="@dimen/dimen_18"
             android:layout_width="match_parent"

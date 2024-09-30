@@ -6,9 +6,17 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.OnDisconnect
+import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.messaging.messaging
 import com.uz.sovchi.appContext
+import com.uz.sovchi.data.utils.FirebaseUtils.getValueSafe
+import com.uz.sovchi.handleException
+import com.uz.sovchi.notification.AppNotification
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -27,7 +35,7 @@ object UserRepository {
 
     private fun saveUserNetwork() {
         if (user.valid) {
-            usersReference.child(user.uid).setValue(user)
+            usersReference.child(user.uid).setValue(user).addOnSuccessListener { }
         }
     }
 
@@ -64,19 +72,30 @@ object UserRepository {
 
     fun getLastSeen(userId: String, done: (time: Long) -> Unit) {
         try {
-            usersReference.child(userId).child(User::lastSeenTime.name).get()
-                .addOnCompleteListener {
-                    val time = it.result.getValue(Long::class.java) ?: System.currentTimeMillis()
-                    done.invoke(time)
-                }
+            usersReference.child(userId).child(User::lastSeenTime.name).get().addOnSuccessListener {
+                val time = it.getValue(Long::class.java) ?: System.currentTimeMillis()
+                done.invoke(time)
+            }.addOnFailureListener {
+                done.invoke(0L)
+            }
         } catch (e: Exception) {
-            //
+            handleException(e)
         }
     }
 
-    fun loadAllUsers(done: (list: List<User>) -> Unit) {
-        usersReference.get().addOnCompleteListener { it ->
-            done.invoke(it.result.children.mapNotNull { it.getValue(User::class.java) })
+    fun loadAllUsers(scope: CoroutineScope, done: (list: List<User>) -> Unit) {
+        usersReference.get().addOnSuccessListener { it ->
+            scope.launch(Dispatchers.Default) {
+                done.invoke(it.children.mapNotNull { it.getValue(User::class.java) })
+            }
+        }
+    }
+
+    fun increaseLiked(id: String, increase: Boolean) {
+        if (id.isNotEmpty()) {
+            //increase count firebase realtime database
+            usersReference.child(id).child(User::liked.name)
+                .setValue(ServerValue.increment(if (increase) 1L else -1))
         }
     }
 
@@ -94,35 +113,23 @@ object UserRepository {
         }
     }
 
-    fun observeUnChatMessages(onChange: (count: Int) -> Unit) {
-        if (user.valid.not()) return
-        usersReference.child(user.uid).child(User::unreadChats.name)
-            .addValueEventListener(object : ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {
-
-                }
-
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val value = snapshot.getValue(Int::class.java)
-                    if (value is Int) {
-                        LocalUser.user.unreadChats = value
-                        LocalUser.saveUser()
-                        onChange.invoke(value)
-                    }
-                }
-            })
-    }
-
-    fun observeUnReadMessages(onChange: (count: Int) -> Unit) {
+    fun removeUnreadMessageListener(eventListener: ValueEventListener) {
         if (user.valid.not()) return
         usersReference.child(user.uid).child(User::unreadMessages.name)
+            .removeEventListener(eventListener)
+    }
+
+    private var readMessageListener: ValueEventListener? = null
+    fun observeUnReadMessages(onChange: (count: Int) -> Unit): ValueEventListener? {
+        if (user.valid.not()) return null
+        readMessageListener = usersReference.child(user.uid).child(User::unreadMessages.name)
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
 
                 }
 
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val value = snapshot.getValue(Int::class.java)
+                    val value = snapshot.getValueSafe(Int::class.java, 0)
                     if (value is Int) {
                         LocalUser.user.unreadMessages = value
                         LocalUser.saveUser()
@@ -130,20 +137,25 @@ object UserRepository {
                     }
                 }
             })
+        return readMessageListener
     }
-
+    
     fun signOut() {
         Firebase.messaging.unsubscribeFromTopic(LocalUser.user.uid + "topic")
         FirebaseAuth.getInstance().signOut()
         LocalUser.user = User()
-        LocalUser.saveUser(appContext)
+        LocalUser.saveUser()
+    }
+
+    fun unblockUser(userId: String) {
+        FirebaseDatabase.getInstance().getReference("users").child(userId)
+            .child("blocked").setValue(false)
     }
 
     private fun createNewUserAndSet(user: User) {
         if (user.valid) {
             LocalUser.user = user
-            LocalUser.saveUser(appContext)
-
+            LocalUser.saveUser()
             saveUserNetwork()
         }
     }
@@ -151,10 +163,13 @@ object UserRepository {
     fun updateUser(user: User) {
         if (user.valid && user.uid == LocalUser.user.uid) {
             LocalUser.user = user
-            LocalUser.saveUser(appContext)
-
+            LocalUser.saveUser()
             saveUserNetwork()
         }
+    }
+
+    fun setHasNomzod(id: String, has: Boolean) {
+        usersReference.child(id).child(User::hasNomzod.name).setValue(has)
     }
 
     fun setHasNomzod(has: Boolean) {
@@ -163,12 +178,21 @@ object UserRepository {
         updateUser(user)
     }
 
-    fun updateLastSeenTime() {
+    private const val ONLINE = 0L
+
+    private var onlineListener: OnDisconnect? = null
+
+    fun setOnline() {
         if (user.valid) {
-            val lastSeen = System.currentTimeMillis()
-            LocalUser.user.lastSeenTime = lastSeen
+            onlineListener?.cancel()
+            LocalUser.user.lastSeenTime = ONLINE
+            usersReference.child(user.uid).child(User::lastSeenTime.name).setValue(ONLINE)
             LocalUser.saveUser()
-            usersReference.child(user.uid).child(User::lastSeenTime.name).setValue(lastSeen)
+            val lastSeen = ServerValue.TIMESTAMP
+            usersReference.child(user.uid).child(User::lastSeenTime.name).onDisconnect().apply {
+                onlineListener = this
+                setValue(lastSeen)
+            }
         }
     }
 
@@ -182,10 +206,12 @@ object UserRepository {
         val networkUser = loadUser(id)
         isNewUser = networkUser.valid.not()
         return if (isNewUser) {
+            val pushToken = AppNotification.loadToken()
             val newUser = User(
                 uid = id,
                 "",
                 firebaseUser.phoneNumber ?: "",
+                firebaseUser.email ?: "",
                 System.currentTimeMillis(),
                 false,
                 0,
@@ -193,53 +219,64 @@ object UserRepository {
                 0,
                 0,
                 false,
-                0
+                0,
+                0,
+                pushToken ?: ""
             )
             createNewUserAndSet(newUser)
             newUser
         } else {
             LocalUser.user = networkUser!!
-            LocalUser.saveUser(appContext)
+            LocalUser.saveUser()
             networkUser
         }
     }
 
-    private suspend fun loadUser(id: String) = suspendCoroutine<User?> { sus ->
+    fun updatePushToken(newPushToken: String) {
+        if (newPushToken.isEmpty()) return
+        if (LocalUser.user.valid.not()) return
+        usersReference.child(LocalUser.user.uid).child(User::pushToken.name).setValue(newPushToken)
+    }
+
+    suspend fun loadUser(id: String) = suspendCoroutine { sus ->
         val reference = usersReference.child(id)
-        reference.get().addOnCompleteListener {
-            val loadedUser = it.result.getValue(User::class.java)
+        reference.get().addOnSuccessListener {
+            val loadedUser = it.getValueSafe(User::class.java)
             sus.resume(loadedUser)
+        }.addOnFailureListener {
+            sus.resume(null)
         }
     }
 
     fun increaseRequest() {
         if (user.valid) {
-            if (user.requests < 5) {
+            if (user.requests < REQUEST_MAX) {
                 user.requests += 1
                 updateUser(user)
             }
         }
     }
 
-    suspend fun loadCurrentUser() = suspendCoroutine<Result<User>> { sus ->
+    fun observeCurrentUser(result: (user: User?) -> Unit) {
         if (userLoading || user.valid.not()) {
-            sus.resume(Result.failure(Throwable()))
-            return@suspendCoroutine
+            return
         }
         userLoading = true
         val reference = usersReference.child(user.uid)
-        reference.get().addOnCompleteListener {
-            userLoading = false
-            val loadedUser = it.result.getValue(User::class.java)
-            if (loadedUser.valid) {
-                LocalUser.user = loadedUser!!
-                LocalUser.saveUser(appContext)
+        reference.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                result.invoke(null)
             }
-            sus.resume(
-                if (loadedUser.valid) Result.success(loadedUser!!) else Result.failure(
-                    Throwable(it.exception)
-                )
-            )
-        }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                userLoading = false
+                val loadedUser = snapshot.getValue(User::class.java)
+                if (loadedUser.valid) {
+                    LocalUser.user = loadedUser!!
+                    LocalUser.saveUser()
+                }
+                result.invoke(loadedUser)
+            }
+        })
     }
 }

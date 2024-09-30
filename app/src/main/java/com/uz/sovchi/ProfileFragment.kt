@@ -1,17 +1,26 @@
 package com.uz.sovchi
 
 
+import android.app.AlertDialog
+import android.graphics.Color
 import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import coil.load
-import com.bumptech.glide.Glide
-import com.google.android.gms.ads.AdRequest
+import com.google.android.material.color.MaterialColors
 import com.uz.sovchi.data.LocalUser
+import com.uz.sovchi.data.UserRepository
+import com.uz.sovchi.data.isAdmin
+import com.uz.sovchi.data.like.LikeState
+import com.uz.sovchi.data.nomzod.KELIN
+import com.uz.sovchi.data.nomzod.KUYOV
 import com.uz.sovchi.data.nomzod.MyNomzodController
 import com.uz.sovchi.data.nomzod.Nomzod
+import com.uz.sovchi.data.nomzod.NomzodRepository
 import com.uz.sovchi.data.nomzod.NomzodState
 import com.uz.sovchi.data.nomzod.getStatusText
+import com.uz.sovchi.data.nomzod.showNeedVerifyInfo
+import com.uz.sovchi.data.premium.getPremiumExpireDate
 import com.uz.sovchi.data.valid
 import com.uz.sovchi.databinding.ProfileFragmentBinding
 import com.uz.sovchi.ui.base.BaseFragment
@@ -38,74 +47,63 @@ class ProfileFragment : BaseFragment<ProfileFragmentBinding>() {
         loadAd()
     }
 
-
-    private fun getProfileFillPercent(nomzod: Nomzod): Int {
-        var percent = 0
-        if (nomzod.photos.isNotEmpty()) {
-            percent += 25
-        }
-        if (nomzod.name.isNotEmpty()) {
-            percent += 25
-        }
-        if (nomzod.tugilganYili != 0) {
-            percent += 5
-        }
-        if (nomzod.talablar.isNotEmpty()) {
-            percent += 5
-        }
-        if (nomzod.mobilRaqam.isNotEmpty()) {
-            percent += 10
-        }
-        if (nomzod.telegramLink.isNotEmpty()) {
-            percent += 5
-        }
-        if (nomzod.ishJoyi.isNotEmpty()) {
-            percent += 15
-        }
-        if (nomzod.buyi > 0 || nomzod.vazni > 0) {
-            percent += 10
-        }
-
-        return percent
-    }
-
-    private fun initFillPercent(nomzod: Nomzod) {
-        binding?.fillPercent?.apply {
-            isVisible = true
-            val percent = getProfileFillPercent(nomzod)
-            text = "${getString(R.string.toldirilgan)} $percent%"
-        }
-    }
-
     private fun initUi(nomzod: Nomzod) {
         val isEmpty = nomzod.id.isEmpty()
         val photo = nomzod.photos.firstOrNull()
+
         binding?.apply {
             if (isEmpty.not()) {
-                Glide.with(photoView).load(photo).into(photoView)
+                photoView.loadPhoto((photo ?: "").ifEmpty {
+                    if (MyNomzodController.nomzod.type == KUYOV) Nomzod.KUYOV_TEXT else Nomzod.KELIN_TEXT
+                })
                 nameView.text = "${nomzod.name} ${nomzod.tugilganYili}"
 
                 var statusText = nomzod.getStatusText()
                 if (nomzod.state == NomzodState.VISIBLE) {
-                    if (userViewModel.user.premium) {
+                    if (UserRepository.user.premium) {
                         statusText += " Premium"
                     }
                 }
+                statusView.setTextColor(
+                    if (nomzod.state == NomzodState.VISIBLE || nomzod.state == NomzodState.CHECKING) MaterialColors.getColor(
+                        statusView, com.google.android.material.R.attr.colorPrimary
+                    ) else Color.RED
+                )
                 statusView.isVisible = statusText.trim().isNotEmpty()
                 statusView.text = statusText
-                initFillPercent(nomzod)
             } else {
                 photoView.load(R.drawable.user_photo_placeholder)
                 statusView.isVisible = false
                 fillPercent.isVisible = false
                 nameView.text = LocalUser.user.name
             }
-            editInfoButton.text =
-                if (isEmpty) getString(R.string.fill_profile) else getString(R.string.edit)
-            editInfoButton.setOnClickListener {
+            val hasPremium = LocalUser.user.premium
+            premiumButton.isVisible = hasPremium.not() && LocalUser.user.hasNomzod
+            premiumView.isVisible = hasPremium.not() && LocalUser.user.hasNomzod
+            premiumActiveC.isVisible = hasPremium
+            if (hasPremium) {
+                premiumExpireDate.text = "${UserRepository.user.getPremiumExpireDate()} gacha"
+            }
+            val openEdit = {
                 findNavController().navigate(R.id.addNomzodFragment, Bundle().apply {
                     putString("nId", nomzod.id)
                 })
+            }
+            editInfoButton.text =
+                if (isEmpty) getString(R.string.fill_profile) else getString(R.string.edit)
+            editInfoButton.setOnClickListener {
+                openEdit.invoke()
+            }
+            photoView.setOnClickListener {
+                openEdit.invoke()
+            }
+            nameView.setOnClickListener {
+                openEdit.invoke()
+            }
+            verifiedBadge.isVisible = MyNomzodController.nomzod.verified
+            verifyInfoParent.isVisible = MyNomzodController.nomzod.showNeedVerifyInfo()
+            verifyButton.setOnClickListener {
+                navigate(R.id.addVerificationInfoFragment)
             }
         }
     }
@@ -116,21 +114,50 @@ class ProfileFragment : BaseFragment<ProfileFragmentBinding>() {
             rateButton.setOnClickListener {
                 mainActivity()?.requestReview()
             }
-            authView.root.visibleOrGone(userViewModel.user.valid.not())
+            authView.root.visibleOrGone(UserRepository.user.valid.not())
+            deleteProfile.setOnClickListener {
+                val dialog = AlertDialog.Builder(requireContext())
+                dialog.setTitle(getString(R.string.profilni_o_chirish))
+                dialog.setMessage("Profil malumotlaringiz o'chib ketadi, keyinchalik qayta yana ochsangiz bo'ladi")
+                dialog.setPositiveButton(getString(R.string.o_chirish)) { _, _ ->
+                    NomzodRepository.deleteNomzod(LocalUser.user.uid)
+                    MyNomzodController.clear()
+                    mainActivity()?.recreateUi()
+                }
+                dialog.setNegativeButton(getString(R.string.cancek)) { _, _ ->
+                }
+                dialog.create().show()
+            }
+            signOut.setOnClickListener {
+                val dialog = AlertDialog.Builder(requireContext())
+                dialog.setTitle(getString(R.string.logout))
+                dialog.setPositiveButton(getString(R.string.close)) { _, _ ->
+                    MyNomzodController.clear()
+                    UserRepository.signOut()
+                    mainActivity()?.recreate()
+                }
+                dialog.setNegativeButton(getString(R.string.cancek)) { _, _ ->
+                }
+                dialog.create().show()
+            }
+            settings.isVisible = LocalUser.user.isAdmin()
             authView.apply {
                 authButton.setOnClickListener {
                     findNavController().navigate(R.id.authFragment)
                 }
-                authView.boglanishButton.setOnClickListener {
+                authView.boglanishButtonV.setOnClickListener {
                     mainActivity()?.showSupportSheet()
                 }
+            }
+            disliked.setOnClickListener {
+                navigate(R.id.likedFragment, Bundle().apply {
+                    putInt("type", LikeState.DISLIKED)
+                })
             }
             settings.setOnClickListener {
                 navigate(R.id.settingsFragment)
             }
-            mainLayout.visibleOrGone(userViewModel.user.valid)
-            val hasPremium = LocalUser.user.premium
-            premiumButton.isVisible = hasPremium.not()
+            mainLayout.visibleOrGone(UserRepository.user.valid)
             premiumButton.setOnClickListener {
                 mainActivity()?.showPremiumSheet()
             }

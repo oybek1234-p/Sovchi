@@ -2,6 +2,8 @@ package com.uz.sovchi.data.messages
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.uz.sovchi.data.utils.FirebaseUtils.toObjectSafe
+import com.uz.sovchi.handleException
 
 class MessagesRepository {
 
@@ -15,83 +17,85 @@ class MessagesRepository {
         if (startId != null) {
             query = query.startAfter(startId)
         }
-        query.limit(limit.toLong()).whereEqualTo("userId", userId).get().addOnCompleteListener {
-            try {
-                val messages = it.result.mapNotNull {
-                    try {
-                        it.toObject(Message::class.java)
-                    } catch (e: Exception) {
-                        null
-                    }
+        query.limit(limit.toLong()).whereEqualTo("userId", userId).get()
+            .addOnSuccessListener { it ->
+                val messages = it.mapNotNull {
+                    it.toObjectSafe(Message::class.java)
                 }.parseData()
                 result.invoke(messages)
-            } catch (e: Exception) {
-                //
+            }.addOnFailureListener {
+                result.invoke(emptyList())
             }
-        }
     }
 
     private fun List<Message>.parseData(): List<Message> {
-        return map {
-            it.apply {
-                if (data is HashMap<*, *>) {
-                    val hashMap = data as HashMap<*, *>
-                    when (type) {
-                        MESSAGE_TYPE_PLATFORM -> {
-                            data = PlatformMessage(
-                                hashMap[PlatformMessage::title.name].toString(),
-                                hashMap[PlatformMessage::message.name].toString()
-                            )
-                        }
+        return mapNotNull {
+            try {
+                it.apply {
+                    if (data is HashMap<*, *>) {
+                        val hashMap = data as HashMap<*, *>
+                        when (type) {
+                            MESSAGE_TYPE_PLATFORM -> {
+                                data = PlatformMessage(
+                                    hashMap[PlatformMessage::title.name].toString(),
+                                    hashMap[PlatformMessage::message.name].toString()
+                                )
+                            }
 
-                        MESSAGE_TYPE_NOMZOD_FOR_YOU -> {
-                            data = NomzodForYouModel(
-                                hashMap["nomzodId"].toString(),
-                                hashMap[NomzodForYouModel::nomzodName.name].toString(),
-                                hashMap[NomzodForYouModel::nomzodAge.name].toString().toIntOrNull(),
-                                hashMap[NomzodForYouModel::showPhoto.name].toString().toBoolean(),
-                                hashMap[NomzodForYouModel::photo.name].toString()
-                            )
-                        }
+                            MESSAGE_TYPE_NOMZOD_FOR_YOU -> {
+                                data = NomzodForYouModel(
+                                    hashMap["nomzodId"].toString(),
+                                    hashMap[NomzodForYouModel::nomzodName.name].toString(),
+                                    hashMap[NomzodForYouModel::nomzodAge.name].toString()
+                                        .toIntOrNull(),
+                                    hashMap[NomzodForYouModel::showPhoto.name].toString()
+                                        .toBoolean(),
+                                    hashMap[NomzodForYouModel::photo.name].toString()
+                                )
+                            }
 
 
-                        MESSAGE_TYPE_NOMZOD_LIKED -> {
-                            data = NomzodLikedModel(
-                                hashMap["nomzodId"].toString(),
-                                hashMap[NomzodLikedModel::likedUserName.name].toString(),
-                                hashMap[NomzodLikedModel::likedUserId.name].toString(),
-                                try {
-                                    hashMap[NomzodLikedModel::hasNomzod.name] as Boolean
-                                } catch (e: Exception) {
-                                    false
-                                },
-                                try {
-                                    hashMap[NomzodLikedModel::liked.name] as Boolean
-                                } catch (e: Exception) {
-                                    false
-                                },
-                                try {
-                                    hashMap[NomzodLikedModel::photo.name].toString()
-                                } catch (e: Exception) {
-                                    ""
-                                }
-                            )
-                        }
+                            MESSAGE_TYPE_NOMZOD_LIKED -> {
+                                data = NomzodLikedModel(
+                                    hashMap["nomzodId"].toString(),
+                                    hashMap[NomzodLikedModel::likedUserName.name].toString(),
+                                    hashMap[NomzodLikedModel::likedUserId.name].toString(),
+                                    try {
+                                        hashMap[NomzodLikedModel::hasNomzod.name] as Boolean
+                                    } catch (e: Exception) {
+                                        false
+                                    },
+                                    try {
+                                        hashMap[NomzodLikedModel::liked.name] as Boolean
+                                    } catch (e: Exception) {
+                                        false
+                                    },
+                                    try {
+                                        hashMap[NomzodLikedModel::photo.name].toString()
+                                    } catch (e: Exception) {
+                                        ""
+                                    }
+                                )
+                            }
 
-                        MESSAGE_TYPE_NOMZOD_REQUEST -> {
-                            data = NomzodRequestModel(
-                                hashMap["nomzodId"].toString(),
-                                hashMap[NomzodRequestModel::likedUserName.name].toString(),
-                                hashMap[NomzodRequestModel::likedUserId.name].toString(),
-                                try {
-                                    hashMap[NomzodRequestModel::hasNomzod.name] as Boolean
-                                } catch (e: Exception) {
-                                    false
-                                }
-                            )
+                            MESSAGE_TYPE_NOMZOD_REQUEST -> {
+                                data = NomzodRequestModel(
+                                    hashMap["nomzodId"].toString(),
+                                    hashMap[NomzodRequestModel::likedUserName.name].toString(),
+                                    hashMap[NomzodRequestModel::likedUserId.name].toString(),
+                                    try {
+                                        hashMap[NomzodRequestModel::hasNomzod.name] as Boolean
+                                    } catch (e: Exception) {
+                                        false
+                                    }
+                                )
+                            }
                         }
                     }
                 }
+            } catch (e: Exception) {
+                handleException(e)
+                null
             }
         }
     }

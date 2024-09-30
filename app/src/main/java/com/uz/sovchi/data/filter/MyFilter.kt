@@ -3,12 +3,8 @@ package com.uz.sovchi.data.filter
 import android.content.Context
 import android.widget.AdapterView
 import android.widget.AutoCompleteTextView
-import android.widget.CheckBox
-import androidx.core.content.edit
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.messaging.FirebaseMessaging
 import com.uz.sovchi.AutoCompleteView
 import com.uz.sovchi.appContext
 import com.uz.sovchi.data.LocalUser
@@ -18,41 +14,12 @@ import com.uz.sovchi.data.nomzod.OilaviyHolati
 import com.uz.sovchi.data.nomzod.getNomzodTypeText
 import com.uz.sovchi.data.nomzod.nomzodTypes
 import com.uz.sovchi.data.valid
-import java.util.UUID
-
-var uniqueID: String = ""
-    get() {
-        val sharedPrefs = appContext.getSharedPreferences(
-            PREF_UNIQUE_ID, Context.MODE_PRIVATE
-        )
-        field = sharedPrefs.getString(PREF_UNIQUE_ID, "").toString()
-        if (field.isEmpty()) {
-            field = UUID.randomUUID().toString()
-            sharedPrefs.edit {
-                putString(PREF_UNIQUE_ID, field)
-            }
-        }
-        return field
-    }
-
-private const val PREF_UNIQUE_ID = "PREF_UNIQUE_ID"
-
-@Entity
-data class SavedFilterUser(
-    @PrimaryKey var userId: String,
-    @PrimaryKey var phoneNumber: String,
-    var manzil: String,
-    var nomzodType: Int,
-    var oilaviyHolati: String,
-    var yoshChegarasiDan: Int,
-    var yoshChegarasiGacha: Int,
-    var imkonChek: Boolean,
-    var date: Long
-) {
-    constructor() : this(
-        LocalUser.user.uid, uniqueID, City.Hammasi.name, KELIN, OilaviyHolati.Aralash.name, 18, 90, false,0
-    )
-}
+import com.uz.sovchi.update
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 object MyFilter {
 
@@ -63,6 +30,7 @@ object MyFilter {
         appContext.getSharedPreferences("SavedFilters", Context.MODE_PRIVATE)
 
     var filter = SavedFilterUser()
+    var filterChangeObserver = MutableLiveData<Any>()
 
     fun changedFromDefault(): Boolean {
         filter.apply {
@@ -91,20 +59,26 @@ object MyFilter {
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun update() {
-        savedFilterPrefs.edit().apply {
-            putInt("nTyp", filter.nomzodType)
-            putString("manzil", filter.manzil)
-            putString("oilHolati", filter.oilaviyHolati)
-            putInt("yoshChegDan", filter.yoshChegarasiDan)
-            putInt("yoshChegGacha", filter.yoshChegarasiGacha)
-            putBoolean("imChek", filter.imkonChek)
-            filter.date = System.currentTimeMillis()
-            apply()
-            if (LocalUser.user.valid) {
-                filter.userId = LocalUser.user.uid
-                filter.phoneNumber = LocalUser.user.phoneNumber.removePrefix("+")
-                filtersReference.document(filter.userId).set(filter)
+        GlobalScope.launch(Dispatchers.Default) {
+            savedFilterPrefs.edit().apply {
+                putInt("nTyp", filter.nomzodType)
+                putString("manzil", filter.manzil)
+                putString("oilHolati", filter.oilaviyHolati)
+                putInt("yoshChegDan", filter.yoshChegarasiDan)
+                putInt("yoshChegGacha", filter.yoshChegarasiGacha)
+                putBoolean("imChek", filter.imkonChek)
+                filter.date = System.currentTimeMillis()
+                apply()
+                if (LocalUser.user.valid) {
+                    filter.userId = LocalUser.user.uid
+                    filter.phoneNumber = LocalUser.user.phoneNumber.removePrefix("+")
+                    filtersReference.document(filter.userId).set(filter)
+                }
+                MainScope().launch {
+                    filterChangeObserver.update()
+                }
             }
         }
     }
@@ -125,24 +99,10 @@ object FilterViewUtils {
             setText(context.getString(City.valueOf(MyFilter.filter.manzil).resId))
             setAdapter(adapter)
             onItemClickListener = AdapterView.OnItemClickListener { _, _, position, id ->
-                if (LocalUser.user.premium) {
-                    updateFilter {
-                        manzil = City.entries[position].name
-                        update.invoke()
-                    }
-                } else {
+                updateFilter {
+                    manzil = City.entries[position].name
                     update.invoke()
                 }
-            }
-        }
-    }
-
-    fun setImkoniyatiCheklangan(checkBox: CheckBox, update: () -> Unit) {
-        checkBox.isChecked = MyFilter.filter.imkonChek
-        checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
-            updateFilter {
-                imkonChek = isChecked
-                update.invoke()
             }
         }
     }
@@ -154,12 +114,8 @@ object FilterViewUtils {
                 types,
                 context.getString(OilaviyHolati.valueOf(MyFilter.filter.oilaviyHolati).resourceId),
                 click = {
-                    if (LocalUser.user.premium) {
-                        updateFilter {
-                            oilaviyHolati = OilaviyHolati.entries[it].name
-                            update.invoke()
-                        }
-                    }else {
+                    updateFilter {
+                        oilaviyHolati = OilaviyHolati.entries[it].name
                         update.invoke()
                     }
                 })

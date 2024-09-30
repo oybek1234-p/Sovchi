@@ -1,25 +1,16 @@
 package com.uz.sovchi.data.premium
 
-import android.content.Context
 import com.google.firebase.database.FirebaseDatabase
-import com.uz.sovchi.DateUtils
-import com.uz.sovchi.appContext
-import com.uz.sovchi.showToast
-
-data class ViewLimit(var viewed: Int, var date: Long) {
-    fun isExpired(): Boolean {
-        val isSameDay = DateUtils.isToday(date)
-        return isSameDay && viewed >= 10
-    }
-}
+import com.uz.sovchi.data.utils.DateUtils
+import com.uz.sovchi.data.User
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 object PremiumUtil {
 
-    private val sharedPrefs = appContext.getSharedPreferences("premiumLimit", Context.MODE_PRIVATE)
-
-    var viewLimit = ViewLimit(0, 0)
-
-    const val PREMIUM_DEFAULT_PRICE = 35000L
+    private const val PREMIUM_DEFAULT_PRICE = 50000L
 
     private val premiumReference = FirebaseDatabase.getInstance().getReference("premiumPrice")
 
@@ -31,22 +22,34 @@ object PremiumUtil {
             done.invoke(PREMIUM_DEFAULT_PRICE)
         }
     }
+}
 
-    fun get() {
-        sharedPrefs.apply {
-            viewLimit = ViewLimit(getInt("viewed", 0), getLong("date", 0))
-            if (DateUtils.isToday(viewLimit.date).not()) {
-                viewLimit.viewed = 0
-                viewLimit.date = System.currentTimeMillis()
-                edit().clear().apply()
-            }
-        }
-    }
+fun User.premiumExpired(): Boolean {
+    val premiumGotDate = premiumDate
+    val currentDate = System.currentTimeMillis()
+    val days = DateUtils.calculateDaysBetween(premiumGotDate, currentDate)
+    return days > 31
+}
 
-    fun setViewedOneMore() {
-        viewLimit.viewed += 1
-        viewLimit.date = System.currentTimeMillis()
-        sharedPrefs.edit().putInt("viewed", viewLimit.viewed).putLong("date", viewLimit.date)
-            .apply()
-    }
+fun User.getPremiumExpireDate(): String {
+    val premiumBoughtTimeInMillis: Long = premiumDate
+    val subscriptionDurationInDays = 30
+    val purchaseDate = Date(premiumBoughtTimeInMillis)
+
+    val calendar = Calendar.getInstance()
+    calendar.time = purchaseDate
+
+    // Add the subscription duration to the purchase date
+    calendar.add(Calendar.DAY_OF_YEAR, subscriptionDurationInDays)
+
+    // Get the expiration date
+    val expirationDate = calendar.time
+
+    // Define the desired date format
+    val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+
+    // Format the expiration date
+    val formattedExpirationDate = dateFormat.format(expirationDate)
+
+    return formattedExpirationDate
 }

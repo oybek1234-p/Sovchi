@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.uz.sovchi.ui.base.MyToolBar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:backgroundTint="@color/white"
+            android:layout_height="wrap_content"
+            android:elevation="@dimen/dimen_12"
+            app:title="Qanday rasm yuklash kerek?" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:background="?colorSurfaceContainerLow"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:id="@+id/ph2"
+                    android:scaleType="centerCrop"
+                    />
+                <TextView
+                    style="@style/Text1_16"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="8dp"
+                    android:padding="@dimen/dimen_12"
+                    android:text="1) Rasmda haqiqiy yaqinda olingan sizni rasmingiz bo'lishi kerak"
+                    android:textColor="?colorOnSurface"
+                    app:drawableTint="@color/green" />
+
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:id="@+id/ph3"
+                    android:scaleType="centerCrop"
+                    />
+
+                <TextView
+                    style="@style/Text1_16"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="8dp"
+                    android:padding="@dimen/dimen_12"
+                    android:text="2) Rasmda sizdan boshqa odamlar bo'lmasiligi kerak"
+                    android:textColor="?colorOnSurface"
+                    app:drawableTint="@color/green" />
+
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:id="@+id/ph4"
+                    android:scaleType="centerCrop"
+                    />
+
+                <TextView
+                    style="@style/Text1_16"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="8dp"
+                    android:padding="@dimen/dimen_12"
+                    android:text="3) Gullar, Moshinalar, va boshqa narsalar rasmda asosiy bo'lmasligi kerak"
+                    android:textColor="?colorOnSurface"
+                    app:drawableTint="@color/green" />
+
+                <TextView
+                    style="@style/Text1_16"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="8dp"
+                    android:padding="@dimen/dimen_12"
+                    android:text="4) Yuzingizni berkitib tushsangiz bo'ladi, lekin qomatingiz ko'rinishi kerak"
+                    android:textColor="?colorOnSurface"
+                    app:drawableTint="@color/green" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:id="@+id/ph1"
+                    android:scaleType="centerCrop"
+                    />
+
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</layout>

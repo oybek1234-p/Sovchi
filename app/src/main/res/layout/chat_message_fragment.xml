@@ -9,15 +9,14 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:background="?colorSurfaceContainerHigh"
+        android:background="#EAEAEA"
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:background="?colorSurfaceContainerLow"
-
+            android:background="?colorSurfaceContainerLowest"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -45,18 +44,17 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:tint="#2196F3" />
 
-            <TextView
-                android:id="@+id/block_view"
-                style="@style/Subtitle2_14"
+            <ImageView
+                android:id="@+id/options_view"
+                style="@style/Subtitle3_13"
                 android:layout_width="wrap_content"
+                android:visibility="gone"
                 android:layout_marginEnd="@dimen/dimen_12"
                 android:layout_height="wrap_content"
-                android:background="@drawable/round_lay"
-                android:backgroundTint="#2F9D0C01"
-                android:paddingHorizontal="@dimen/dimen_12"
+                android:src="@drawable/more_vert"
+                android:paddingHorizontal="@dimen/dimen_8"
                 android:paddingVertical="@dimen/dimen_8"
-                android:text="Bloklash"
-                android:textColor="@color/rejected"
+                android:drawablePadding="@dimen/dimen_12"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -67,8 +65,8 @@
                 android:layout_height="40dp"
                 android:layout_marginStart="12dp"
                 android:background="?colorSurfaceContainerHigh"
-                android:scaleType="center"
-                android:src="@drawable/person_filled"
+                android:scaleType="centerCrop"
+                android:elevation="1dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/back_button"
                 app:layout_constraintTop_toTopOf="parent"
@@ -78,25 +76,26 @@
                 android:id="@+id/title_view"
                 style="@style/Headline2_16"
                 android:layout_width="0dp"
-                android:elevation="@dimen/dimen_24"
-                android:maxLines="1"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dimen_12"
+                android:elevation="@dimen/dimen_24"
+                android:maxLines="1"
                 android:text="Nargiza"
                 android:textColor="?colorOnSurface"
-                app:layout_constraintEnd_toStartOf="@+id/block_view"
+                app:layout_constraintEnd_toStartOf="@+id/options_view"
                 app:layout_constraintStart_toEndOf="@+id/imageView"
                 app:layout_constraintTop_toTopOf="@+id/imageView" />
 
             <TextView
                 android:id="@+id/last_seen_view"
-                style="@style/Subtitle3_13"
-                android:layout_width="wrap_content"
+                style="@style/Caption2_12"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                tools:text="Yaqinda"
                 android:textColor="?colorOnSurfaceVariant"
+                app:layout_constraintEnd_toStartOf="@+id/options_view"
                 app:layout_constraintStart_toStartOf="@+id/title_view"
-                app:layout_constraintTop_toBottomOf="@+id/title_view" />
+                app:layout_constraintTop_toBottomOf="@+id/title_view"
+                tools:text="Yaqinda" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.gms.ads.AdView
@@ -104,25 +103,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:adSize="BANNER"
+            android:elevation="@dimen/dimen_2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:adUnitId="ca-app-pub-8679920253502267/8382888757"
             app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            tools:layout_editor_absoluteX="24dp"></com.google.android.gms.ads.AdView>
+           ></com.google.android.gms.ads.AdView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:clipToPadding="false"
-            android:padding="@dimen/dimen_12"
-            app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
-            app:layout_constraintTop_toBottomOf="@+id/adView"
+            android:paddingHorizontal="@dimen/dimen_12"
+            android:paddingBottom="@dimen/dimen_12"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintBottom_toTopOf="@id/constraintLayout2"
             tools:listitem="@layout/chat_message" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?colorSurfaceContainer"
+            android:background="?colorSurfaceContainerLowest"
             android:elevation="@dimen/dimen_4"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -134,8 +137,9 @@
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:hint="@string/yozing"
+                android:textSize="16sp"
                 android:paddingVertical="@dimen/dimen_12"
-                android:paddingHorizontal="@dimen/dimen_18"
+                android:paddingHorizontal="@dimen/dimen_20"
                 android:textColorHint="?colorOnSurfaceVariant"
                 app:layout_constraintEnd_toStartOf="@+id/send_button"
                 app:layout_constraintStart_toStartOf="parent"
@@ -143,11 +147,13 @@
 
             <ImageView
                 android:id="@+id/send_button"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:paddingHorizontal="@dimen/dimen_12"
                 android:scaleType="center"
+                android:visibility="gone"
                 android:src="@drawable/telegram_ic"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:tint="?colorPrimary" />
@@ -158,37 +164,95 @@
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
-        <TextView
-            android:id="@+id/blocked_text"
-            style="@style/Text1_16"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/block_view"
             android:visibility="gone"
-            android:text="Sizni bloklagan"
-            android:textColor="@color/rejected"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/recycler_view"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            >
+            <TextView
+                android:id="@+id/blocked_text"
+                style="@style/Text1_16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sizni bloklagan"
+                android:gravity="center"
+                android:layout_marginHorizontal="@dimen/dimen_24"
+                android:textColor="@color/rejected"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/recycler_view"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/unblock_button"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/dimen_12"
+                android:text="@string/blockdan_chiqarish"
+                />
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/image_upload_button"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
             android:scaleType="center"
             android:elevation="@dimen/dimen_12"
+            android:visibility="gone"
             android:src="@drawable/photo_ic"
+            android:paddingHorizontal="@dimen/dimen_12"
             app:layout_constraintBottom_toBottomOf="@+id/constraintLayout2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
             app:tint="?colorOnSurfaceVariant" />
 
+        <LinearLayout
+            android:id="@+id/empty_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/toolbar">
 
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/empty_lottie"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="false"
+                app:lottie_rawRes="@raw/lottie_write" />
+
+            <TextView
+                android:id="@+id/empty_text"
+                style="@style/Text1_16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dimen_24"
+                android:drawablePadding="@dimen/dimen_12"
+                android:gravity="center"
+                android:text="Birinchi suxbatni boshlang"
+                android:textColor="?colorOnSurface"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

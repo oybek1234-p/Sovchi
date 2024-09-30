@@ -7,634 +7,745 @@
 
     </data>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <FrameLayout
-            android:id="@+id/toolbar"
+            android:id="@+id/progress_bar"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="?colorSurfaceContainer"
-            android:elevation="@dimen/dimen_4"
-            app:title="@string/profil">
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="#33000000"
+            android:elevation="@dimen/dimen_2"
+            android:padding="@dimen/dimen_24"
+            android:visibility="gone">
 
             <ProgressBar
-                android:id="@+id/progress_bar"
                 android:layout_width="24dp"
                 android:layout_height="@dimen/dimen_24"
                 android:layout_gravity="center"
-                android:visibility="gone" />
-
-            <ImageView
-                android:id="@+id/back_button"
-                android:layout_width="56dp"
-                android:layout_height="match_parent"
-                android:scaleType="center"
-                android:src="@drawable/arrow_back" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/save_view"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="@dimen/dimen_12"
-                android:text="@string/saqlash"
-                app:icon="@drawable/check_ic" />
-
+                android:indeterminateTint="@color/white" />
         </FrameLayout>
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/nestedScrollView"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingHorizontal="@dimen/dimen_18"
-            android:paddingVertical="@dimen/dimen_18">
+            android:background="@color/white"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/container"
+            <FrameLayout
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="56dp"
+                android:background="?colorSurfaceContainerLowest"
+                android:elevation="@dimen/dimen_4"
+                app:title="@string/profil">
 
-                <TextView
-                    android:id="@+id/chek_title"
-                    style="@style/Title2_20"
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:text="@string/chek"
-                    android:textColor="?colorOnSurface"
-                    android:visibility="gone" />
-
-                <ImageView
-                    android:id="@+id/check_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:layout_marginHorizontal="@dimen/dimen_24"
-                    android:visibility="gone" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/type_view"
-                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Siz kimsiz ?"
-                    app:helperText="Kelin yoki Kuyov">
-
-                    <AutoCompleteTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp"
-                        android:inputType="none" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <TextView
-                    style="@style/Title2_20"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_24"
-                    android:text="@string/rasmlar"
-                    android:textColor="?colorOnSurface" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/photo_recycler_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_8"
-                    android:orientation="horizontal"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/photo_mini_item" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/add_photo_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_4"
-                    android:text="@string/rasm_qo_shish"
-                    app:icon="@drawable/add_ic"
-                    app:iconGravity="textStart" />
-
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/hide_photo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_8"
-                    android:padding="@dimen/dimen_12"
-                    android:text="@string/hide_photo"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/hide_photo_info"
-                    style="@style/Text2_15"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/dimen_12"
-                    android:text="Rasmnigizni faqat siz yoqtirgan nomzodlarga ko'rinadi boshqalarga ko'rinmaydi"
-                    android:textColor="?colorOnSurfaceVariant"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/selfie_title"
-                    style="@style/Title2_20"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:text="Rasmingizni tasdqilgang"
-                    android:drawablePadding="@dimen/dimen_8"
-                    app:drawableStartCompat="@drawable/check_ic"
-                    app:drawableTint="@color/green" />
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/selfie_photo"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
-                    app:shapeAppearanceOverlay="@style/RadiusImageView12"
-                    android:layout_marginTop="@dimen/dimen_12"
-                    android:layout_marginVertical="@dimen/dimen_8"
-                    android:scaleType="centerCrop"
-                    android:visibility="gone" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/selfie_button"
-                    android:text="Tasdiqlash"
-                    style="@style/Widget.Material3.Button.TonalButton"
-                    app:icon="@drawable/photo_ic"
-                    app:iconGravity="textStart"
-                    android:layout_marginTop="@dimen/dimen_12"
-                    />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tgy_view"
-                    style="@style/FilledButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="@string/tugilgan_yili">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="numberDecimal"
-                        android:maxLength="2" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/buyi_view"
-                    style="@style/FilledButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="@string/bo_yi_170">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="numberDecimal"
-                        android:maxLength="3" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/vazni_view"
-                    style="@style/FilledButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="@string/vazni">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="numberDecimal"
-                        android:maxLength="3" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/manzil_view"
-                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="@string/yashaydi">
-
-                    <AutoCompleteTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="none" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tgj_view"
-                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="@string/tugilgan_joyi">
-
-                    <AutoCompleteTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="none" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/millati_view"
-                    style="@style/FilledButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="@string/millati">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/o_zbek" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/oilaviy_view"
-                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="@string/oilaviy_holati"
-                    app:helperText="Ajrashgan, Oila qurmagan ,Beva">
-
-                    <AutoCompleteTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="none" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <TextView
-                    android:id="@+id/divorce_title"
-                    style="@style/Title2_20"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:drawablePadding="@dimen/dimen_8"
-                    android:drawableTint="@color/green"
-                    app:drawableStartCompat="@drawable/check_ic"
-                    android:text="Ajrashganizni tasdqilang" />
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/divorce_photo"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
-                    app:shapeAppearanceOverlay="@style/RadiusImageView12"
-                    android:layout_marginTop="@dimen/dimen_12"
-                    android:layout_marginVertical="@dimen/dimen_8"
-                    android:scaleType="centerCrop"
-                    android:visibility="gone" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/divorce_button"
-                    android:text="Rasm yuklash"
-                    app:icon="@drawable/photo_ic"
-                    app:iconGravity="textStart"
-                    android:layout_marginTop="@dimen/dimen_12"
-                    />
-
-
-                <TextView
-                    style="@style/Title2_20"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="Farzandingiz bormi?"
-                    android:textColor="?colorOnSurface" />
-
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/children_lay"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_8"
-                    app:singleLine="true"
-                    app:singleSelection="true">
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/farzand_yes"
-                        style="@style/Widget.Material3.Chip.Filter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/bor" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/farzand_no"
-                        style="@style/Widget.Material3.Chip.Filter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/dimen_24"
-                        android:layout_marginTop="0dp"
-                        android:text="@string/yoq" />
-                </com.google.android.material.chip.ChipGroup>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/farzandlar_view"
-                    style="@style/FilledButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="Farzandingiz haqida"
-                    app:helperText="@string/helper_farzandlar">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/oqish_view"
-                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="@string/o_qish_malumoti">
-
-                    <AutoCompleteTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="none" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/ish_view"
-                    style="@style/FilledButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="@string/ish_joyi">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="top"
-                        android:maxLength="30" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <TextView
-                    style="@style/Title2_20"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:text="Yosh chegarasi"
-                    android:textColor="?colorOnSurface" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/yosh_chegarasi_dan_view"
-                    style="@style/FilledButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_8"
-                    android:hint="Yoshdan">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="number" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/yosh_chegarasi_gacha_view"
-                    style="@style/FilledButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Yoshgacha"
-                    app:helperText="Faqat shu yosh oraligidagi insonlar sizni anketangizni ko'ra oladi">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="number" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <TextView
-                    android:id="@+id/talab_title"
-                    style="@style/Title2_20"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:text="@string/talablar"
-                    android:textColor="?colorOnSurface" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/Text1_16"
-                    android:textColor="@color/yellow"
-                    android:text="Talablarga mos nomzodlar sizga yozadi"
-                    />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/talablar_list_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    tools:listitem="@layout/talab_item" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/talablar_view"
-                    style="@style/FilledButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="To'liqroq ma'lumot yozing"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="500"
-                    app:helperText="Kamida 80 ta harf yozing"
-                    app:helperTextEnabled="true">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="top"
-                        android:minHeight="120dp" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <TextView
-                    style="@style/Headline2_16"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="Ovoz habar (Marjburiy emas)"
-                    android:textColor="?colorOnSurface"
-                    android:visibility="gone" />
-
-                <TextView
-                    style="@style/Text1_14"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="O'zingiz haqida to'liqroq gapirib bering"
-                    android:textColor="?colorOnSurface"
-                    android:visibility="gone" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/audio_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:visibility="gone">
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
 
                     <ImageView
-                        android:id="@+id/play_view"
+                        android:id="@+id/back_button"
                         android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:layout_gravity="center"
-                        android:layout_marginEnd="@dimen/dimen_18"
-                        android:background="@drawable/round_lay"
-                        android:backgroundTint="?colorPrimary"
+                        android:layout_height="match_parent"
                         android:scaleType="center"
-                        android:src="@drawable/play_ic"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tint="@color/white" />
+                        android:src="@drawable/arrow_back" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/audio_button"
+                        android:id="@+id/skip_view"
+                        android:layout_marginStart="@dimen/dimen_12"
                         style="@style/Widget.Material3.Button.OutlinedButton"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/dimen_18"
-                        android:text="Ovoz yozish"
-                        app:icon="@drawable/mic_ic"
+                        android:visibility="gone"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_marginEnd="@dimen/dimen_12"
+                        android:text="@string/o_tkazib_yuborish"
                         app:iconGravity="textStart"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/play_view"
-                        app:layout_constraintTop_toTopOf="parent" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                        app:icon="@drawable/arrow_back" />
 
-                <com.google.android.material.checkbox.MaterialCheckBox
-                    android:id="@+id/imkonchek_check_box"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_12"
-                    android:text="@string/imkoniyati_cheklangan"
-                    android:visibility="gone" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/imkoniyati_malumot_view"
-                    style="@style/FilledButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="@string/im_ch_m"
-                    android:visibility="gone">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="top"
-                        android:minHeight="100dp" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/ismi_view"
-                    style="@style/FilledButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="Ism Familiya"
-                    app:helperText="Pasportdagi ismingizni kiriting"
-                    app:helperTextEnabled="true">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <TextView
-                    android:id="@+id/passport_title"
-                    style="@style/Title2_20"
-                    android:drawablePadding="@dimen/dimen_8"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:text="Passportingiz rasmini yuklang"
-                    app:drawableStartCompat="@drawable/check_ic"
-                    app:drawableTint="@color/green" />
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/passport_photo"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
-                    android:layout_marginTop="@dimen/dimen_8"
-                    app:shapeAppearanceOverlay="@style/RadiusImageView12"
-                    android:layout_marginVertical="@dimen/dimen_8"
-                    android:scaleType="centerCrop"
-                    android:visibility="gone" />
+                </LinearLayout>
 
                 <com.google.android.material.button.MaterialButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/passport_button"
-                    android:text="Yuklash"
-                    app:icon="@drawable/photo_ic"
-                    app:iconGravity="textStart"
-                    android:layout_marginTop="@dimen/dimen_12"
-                    />
-
-                <TextView
-                    style="@style/Title2_20"
+                    android:id="@+id/save_view"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:text="@string/bog_lanish"
-                    android:textColor="?colorOnSurface" />
+                    android:layout_height="40dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="@dimen/dimen_12"
+                    android:text="Saqlash"
+                    app:icon="@drawable/check_ic" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/mobil_raqam_view"
-                    style="@style/FilledButton"
+            </FrameLayout>
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/nestedScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingHorizontal="@dimen/dimen_18"
+                android:paddingVertical="@dimen/dimen_18"
+                android:scrollIndicators="right"
+                android:scrollbarSize="1dp"
+                android:scrollbars="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="Telefon raqam"
-                    app:helperText="Hech kimga ko'rinmaydi">
+                    android:orientation="vertical">
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <TextView
+                        android:id="@+id/chek_title"
+                        style="@style/Title2_20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="18dp"
+                        android:text="@string/chek"
+                        android:textColor="?colorOnSurface"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/check_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:layout_marginHorizontal="@dimen/dimen_24"
+                        android:visibility="gone" />
+
+                    <TextView
+                        style="@style/Title3_17"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="8dp"
+                        android:text="Ma'lumotlarni odam tomonidan tekshiriladi, keyin platformada ko'rinadi, agar ma'lumotlar notog'ri bo'lsa profiliz o'chiriladi"
+                        android:textColor="?colorOnSurfaceVariant"
+                        />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/type_view"
+                        android:layout_marginTop="@dimen/dimen_12"
+                        style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="numberDecimal" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:hint="Jinsingizni tanlang">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/telegram_view"
-                    style="@style/FilledButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="@string/telegram_nick"
-                    android:visibility="gone"
-                    app:helperText="Nikingiz @ dan boshlanishi kerak">
+                        <AutoCompleteTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:inputType="none" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <TextView
+                        style="@style/Title2_20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_24"
+                        android:drawablePadding="@dimen/dimen_12"
+                        android:text="@string/rasmlar"
+                        android:textColor="?colorOnSurface"
+                       />
+
+                    <TextView
+                        style="@style/Subtitle1_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="8dp"
+                        android:layout_marginTop="@dimen/dimen_4"
+                        android:text="@string/photoInfo"
+                        android:textColor="?colorOnSurfaceVariant" />
+
+                    <TextView
+                        style="@style/Subtitle1_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:drawablePadding="8dp"
+                        android:text="Taqiqlanadi - rasmda boshqa odamlar yuzi ko'rinishi, gullar, moshinalar va boshqa narsalar bo'lishi, telefon nomer yoki birovning instagrami rasmi"
+                        android:textColor="@color/rejected" />
+
+                    <TextView
+                        android:id="@+id/photo_info_view"
+                        style="@style/Subtitle2_14"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="text" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:drawablePadding="8dp"
+                        android:visibility="gone"
+                        android:paddingVertical="@dimen/dimen_4"
+                        android:layout_marginTop="@dimen/dimen_4"
+                        android:text="Qanday rasm yuklash kerak?"
+                        android:textColor="?colorPrimary" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/joylagan_odam_view"
-                    style="@style/FilledButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_18"
-                    android:hint="@string/joylagan_odam">
-
-                    <com.google.android.material.textfield.TextInputEditText
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/photo_recycler_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="O'zi" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_marginTop="@dimen/dimen_18"
+                        android:orientation="horizontal"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/photo_mini_item" />
 
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
-    </LinearLayout>
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/add_photo_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_4"
+                        android:text="@string/rasm_qo_shish"
+                        app:icon="@drawable/add_ic"
+                        app:iconGravity="textStart" />
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/hide_photo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_8"
+                        android:text="@string/hide_photo"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/hide_info"
+                        style="@style/Subtitle1_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/info_ic"
+                        android:drawablePadding="8dp"
+                        android:text="Siz qabul qilgan nomzodlarga rasmingiz ko'rinadi"
+                        android:textColor="?colorOnSurfaceVariant"
+                        android:visibility="gone"
+                        app:drawableTint="@color/green" />
+
+                    <TextView
+                        android:id="@+id/selfie_title"
+                        style="@style/Title2_20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_18"
+                        android:drawablePadding="@dimen/dimen_8"
+                        android:text="Rasmingizni tasdqilgang"
+                        android:visibility="gone" />
+
+                    <TextView
+                        style="@style/Caption1_13"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="8dp"
+                        android:text="Yuznigizni kameraga oling"
+                        android:textColor="@color/yellow"
+                        android:visibility="gone"
+                        app:drawableTint="@color/green" />
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/selfie_photo"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:layout_marginVertical="@dimen/dimen_8"
+                        android:layout_marginTop="@dimen/dimen_12"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"
+                        app:shapeAppearanceOverlay="@style/RadiusImageView12" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/selfie_button"
+                        style="@style/FilledButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_12"
+                        android:text="Tasdiqlash"
+                        android:visibility="gone"
+                        app:icon="@drawable/person_ic"
+                        app:iconGravity="textStart" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tgy_view"
+                        style="@style/FilledButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_28"
+                        android:hint="@string/tugilgan_yili">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal"
+                            android:maxLength="2" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/buyi_view"
+                        style="@style/FilledButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_8"
+                        android:hint="@string/bo_yi_170">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal"
+                            android:maxLength="3" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/vazni_view"
+                        style="@style/FilledButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_8"
+                        android:hint="@string/vazni">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal"
+                            android:maxLength="3" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/manzil_view"
+                        style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_24"
+                        android:drawableStart="@drawable/location_ic"
+                        android:hint="@string/yashaydi">
+
+                        <AutoCompleteTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tgj_view"
+                        style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_12"
+                        android:hint="@string/tugilgan_joyi">
+
+                        <AutoCompleteTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/millati_view"
+                        style="@style/FilledButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_8"
+                        android:hint="@string/millati">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/o_zbek" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        style="@style/Subtitle1_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_24"
+                        android:drawablePadding="8dp"
+                        android:text="@string/ikinchiruzgorinfo"
+                        android:textColor="@color/rejected" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/oilaviy_view"
+                        style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_12"
+                        android:hint="@string/oilaviy_holati">
+
+                        <AutoCompleteTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:id="@+id/divorce_title"
+                        style="@style/Title2_20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_18"
+                        android:drawablePadding="@dimen/dimen_8"
+                        android:drawableTint="@color/green"
+                        android:text="Ajrim ishonchi"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/divorce_sub"
+                        style="@style/Caption1_13"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="8dp"
+                        android:text="Ajrim qarori yoki aliment qogozini rasmini yuklang"
+                        android:textColor="@color/yellow"
+                        android:visibility="gone"
+                        app:drawableTint="@color/green" />
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/divorce_photo"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:layout_marginVertical="@dimen/dimen_8"
+                        android:layout_marginTop="@dimen/dimen_12"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"
+                        app:shapeAppearanceOverlay="@style/RadiusImageView12" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/divorce_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_12"
+                        android:text="@string/rasm_yuklash"
+                        android:visibility="gone"
+                        app:icon="@drawable/photo_ic"
+                        app:iconGravity="textStart" />
+
+                    <TextView
+                        style="@style/Title2_20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:drawablePadding="@dimen/dimen_12"
+                        android:text="Farzandingiz bormi?"
+                        android:textColor="?colorOnSurface" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/children_lay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_8"
+                        app:singleLine="true"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/farzand_yes"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/bor" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/farzand_no"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dimen_24"
+                            android:layout_marginTop="0dp"
+                            android:text="@string/yoq" />
+                    </com.google.android.material.chip.ChipGroup>
+
+                    <!--                <com.google.android.material.textfield.TextInputLayout-->
+                    <!--                    android:id="@+id/farzandlar_view"-->
+                    <!--                    style="@style/FilledButton"-->
+                    <!--                    android:layout_width="match_parent"-->
+                    <!--                    android:layout_height="wrap_content"-->
+                    <!--                    android:layout_marginTop="@dimen/dimen_8"-->
+                    <!--                    android:hint="Farzandingiz haqida"-->
+                    <!--                    app:helperText="@string/helper_farzandlar">-->
+
+                    <!--                    <com.google.android.material.textfield.TextInputEditText-->
+                    <!--                        android:layout_width="match_parent"-->
+                    <!--                        android:drawablePadding="@dimen/dimen_8"-->
+                    <!--                        android:drawableStart="@drawable/child_ic"-->
+                    <!--                        android:layout_height="wrap_content" />-->
+                    <!--                </com.google.android.material.textfield.TextInputLayout>-->
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/oqish_view"
+                        style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_24"
+                        android:hint="@string/o_qish_malumoti">
+
+                        <AutoCompleteTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/ish_view"
+                        style="@style/FilledButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_18"
+                        android:hint="@string/ish_joyi">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:drawableStart="@drawable/work_ic"
+                            android:drawablePadding="@dimen/dimen_12"
+                            android:gravity="top"
+                            android:maxLength="30" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        style="@style/Title2_20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:text="Yosh chegarasi"
+                        android:textColor="?colorOnSurface" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/yosh_chegarasi_dan_view"
+                        style="@style/FilledButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_8"
+                        android:hint="Yoshdan">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/yosh_chegarasi_gacha_view"
+                        style="@style/FilledButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Yoshgacha">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        style="@style/Title2_20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:text="O'zingiz haqizda yozing"
+                        android:textColor="?colorOnSurface" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/Text1_14"
+                        android:textColor="@color/rejected"
+                        android:text="Yozish mumkin emas - telefon , telegram , instagram, har hil belgilar , no\'tog\'ri so\'zlar , raqamlar , yolg\'on ma\'lumot yozish taqiqlanadi"
+                        />
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/talablar_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_12"
+                        app:counterEnabled="true"
+                        app:helperText="@string/batafsil_info"
+                        app:helperTextEnabled="true"
+                        app:helperTextTextColor="?colorOnSurfaceVariant"
+                        app:hintEnabled="false">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="top|start"
+                            android:hint="@string/about_sample"
+                            android:inputType="textMultiLine|text"
+                            android:minLines="6" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:id="@+id/talab_title"
+                        style="@style/Title2_20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:text="@string/talablar"
+                        android:textColor="?colorOnSurface" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/talablar_list_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:listitem="@layout/talab_item" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/audio_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_18"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:id="@+id/play_view"
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:layout_gravity="center"
+                            android:layout_marginEnd="@dimen/dimen_18"
+                            android:background="@drawable/round_lay"
+                            android:backgroundTint="?colorPrimary"
+                            android:scaleType="center"
+                            android:src="@drawable/play_ic"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="@color/white" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/audio_button"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/dimen_18"
+                            android:text="Ovoz yozish"
+                            app:icon="@drawable/mic_ic"
+                            app:iconGravity="textStart"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/play_view"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <com.google.android.material.checkbox.MaterialCheckBox
+                        android:id="@+id/imkonchek_check_box"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_12"
+                        android:text="@string/imkoniyati_cheklangan"
+                        android:visibility="gone" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/imkoniyati_malumot_view"
+                        style="@style/FilledButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_18"
+                        android:hint="@string/im_ch_m"
+                        android:visibility="gone">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="top"
+                            android:minHeight="100dp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/ismi_view"
+                        style="@style/FilledButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_28"
+                        android:hint="Ismingiz"
+                        app:helperText="Haqiqiy"
+                        app:helperTextEnabled="true">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:id="@+id/passport_title"
+                        style="@style/Title2_20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_18"
+                        android:drawablePadding="@dimen/dimen_8"
+                        android:text="Passport"
+                        android:visibility="gone" />
+
+                    <TextView
+                        style="@style/Caption1_13"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="8dp"
+                        android:text="Havfsiz saqlanadi, ma'lumotlaringizni tekshiramiz"
+                        android:textColor="@color/yellow"
+                        android:visibility="gone"
+                        app:drawableTint="@color/green" />
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/passport_photo"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:layout_marginVertical="@dimen/dimen_8"
+                        android:layout_marginTop="@dimen/dimen_8"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"
+                        app:shapeAppearanceOverlay="@style/RadiusImageView12" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/passport_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_12"
+                        android:text="@string/rasm_yuklash"
+                        android:visibility="gone"
+                        app:icon="@drawable/photo_ic"
+                        app:iconGravity="textStart" />
+
+                    <TextView
+                        style="@style/Title2_20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:text="@string/bog_lanish"
+                        android:textColor="?colorOnSurface" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/mobil_raqam_view"
+                        style="@style/FilledButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_12"
+                        android:hint="Telefon raqam"
+                        app:helperText="Hech kimga ko'rinmaydi">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/telegram_view"
+                        style="@style/FilledButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_18"
+                        android:hint="@string/telegram_nick"
+                        android:visibility="gone"
+                        app:helperText="Nikingiz @ dan boshlanishi kerak">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/joylagan_odam_view"
+                        style="@style/FilledButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_18"
+                        android:hint="@string/joylagan_odam">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="O'zi" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+        </LinearLayout>
+    </FrameLayout>
 </layout>

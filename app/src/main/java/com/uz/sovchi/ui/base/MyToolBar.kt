@@ -1,6 +1,7 @@
 package com.uz.sovchi.ui.base
 
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -36,6 +37,7 @@ class MyToolBar @JvmOverloads constructor(
     init {
         showArrowBack = true
         setTitleTextAppearance(context, R.style.ToolbarTitleApearence)
+        background = ColorDrawable(resources.getColor(R.color.white))
     }
 
 }

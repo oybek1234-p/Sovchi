@@ -1,97 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:scaleType="center"
-        android:src="@drawable/cancel_ic"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="?colorOnSurface" />
+    <data>
 
-    <TextView
-        android:id="@+id/textView15"
-        style="@style/Title2_20"
-        android:layout_width="wrap_content"
-        android:layout_marginTop="@dimen/dimen_48"
-        android:layout_height="wrap_content"
-        android:text="@string/tanishing"
-        android:textColor="?colorOnSurface"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+    </data>
 
-    <LinearLayout
-        android:id="@+id/linearLayout5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dimen_24"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView15">
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/my_photo"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginStart="@dimen/dimen_12"
-            android:background="?colorSurfaceContainerHigh"
-            android:scaleType="center"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView15"
-            app:shapeAppearanceOverlay="@style/CircleImageView" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:background="?colorSurfaceContainerLowest"
+        android:layout_height="match_parent">
 
         <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginHorizontal="@dimen/dimen_24"
-            android:src="@drawable/like_ic"
-            app:tint="@color/likeColor" />
+            android:id="@+id/back_button"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:scaleType="center"
+            android:src="@drawable/arrow_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="?colorOnSurface" />
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/user_photo"
+        <TextView
+            android:id="@+id/textView15"
+            style="@style/Subtitle1_14"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dimen_48"
+            android:layout_marginTop="@dimen/dimen_18"
+            android:gravity="center"
+            android:text="@string/bir_biringizga_yoqdingiz_endi_tanishing"
+            android:textColor="?colorOnSurfaceVariant"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView16" />
+
+        <com.airbnb.lottie.LottieAnimationView
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:background="?colorSurfaceContainerHigh"
-            android:scaleType="center"
+            android:layout_marginHorizontal="@dimen/dimen_24"
+            android:src="@drawable/like_ic"
+            app:lottie_autoPlay="true"
+            app:lottie_rawRes="@raw/lottie_like"
+            android:layout_marginBottom="@dimen/dimen_24"
+            app:layout_constraintBottom_toTopOf="@+id/textView16"
+            app:layout_constraintEnd_toEndOf="@+id/textView16"
+            app:layout_constraintStart_toStartOf="@+id/textView16"
+            app:tint="@color/likeColor" />
+
+        <TextView
+            android:id="@+id/textView16"
+            style="@style/Title4_24"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="86dp"
+            android:layout_marginHorizontal="@dimen/dimen_48"
+            android:gravity="center"
+            android:text="Suxbatni boshlang !"
+            android:textColor="?colorOnSurface"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView15"
-            app:shapeAppearanceOverlay="@style/CircleImageView" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/back_button" />
 
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/linearLayout5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dimen_4"
+            android:layout_marginTop="@dimen/dimen_24"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView15">
 
-    <TextView
-        android:id="@+id/textView16"
-        style="@style/Text1_16"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/dimen_24"
-        android:layout_marginTop="@dimen/dimen_24"
-        android:gravity="center"
-        android:text="@string/bir_biringizga_yoqdingiz_endi_tanishing"
-        android:textColor="?colorOnSurfaceVariant"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout5" />
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/my_photo"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_marginStart="@dimen/dimen_12"
+                android:elevation="@dimen/dimen_4"
+                android:padding="@dimen/dimen_4"
+                android:background="?colorSurfaceContainerHigh"
+                android:scaleType="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView15"
+                app:shapeAppearanceOverlay="@style/CircleImageView" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/chat_button"
-        style="@style/FilledButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawableEnd="@drawable/telegram_ic"
-        android:text="@string/chatga_o_tish"
-        android:layout_margin="@dimen/dimen_24"
-        app:icon="@drawable/chat_ic"
-        app:iconGravity="textStart"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/user_photo"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_marginStart="@dimen/dimen_24"
+                android:elevation="@dimen/dimen_4"
+                android:padding="@dimen/dimen_4"
+                android:background="?colorSurfaceContainerHigh"
+                android:scaleType="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView15"
+                app:shapeAppearanceOverlay="@style/CircleImageView" />
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/chat_button"
+            style="@style/FilledButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_24"
+            android:drawableEnd="@drawable/telegram_ic"
+            android:text="@string/suxbatni_boshlash"
+            app:icon="@drawable/chat_ic"
+            app:iconGravity="textStart"
+            app:layout_constraintEnd_toEndOf="@+id/linearLayout5"
+            app:layout_constraintStart_toStartOf="@+id/linearLayout5"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout5" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -12,7 +12,7 @@ class TalablarAdapter : BaseAdapter<Talablar,TalablarItemBinding>(R.layout.talab
 
     var showCheckBox = true
     val selectedTalablar = mutableSetOf<Talablar>()
-
+    
     override fun onViewCreated(holder: ViewHolder<TalablarItemBinding>, viewType: Int) {
         super.onViewCreated(holder, viewType)
         holder.apply {

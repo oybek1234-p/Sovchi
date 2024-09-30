@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <FrameLayout
+        android:id="@+id/like_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="?colorSurfaceContainerLowest"
+        android:elevation="@dimen/dimen_8"
+        android:paddingHorizontal="@dimen/dimen_12"
+        android:paddingVertical="@dimen/dimen_12">
+
+        <TextView
+            android:id="@+id/not_for_you"
+            style="@style/Headline2_16"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="@dimen/dimen_4"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="@string/sizga_mos_emas"
+            android:textColor="?colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/cancel_like"
+            app:layout_constraintStart_toStartOf="@+id/contact_button"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/dislike_view"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/hand_dilike"
+                app:iconGravity="textStart"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/like_view"
+                app:layout_constraintStart_toEndOf="@id/contact_button"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/like_view"
+                style="@style/FilledButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dimen_12"
+                android:autoSizeMaxTextSize="14sp"
+                android:autoSizeMinTextSize="12sp"
+                android:autoSizeTextType="uniform"
+                android:maxLines="1"
+                app:icon="@drawable/like_hand"
+                app:iconGravity="textStart"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/cancel_like"
+                app:layout_constraintStart_toEndOf="@id/dislike_view"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/contact_button"
+                style="@style/FilledButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/yozish"
+                android:layout_marginStart="@dimen/dimen_12"
+                app:icon="@drawable/chat_ic"
+                app:iconGravity="textStart"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/dislike_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/cancel_like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/dimen_12"
+                android:paddingVertical="@dimen/dimen_8"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:layout_marginStart="@dimen/dimen_4"
+                android:src="@drawable/cancel_ic"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+</layout>

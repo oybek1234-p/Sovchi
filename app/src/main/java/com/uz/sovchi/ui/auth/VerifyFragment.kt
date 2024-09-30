@@ -6,10 +6,12 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.uz.sovchi.R
+import com.uz.sovchi.data.UserRepository
 import com.uz.sovchi.data.filter.MyFilter
 import com.uz.sovchi.data.valid
 import com.uz.sovchi.databinding.FragmentVerifyBinding
 import com.uz.sovchi.ifNotNullOrEmpty
+import com.uz.sovchi.postVal
 import com.uz.sovchi.showKeyboard
 import com.uz.sovchi.ui.base.BaseFragment
 import com.uz.sovchi.visibleOrGone
@@ -74,7 +76,7 @@ class VerifyFragment : BaseFragment<FragmentVerifyBinding>() {
             }
 
             phoneView.editText?.addTextChangedListener {
-                viewModel.verifyState.postValue(VerifyState.Input(inputCode))
+                viewModel.verifyState.postVal(VerifyState.Input(inputCode))
             }
             continueButton.setOnClickListener {
                 viewModel.verifyCode(requireContext(), inputCode.code!!, sendInfo?.code!!)
@@ -83,10 +85,10 @@ class VerifyFragment : BaseFragment<FragmentVerifyBinding>() {
     }
 
     private fun verified() {
-        viewModel.verifyState.postValue(VerifyState.Verifying)
+        viewModel.verifyState.postVal(VerifyState.Verifying)
         lifecycleScope.launch {
-            val user = userViewModel.authFirebaseUser()
-            viewModel.verifyState.postValue(VerifyState.Input(inputCode))
+            val user = UserRepository.authFirebaseUser()
+            viewModel.verifyState.postVal(VerifyState.Input(inputCode))
             if (user.valid.not()) return@launch
             MyFilter.update()
             if (user!!.name.isEmpty()) {

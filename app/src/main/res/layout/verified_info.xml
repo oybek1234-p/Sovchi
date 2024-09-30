@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:padding="@dimen/dimen_18"
+        android:orientation="vertical"
+        android:background="@drawable/round_lay"
+        android:backgroundTint="?colorSurfaceContainerLowest"
+        android:layout_height="match_parent">
+
+        <TextView
+            style="@style/Text2_15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Manzil, Tugilgan joyi, Yoshi"
+            android:layout_marginTop="@dimen/dimen_12"
+            android:drawablePadding="8dp"
+            android:textSize="16sp"
+            android:textColor="?colorOnSurface"
+            app:drawableStartCompat="@drawable/check_ic"
+            app:drawableTint="@color/green" />
+
+        <TextView
+            style="@style/Text2_15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="8dp"
+            android:text="Rasmi"
+            android:layout_marginTop="@dimen/dimen_12"
+            android:textSize="16sp"
+            android:textColor="?colorOnSurface"
+            app:drawableStartCompat="@drawable/check_ic"
+            app:drawableTint="@color/green" />
+
+        <TextView
+            style="@style/Subtitle3_13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawablePadding="8dp"
+            android:text="Biz tomondan tekshirilgan va ishonchli"
+            android:layout_marginTop="@dimen/dimen_12"
+            android:textSize="18sp"
+            android:textColor="@color/green"
+            app:drawableTint="@color/green" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/done"
+            android:layout_marginTop="@dimen/dimen_28"
+            android:text="@string/tushundim"
+            />
+    </LinearLayout>
+</layout>

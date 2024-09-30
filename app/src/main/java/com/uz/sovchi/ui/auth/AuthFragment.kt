@@ -1,29 +1,34 @@
 package com.uz.sovchi.ui.auth
 
+import android.app.Activity
 import android.content.Intent
 import android.content.IntentSender
 import android.os.Bundle
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.github.vacxe.phonemask.PhoneMaskManager
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.uz.sovchi.PermissionController
 import com.uz.sovchi.PhoneUtils
 import com.uz.sovchi.R
+import com.uz.sovchi.data.UserRepository
 import com.uz.sovchi.data.filter.MyFilter
 import com.uz.sovchi.data.valid
 import com.uz.sovchi.databinding.FragmentAuthBinding
-import com.uz.sovchi.showKeyboard
+import com.uz.sovchi.handleException
+import com.uz.sovchi.postVal
 import com.uz.sovchi.showToast
 import com.uz.sovchi.ui.base.BaseFragment
 import com.uz.sovchi.visibleOrGone
 import kotlinx.coroutines.launch
-
 
 class AuthFragment : BaseFragment<FragmentAuthBinding>() {
     override val layId: Int
@@ -40,10 +45,8 @@ class AuthFragment : BaseFragment<FragmentAuthBinding>() {
         return (phoneText?.length ?: 0) == 13
     }
 
-    override fun onResume() {
-        super.onResume()
-        binding?.phoneView?.editText?.showKeyboard()
-    }
+    private var splash = true
+
 
     override fun onDestroyView() {
         savedPhone = phoneText
@@ -53,7 +56,52 @@ class AuthFragment : BaseFragment<FragmentAuthBinding>() {
     private var signInRequest: BeginSignInRequest? = null
     private var oneTapClient: SignInClient? = null
 
+    private var isSigning = false
+
+    private val intentSenderLauncher =
+        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data
+                if (data != null) {
+                    try {
+                        val credential = oneTapClient?.getSignInCredentialFromIntent(data)
+                        val idToken = credential?.googleIdToken
+                        if (idToken != null) {
+                            val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
+                            if (context != null && activity != null) {
+                                viewModel.sendState.postVal(SendState.Sending)
+                                viewModel.signInGoogle(requireContext(), firebaseCredential) {
+                                    if (it) {
+                                        verified()
+                                    } else {
+                                        viewModel.sendState.postVal(SendState.Input())
+                                        isSigning = false
+                                    }
+                                }
+                            } else {
+                                isSigning = false
+                            }
+                        }
+                    } catch (e: Exception) {
+                        // Handle exception
+                        handleException(e)
+                        isSigning = false
+                    }
+                } else {
+                    isSigning = false
+                }
+            } else {
+                isSigning = false
+                // Handle failure or cancellation
+                //  showToast("Sign in failed or was cancelled")
+            }
+        }
+
     private fun loginGoogle() {
+        if (activity == null) return
+        if (isSigning) return
+        isSigning = true
+
         PermissionController.getInstance()
             .doOnActivityResult(PermissionController.ANY_REQUEST_CODE) { res, resultOk ->
                 if (resultOk) {
@@ -64,28 +112,30 @@ class AuthFragment : BaseFragment<FragmentAuthBinding>() {
                             if (idToken != null) {
                                 val firebaseCredential =
                                     GoogleAuthProvider.getCredential(idToken, null)
-                                if (context != null) {
-                                    viewModel.sendState.postValue(SendState.Sending)
+                                if (context != null && activity != null) {
+                                    viewModel.sendState.postVal(SendState.Sending)
                                     viewModel.signInGoogle(requireContext(), firebaseCredential) {
                                         if (it) {
                                             verified()
                                         } else {
-                                            viewModel.sendState.postValue(SendState.Input())
+                                            viewModel.sendState.postVal(SendState.Input())
                                         }
                                     }
                                 }
                             }
                         } catch (e: Exception) {
-                            //
+                            handleException(e)
                         }
                     }
                 }
             }
-        signInRequest?.let { it ->
-            oneTapClient?.beginSignIn(it)?.addOnSuccessListener {
+
+        signInRequest?.let { request ->
+            oneTapClient?.beginSignIn(request)?.addOnSuccessListener { result ->
                 try {
-                    startIntentSenderForResult(
-                        it.pendingIntent.intentSender, 2, null, 0, 0, 0, null
+                    if (isDetached || isRemoving || isVisible.not()) return@addOnSuccessListener
+                    intentSenderLauncher.launch(
+                        IntentSenderRequest.Builder(result.pendingIntent).build()
                     )
                 } catch (e: IntentSender.SendIntentException) {
                     showToast(e.message ?: "")
@@ -96,22 +146,34 @@ class AuthFragment : BaseFragment<FragmentAuthBinding>() {
         }
     }
 
+
     private fun verified() {
-        viewModel.sendState.postValue(SendState.Sending)
+        viewModel.sendState.postVal(SendState.Sending)
+        isSigning = true
         lifecycleScope.launch {
-            val user = userViewModel.authFirebaseUser()
-            if (user.valid.not()) return@launch
+            if (activity == null) {
+                isSigning = false
+                return@launch
+            }
+            val user = UserRepository.authFirebaseUser()
+            if (isRemoving || user.valid.not()) {
+                isSigning = false
+                return@launch
+            }
+            isSigning = false
             closeFragment()
             MyFilter.update()
+            isSigning = false
             if (user!!.name.isEmpty()) {
                 navigate(R.id.getUserNameFragment)
             } else {
-                mainActivity()?.recreateUi()
+                mainActivity()?.recreateUi(true)
             }
         }
     }
 
     private fun initGoogleAuth() {
+        if (activity == null) return
         oneTapClient = Identity.getSignInClient(requireActivity())
         signInRequest = BeginSignInRequest.builder().setGoogleIdTokenRequestOptions(
             BeginSignInRequest.GoogleIdTokenRequestOptions.builder().setSupported(true)
@@ -122,13 +184,16 @@ class AuthFragment : BaseFragment<FragmentAuthBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        splash = arguments?.getBoolean("splash", false) ?: false
         initGoogleAuth()
+        loginGoogle()
     }
 
     override fun viewCreated(bind: FragmentAuthBinding) {
         bind.apply {
             toolbar.setUpBackButton(this@AuthFragment)
-
+            toolbar.isVisible = false
+            Glide.with(requireContext()).load(R.drawable.splash_photo).into(photo)
             gmailButton.setOnClickListener {
                 loginGoogle()
             }
@@ -136,12 +201,17 @@ class AuthFragment : BaseFragment<FragmentAuthBinding>() {
                 editText?.apply {
                     phoneMask = PhoneUtils.phoneMask(this)
                     addTextChangedListener {
-                        viewModel.sendState.postValue(SendState.Input(phoneText))
+                        viewModel.sendState.postVal(SendState.Input(phoneText))
                     }
                     savedPhone?.let { setText(it) }
                 }
             }
-
+            skipButton.setOnClickListener {
+                navigate(R.id.searchFragment)
+            }
+            emailButton.setOnClickListener {
+                navigate(R.id.loginGmailFragment)
+            }
             viewModel.apply {
                 sendState.observe(viewLifecycleOwner) { state ->
                     val sending = state is SendState.Sending
@@ -156,7 +226,7 @@ class AuthFragment : BaseFragment<FragmentAuthBinding>() {
                         val error = (state as SendState.Error).exception.message
                         if (error != null) {
                             phoneView.error = getString(R.string.xatolik_yuz_berdi)
-                            if (error.startsWith("An internal error")){
+                            if (error.startsWith("An internal error")) {
                                 phoneView.error = "Gmail orqali kiring"
                                 loginGoogle()
                             }
@@ -175,7 +245,7 @@ class AuthFragment : BaseFragment<FragmentAuthBinding>() {
                             navigate(
                                 R.id.verifyFragment, bundle
                             )
-                            sendState.postValue(SendState.Input(phoneText))
+                            sendState.postVal(SendState.Input(phoneText))
                         }
                     }
                 }
@@ -190,6 +260,8 @@ class AuthFragment : BaseFragment<FragmentAuthBinding>() {
     override fun onDestroy() {
         super.onDestroy()
         viewModel.stopAutoCodeReceiver()
+        intentSenderLauncher.unregister()
+        PermissionController.getInstance().removeCallback(PermissionController.ANY_REQUEST_CODE)
     }
 
     companion object {

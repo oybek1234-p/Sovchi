@@ -3,8 +3,7 @@
 
         <item name="backgroundColor">?colorSurface</item>
         <item name="android:windowBackground">?backgroundColor</item>
-
-        <item name="android:statusBarColor">?colorSurfaceContainer</item>
+        <item name="android:statusBarColor">?colorSurfaceContainerLowest</item>
         <item name="android:windowLightStatusBar">true</item>
 
         <item name="colorPrimary">#6750A4</item>
@@ -39,10 +38,10 @@
         <item name="colorOnTertiaryFixedVariant">#7D5260</item>
 
         <item name="colorOutline">#979797</item>
-        <item name="colorOutlineVariant">#BFBFBF</item>
+        <item name="colorOutlineVariant">#FDF4F4F4</item>
 
         <item name="colorSurfaceDim">#DED8E1</item>
-        <item name="colorSurface">#FEF7FF</item>
+        <item name="colorSurface">#FFFFFF</item>
         <item name="colorSurfaceBright">#FEF7FF</item>
 
         <item name="colorSurfaceContainerLowest">#FFFFFF</item>
@@ -51,7 +50,7 @@
         <item name="colorSurfaceContainerHigh">#E6E0EC</item>
         <item name="colorSurfaceContainerHighest">#DED8E1</item>
         <item name="colorOnSurface">#1D1B20</item>
-        <item name="colorOnSurfaceVariant">#4E4E4E</item>
+        <item name="colorOnSurfaceVariant">#777777</item>
 
         <item name="colorSurfaceInverse">#322F35</item>
         <item name="colorOnSurfaceInverse">#F5EFF7</item>
@@ -61,4 +60,15 @@
     </style>
 
     <style name="Theme.Sovchi" parent="Base.Theme.Sovchi" />
+
+     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+         <item name="backgroundColor">?colorSurface</item>
+         <item name="android:windowBackground">?backgroundColor</item>
+         <item name="android:statusBarColor">?colorSurfaceContainerLowest</item>
+         <item name="android:windowLightStatusBar">true</item>
+         <item name="windowSplashScreenBackground">@color/white</item>
+         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
+         <item name="postSplashScreenTheme">@style/Theme.Sovchi</item>
+     </style>
+
 </resources>

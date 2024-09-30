@@ -6,12 +6,16 @@
 
     </data>
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="140dp"
-        android:layout_height="140dp"
-        app:cardBackgroundColor="?backgroundColor"
-        android:layout_margin="@dimen/dimen_4"
-        app:cardCornerRadius="@dimen/dimen_12">
+    <androidx.cardview.widget.CardView
+        android:layout_width="120dp"
+        app:cardCornerRadius="0dp"
+        app:contentPaddingBottom="0dp"
+        app:contentPaddingLeft="0dp"
+        app:contentPaddingRight="0dp"
+        app:contentPaddingTop="0dp"
+        android:padding="0dp"
+        android:layout_height="120dp"
+        app:cardBackgroundColor="?colorSurface">
 
         <ImageView
             android:layout_width="44dp"
@@ -29,5 +33,41 @@
             android:layout_height="match_parent"
             android:id="@+id/image_view"
             android:scaleType="centerCrop" />
-    </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/add_photo_view"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/dimen_12"
+            android:layout_margin="@dimen/dimen_24"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                style="@style/Text2_15"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
+                android:layout_marginHorizontal="@dimen/dimen_24"
+                android:text="Rasmni ko'rish uchun 2 ta dan ko'proq rasmingizni yuklang"
+                />
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/add_photo_button"
+                    android:text="Rasm yuklash"
+                    android:layout_marginTop="@dimen/dimen_4"
+                    app:icon="@drawable/photo_ic"
+                    android:backgroundTint="@color/white"
+                    android:textColor="@color/black"
+                    app:iconTint="@color/black"
+                    android:layout_gravity="center_horizontal"
+                    />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 </layout>

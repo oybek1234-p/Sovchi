@@ -8,6 +8,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:background="@drawable/round_lay"
         android:backgroundTint="?colorSurfaceContainerLowest"
         android:layout_height="wrap_content">
 
@@ -27,7 +28,10 @@
                 android:id="@+id/boglanish"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/bog_lanish"
+                android:text="Biz bilan aloqa"
+                android:drawableStart="@drawable/admin_ic"
+                android:drawablePadding="@dimen/dimen_12"
+                android:layout_gravity="center_horizontal"
                 style="@style/Title2_20"
                 android:layout_marginBottom="@dimen/dimen_18"
                 android:textColor="?colorOnSurface" />
@@ -35,6 +39,7 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/callview"
                 style="@style/FilledButton"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -50,7 +55,17 @@
                 android:layout_height="wrap_content"
                 android:drawableTint="@color/white"
                 android:text="Telegram"
-                style="@style/FilledButton"
+                style="@style/Widget.Material3.Button.TonalButton"
+                app:icon="@drawable/telegram_ic"
+                app:iconGravity="textStart" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/telegram_channel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableTint="@color/white"
+                android:text="Telegram kanal"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 app:icon="@drawable/telegram_ic"
                 app:iconGravity="textStart" />
         </LinearLayout>

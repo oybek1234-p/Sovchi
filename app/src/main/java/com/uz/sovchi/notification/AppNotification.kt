@@ -1,12 +1,16 @@
 package com.uz.sovchi.notification
 
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 object AppNotification {
 
-    fun getToken(result: (token: String) -> Unit) {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener {
-            result.invoke(it.result)
+    suspend fun loadToken()= suspendCoroutine { sus->
+        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+            sus.resume(it)
+        }.addOnFailureListener {
+            sus.resume(null)
         }
     }
 }

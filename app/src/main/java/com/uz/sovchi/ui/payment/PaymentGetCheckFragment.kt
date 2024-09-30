@@ -17,6 +17,7 @@ import com.uz.sovchi.data.nomzod.NomzodTarif
 import com.uz.sovchi.data.payment.PaymentInfo
 import com.uz.sovchi.data.premium.PremiumUtil
 import com.uz.sovchi.databinding.PaymentCheckFragmentBinding
+import com.uz.sovchi.loadPhoto
 import com.uz.sovchi.showToast
 import com.uz.sovchi.ui.base.BaseFragment
 import com.uz.sovchi.ui.nomzod.NomzodViewModel
@@ -47,7 +48,7 @@ class PaymentGetCheckFragment : BaseFragment<PaymentCheckFragmentBinding>() {
                 PickPhotoFragment(false) {
                     if (it.isNotEmpty()) {
                         checkPath = it.first().path
-                        checkImage.load(checkPath)
+                        checkImage.loadPhoto(checkPath)
                         checkImage.isVisible = true
                         nextButton.isEnabled = true
                     }

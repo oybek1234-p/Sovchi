@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:background="@drawable/round_lay"
+        android:backgroundTint="@color/white"
+        android:padding="@dimen/dimen_12"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dimen_12"
+            android:gravity="center"
+            style="@style/Text1_16"
+            android:textColor="?colorOnSurface"
+            android:text="" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_8"
+            app:icon="@drawable/delete_ic"
+            app:iconGravity="textStart"
+            android:text="@string/delete"
+            android:id="@+id/delete_button" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:text="Ortga"
+            android:id="@+id/undo_button" />
+    </LinearLayout>
+</layout>

@@ -73,6 +73,7 @@
             app:layout_constraintTop_toBottomOf="@+id/card_number"
             app:layout_constraintVertical_bias="0.5" />
 
+
         <TextView
             android:id="@+id/textView10"
             android:layout_width="wrap_content"
@@ -134,11 +135,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dimen_12"
-            android:text="Chek admin tomonidan tekshiriladi"
+            android:text="Chekni admin tekshiradi"
             android:textColor="?colorOnSurfaceVariant"
             app:layout_constraintStart_toStartOf="@+id/check_button"
             app:layout_constraintTop_toBottomOf="@+id/check_button" />
 
+        <TextView
+            android:id="@+id/textView17"
+            style="@style/Title4_24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/dimen_12"
+            android:text="@string/premium"
+            android:textColor="?colorPrimary"
+            app:drawableStartCompat="@drawable/star_ic"
+            app:drawableTint="?colorPrimary"
+            app:layout_constraintBottom_toTopOf="@+id/next_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView14" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/next_button"
             android:layout_width="match_parent"

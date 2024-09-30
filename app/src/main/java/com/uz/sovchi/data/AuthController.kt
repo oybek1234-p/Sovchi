@@ -20,9 +20,9 @@ object AuthController {
         done: (success: Boolean, exception: Exception?) -> Unit
     ) {
         val credential = PhoneAuthProvider.getCredential(verificationCode, code)
-        FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener {
-            done.invoke(it.isSuccessful, it.exception)
-        }
+//        FirebaseAuth.getInstance().signInWithCredential(credential).addOnSuccessListener {
+//            done.invoke(it.isSuccessful, it.exception)
+//        }
     }
 
     fun sendSms(
